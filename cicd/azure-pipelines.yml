@@ -7,8 +7,8 @@ trigger:
 - main
 
 stages:
-- stage: string  # name of the stage (A-Z, a-z, 0-9, and underscore)
-  displayName: string  # friendly name to display in the UI
+- stage: Unit Test
+  displayName: Unit Tests
   jobs:
   - job: SetupScript
     steps:
