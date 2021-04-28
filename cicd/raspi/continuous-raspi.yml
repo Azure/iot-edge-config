@@ -1,0 +1,4 @@
+steps:
+- script: echo Hello Raspi!
+  displayName: 'Echo Hello Raspi!'
+

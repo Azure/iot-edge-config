@@ -1,0 +1,7 @@
+pool:
+  vmImage: ubuntu-18.04
+
+steps:
+- script: echo Hello Linux!
+  displayName: 'Echo Hello Linux'
+
