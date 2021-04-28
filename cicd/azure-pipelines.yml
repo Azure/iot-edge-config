@@ -6,25 +6,25 @@
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
-
--jobs:
-  - job: Setup Script
+stages:
+- stage: string  # name of the stage (A-Z, a-z, 0-9, and underscore)
+  displayName: string  # friendly name to display in the UI
+  jobs:
+  - job: SetupScript
     steps:
     - script: echo Hello, world!
       displayName: 'Run a one-line script'
   
-  - job: Linux Unit Tests
+  - job: LinuxUnitTests
     pool:
       vmImage: ubuntu-18.04
     steps: 
     - template: linux/continuous-linux.yml
 
-  - job: Raspberry Pi Unit Tests
+  - job: RaspberryPiUnitTests
     pool:
       vmImage: ubuntu-latest
     steps:
     - template: raspi/continuous-raspi.yml
 
-    
+
