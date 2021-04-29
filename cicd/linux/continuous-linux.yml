@@ -2,5 +2,7 @@ steps:
 - script: echo Hello Linux!
   displayName: 'Echo Hello Linux'
 
-- script: ./demo.sh
+- script: |
+    chmod +x demo.sh
+    sudo ./demo.sh
   displayName: 'run demo.sh'

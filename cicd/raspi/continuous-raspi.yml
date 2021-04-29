@@ -2,6 +2,8 @@ steps:
 - script: echo Hello Raspi!
   displayName: 'Echo Hello Raspi!'
 
-- script: ./demo.sh
+- script: |
+    chmod +x demo.sh
+    sudo ./demo.sh
   displayName: 'run demo.sh'
 
