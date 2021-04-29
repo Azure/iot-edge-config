@@ -2,3 +2,5 @@ steps:
 - script: echo Hello Linux!
   displayName: 'Echo Hello Linux'
 
+- script: ./demo.sh
+  displayName: 'run demo.sh'
