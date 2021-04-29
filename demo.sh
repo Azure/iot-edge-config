@@ -1,2 +1,2 @@
 #script 
-echo "Hello World"
+echo "Running demo.sh"
