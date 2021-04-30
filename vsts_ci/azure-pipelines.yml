@@ -28,10 +28,15 @@ stages:
     - template: raspi/continuous-raspi.yml
 
   - job: PublishFile
+    dependsOn:
+      - LinuxUnitTests
+      - RaspberryPiUnitTests
+    condition: and(succeeded('LinuxUnitTests'), succeeded('RaspberryPiUnitTests'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+      
     steps:
     - task: CopyFiles@2
       inputs:
-        SourceFolder: '$(BUILD.REPOSITORY.LOCALPATH)/release'
+        SourceFolder: 'src/azure-iot-edge-installer.sh'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
       displayName: "Copy files to build artifact staging directory"
     
