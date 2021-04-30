@@ -3,7 +3,7 @@ steps:
   displayName: 'Echo Hello Raspi!'
 
 - script: |
-    cd tests/unit_tests
+    cd tests/unit-tests
     chmod +x test-install-container-management.sh  
     chmod +x test-install-edge-runtime.sh  
     chmod +x test-validate-post-install.sh  
