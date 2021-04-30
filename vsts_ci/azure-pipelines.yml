@@ -27,4 +27,16 @@ stages:
     steps:
     - template: raspi/continuous-raspi.yml
 
-
+  - job: PublishFile
+    steps:
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(BUILD.REPOSITORY.LOCALPATH)/release'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      displayName: "Copy files to build artifact staging directory"
+    
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'build-artifact-drop'
+        publishLocation: 'Container'

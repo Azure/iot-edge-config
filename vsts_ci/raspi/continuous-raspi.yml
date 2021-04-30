@@ -1,0 +1,16 @@
+steps:
+- script: echo Hello Raspi!
+  displayName: 'Echo Hello Raspi!'
+
+- script: |
+    cd tests/unit-tests
+    chmod +x test-install-container-management.sh  
+    chmod +x test-install-edge-runtime.sh  
+    chmod +x test-validate-post-install.sh  
+    chmod +x test-validate-tier1-os.sh
+    ./test-install-container-management.sh  
+    ./test-install-edge-runtime.sh  
+    ./test-validate-post-install.sh  
+    ./test-validate-tier1-os.sh
+  displayName: 'Run All Linux Unit Tests'
+
