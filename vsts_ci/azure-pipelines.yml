@@ -31,7 +31,7 @@ stages:
     dependsOn:
       - LinuxUnitTests
       - RaspberryPiUnitTests
-    condition: and(succeeded('LinuxUnitTests'), succeeded('RaspberryPiUnitTests'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    condition: and(succeeded('LinuxUnitTests'), succeeded('RaspberryPiUnitTests'))
       
     steps:
     - task: CopyFiles@2
