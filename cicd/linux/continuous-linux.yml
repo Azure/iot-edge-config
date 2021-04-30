@@ -1,8 +1,0 @@
-steps:
-- script: echo Hello Linux!
-  displayName: 'Echo Hello Linux'
-
-- script: |
-    chmod +x demo.sh
-    sudo ./demo.sh
-  displayName: 'run demo.sh'
