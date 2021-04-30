@@ -3,6 +3,7 @@ steps:
   displayName: 'Echo Hello Linux'
 
 - script: |
+    cd tests/unit_tests
     chmod +x test-install-container-management.sh  
     chmod +x test-install-edge-runtime.sh  
     chmod +x test-validate-post-install.sh  
