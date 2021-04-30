@@ -7,7 +7,7 @@ trigger:
 - main
 
 stages:
-- stage: Unit Test
+- stage: UnitTest
   displayName: Unit Tests
   jobs:
   - job: SetupScript
