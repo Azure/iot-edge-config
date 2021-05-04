@@ -34,9 +34,13 @@ stages:
     condition: and(succeeded('LinuxUnitTests'), succeeded('RaspberryPiUnitTests'))
       
     steps:
+    - script: |  
+        mkdir dest
+        cp src/azure-iot-edge-installer.sh dest/ 
+      displayName: Create dest/ directory
     - task: CopyFiles@2
       inputs:
-        SourceFolder: 'src/azure-iot-edge-installer.sh'
+        SourceFolder: 'dest'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
       displayName: "Copy files to build artifact staging directory"
     
