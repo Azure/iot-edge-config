@@ -1,0 +1,28 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+stages:
+- stage: E2ETest
+  displayName: E2E Tests
+  jobs:
+  - job: SetupScript
+    steps:
+    - script: echo Hello, world!
+      displayName: 'Run a one-line script'
+      
+  - job: LinuxE2ETests
+    pool:
+      vmImage: ubuntu-18.04
+    steps: 
+    - template: continuous-e2e.yml
+
+  - job: RaspberryPiE2ETests
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - template: continuous-e2e.yml
