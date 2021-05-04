@@ -37,8 +37,9 @@ stages:
     - script: |  
         mkdir dest
         cp src/azure-iot-edge-installer.sh dest/ 
+        echo '$(System.DefaultWorkingDirectory)/dest'
       displayName: Create dest/ directory
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)/dest'
+        targetPath: '$(System.DefaultWorkingDirectory)/dest'
         publishLocation: 'pipeline'
