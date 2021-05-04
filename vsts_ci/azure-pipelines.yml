@@ -38,14 +38,7 @@ stages:
         mkdir dest
         cp src/azure-iot-edge-installer.sh dest/ 
       displayName: Create dest/ directory
-    - task: CopyFiles@2
+    - task: PublishPipelineArtifact@1
       inputs:
-        SourceFolder: 'dest'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
-      displayName: "Copy files to build artifact staging directory"
-    
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'build-artifact-drop'
-        publishLocation: 'Container'
+        targetPath: '$(Pipeline.Workspace)/dest'
+        publishLocation: 'pipeline'
