@@ -1,0 +1,15 @@
+steps:
+- script: |
+      sudo apt update
+      sudo apt install jq
+      displayName: 'Install jq'
+      
+- script: |
+      az account set -s "377c3343-75bb-4244-98a3-0fb84a830c4b"
+      displayName: 'Set Azure subscription'
+
+- script: |
+    cd tests/e2e-tests
+    chmod +x test-azure-iot-edge-installer
+    ./test-azure-iot-edge-installer  
+  displayName: 'Run All E2E Tests'
