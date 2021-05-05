@@ -1,12 +1,7 @@
-steps:
-- script: |
-      sudo apt update
-      sudo apt install jq
-  displayName: 'Install jq'
-      
+steps:  
 - script: |
     cd tests/e2e-tests
     pwd
-    chmod +x ./test-azure-iot-edge-installer
-    ./test-azure-iot-edge-installer  
+    chmod +x test-azure-iot-edge-installer.sh
+    ./test-azure-iot-edge-installer.sh  
   displayName: 'Run All E2E Tests'
