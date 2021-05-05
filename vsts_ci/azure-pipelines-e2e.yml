@@ -14,7 +14,15 @@ stages:
     steps:
     - script: echo Hello, world!
       displayName: 'Run a one-line script'
-      
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az account list
+          az account set -s "377c3343-75bb-4244-98a3-0fb84a830c4b"
+        
   - job: LinuxE2ETests
     pool:
       vmImage: ubuntu-18.04
@@ -26,3 +34,4 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - template: continuous-e2e.yml
+  
