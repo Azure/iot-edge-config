@@ -50,6 +50,9 @@ stages:
         publishLocation: 'Container'
 
   - job: GithubRelease
+    dependsOn:
+      - PublishFile
+    condition: succeeded('PublishFile')
     steps:
     - task: GitHubRelease@1
       displayName: 'GitHub release (create)'
