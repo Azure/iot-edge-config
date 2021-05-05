@@ -39,4 +39,5 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - template: continuous-e2e.yml
+    condition: and(succeeded('SetupScript'))
   
