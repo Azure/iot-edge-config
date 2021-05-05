@@ -1,2 +1,2 @@
 #script 
-echo "Run test-azure-iot-edge-installer.sh"
+echo "Running test-azure-iot-edge-installer.sh"
