@@ -40,11 +40,11 @@ stages:
     - task: CopyFiles@2
       inputs:
         SourceFolder: 'dest'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/dest'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
       displayName: "Copy files to build artifact staging directory"
     
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/dest'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'build-artifact-drop'
         publishLocation: 'Container'
