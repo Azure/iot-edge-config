@@ -8,11 +8,11 @@ exec 3>&1
 
 #
 error_output() {
-    printf "%b\n" "${red:-}$script_name: Error: $1${normal:-}" >&2
+    printf "%b\n" "${red:-}Error: $1${normal:-}" >&2
 }
 
 output() {
-    printf "%b\n" "${cyan:-}$script_name:${normal:-} $1" >&3
+    printf "%b\n" "${cyan:-}${normal:-} $1" >&3
 }
 
 verbose_output() {
@@ -21,7 +21,6 @@ verbose_output() {
     fi
 }
 
-# This platform list is finite - if the SDK/Runtime has supported Linux distribution-specific assets,
 #
 verbose=false
 count=1
@@ -65,6 +64,7 @@ do
 done
 
 total=0.0
+verbose_output ""
 for ((curr = 1; curr <= $count; curr++))
 do
     start=`date +%s.%N`
@@ -73,4 +73,7 @@ do
     total=$(bc <<< $total+$end-$start)
     verbose_output "run $curr took $(bc <<< $end-$start) seconds"
 done
-output "average run time for '$test_command' is: $(bc -l <<< $total/$count)"
+
+verbose_output ""
+verbose_output "----------------------------------------------------------------------------------------------"
+output "average run time for '$test_command' is: $(bc -l <<< $total/$count) seconds"
