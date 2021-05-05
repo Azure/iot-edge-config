@@ -5,6 +5,7 @@
 
 trigger:
 - main
+- xinzed/cicd-release
 
 stages:
 - stage: UnitTest
