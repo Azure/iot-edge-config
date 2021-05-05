@@ -1,5 +1,6 @@
 steps:  
 - script: |
+    az login
     cd tests/e2e-tests
     chmod +x test-azure-iot-edge-installer.sh
     chmod +x test-devicestate.sh
