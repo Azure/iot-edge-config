@@ -1,7 +1,8 @@
 steps:  
 - script: |
     cd tests/e2e-tests
-    pwd
     chmod +x test-azure-iot-edge-installer.sh
+    chmod +x test-devicestate.sh
     ./test-azure-iot-edge-installer.sh  
+    ./test-devicestate.sh
   displayName: 'Run All E2E Tests'
