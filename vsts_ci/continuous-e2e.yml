@@ -1,9 +1,17 @@
 steps:  
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az account set -s "377c3343-75bb-4244-98a3-0fb84a830c4b"
+      cd tests/e2e-tests
+      chmod +x test-devicestate.sh
+      ./test-devicestate.sh
+        
 - script: |
-    az login
     cd tests/e2e-tests
     chmod +x test-azure-iot-edge-installer.sh
-    chmod +x test-devicestate.sh
     ./test-azure-iot-edge-installer.sh  
-    ./test-devicestate.sh
   displayName: 'Run All E2E Tests'
