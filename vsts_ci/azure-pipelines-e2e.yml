@@ -32,12 +32,14 @@ stages:
       vmImage: ubuntu-18.04
     steps: 
     - template: continuous-e2e.yml
-    condition: and(succeeded('SetupScript'))
+    dependsOn: SetupScript
+    condition: succeeded()
 
   - job: RaspberryPiE2ETests
     pool:
       vmImage: ubuntu-latest
     steps:
     - template: continuous-e2e.yml
-    condition: and(succeeded('SetupScript'))
+    dependsOn: SetupScript
+    condition: succeeded()
   
