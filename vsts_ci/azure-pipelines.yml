@@ -28,37 +28,38 @@ stages:
     steps:
     - template: raspi/continuous-raspi.yml
 
+  - job: GithubRelease
+    dependsOn:
+      - PublishFile
+    condition: succeeded('PublishFile')
+    steps:
+    - script: |  
+        mkdir dest
+        cp src/azure-iot-edge-installer.sh dest/ 
+      displayName: Create dest/ directory
+    - task: GitHubRelease@1
+      displayName: 'GitHub release (create)'
+      inputs:
+        gitHubConnection: 'github connection 1'
+        tagPattern: '^v?[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$'
+        assets: 'dest/azure-iot-edge-installer.sh'
+        isDraft: true
+
   - job: PublishFile
     dependsOn:
       - LinuxUnitTests
       - RaspberryPiUnitTests
     condition: and(succeeded('LinuxUnitTests'), succeeded('RaspberryPiUnitTests'))      
     steps:
-    - script: |  
-        mkdir dest
-        cp src/azure-iot-edge-installer.sh dest/ 
-      displayName: Create dest/ directory
     - task: CopyFiles@2
       inputs:
         SourceFolder: 'dest'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
-      displayName: "Copy files to build artifact staging directory"
-    
+      displayName: "Copy files to build artifact staging directory" 
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'build-artifact-drop'
         publishLocation: 'Container'
 
-  - job: GithubRelease
-    dependsOn:
-      - PublishFile
-    condition: succeeded('PublishFile')
-    steps:
-    - task: GitHubRelease@1
-      displayName: 'GitHub release (create)'
-      inputs:
-        gitHubConnection: 'github connection 1'
-        tagPattern: '^v?[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$'
-        assets: '$(Build.ArtifactStagingDirectory)/azure-iot-edge-installer.sh'
-        isDraft: true
+
