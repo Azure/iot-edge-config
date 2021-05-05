@@ -48,8 +48,8 @@ stages:
 
   - job: PublishFile
     dependsOn:
-      - PublishFile
-    condition: succeeded('PublishFile')      
+      - GithubRelease
+    condition: succeeded('GithubRelease')      
     steps:
     - task: CopyFiles@2
       inputs:
