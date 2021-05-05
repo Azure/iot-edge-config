@@ -12,8 +12,10 @@ stages:
   jobs:
   - job: SetupScript
     steps:
-    - script: echo Hello, world!
-      displayName: 'Run a one-line script'
+    - script: |
+        sudo apt update
+        sudo apt install jq
+      displayName: 'Install jq'
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
