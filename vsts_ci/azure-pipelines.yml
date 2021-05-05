@@ -41,5 +41,5 @@ stages:
       displayName: Create dest/ directory
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(System.DefaultWorkingDirectory)/dest'
+        targetPath: '$(Build.ArtifactStagingDirectory)/dest'
         publishLocation: 'pipeline'
