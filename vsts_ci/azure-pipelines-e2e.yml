@@ -20,7 +20,6 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          az login
           az account list
           az account set -s "377c3343-75bb-4244-98a3-0fb84a830c4b"
         
