@@ -48,3 +48,13 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'build-artifact-drop'
         publishLocation: 'Container'
+
+  - job: GithubRelease
+    steps:
+    - task: GitHubRelease@1
+      displayName: 'GitHub release (create)'
+      inputs:
+        gitHubConnection: 'github connection 1'
+        tagPattern: '^v?[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$'
+        assets: '$(Build.ArtifactStagingDirectory)/azure-iot-edge-installer.sh'
+        isDraft: true
