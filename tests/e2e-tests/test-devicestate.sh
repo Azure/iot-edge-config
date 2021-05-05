@@ -10,7 +10,7 @@ function cleanup() {
 	local token_id=$4
 
 	# Clean up device if it exists
-	local device_exists=$(curl -X GET -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/devices/${device_id}  2>/dev/null | jq -r '.id')	
+	local device_exists=$(curl -X GET -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/devices/${device_id} | jq -r '.id')	
 	if [ "$device_exists" == "$device_id" ];
 	then
 		echo Device ${device_id} exists
@@ -21,7 +21,7 @@ function cleanup() {
 	fi;
 
 	# Clean up API token if it exists
-	local apiToken_exists=$(curl -X GET -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/apiTokens/${token_id} 2>/dev/null | jq -r '.id')
+	local apiToken_exists=$(curl -X GET -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/apiTokens/${token_id} | jq -r '.id')
 	if [ "$apiToken_exists" == "$token_id" ];
 	then
 		echo API token ${token_id} exists
@@ -52,7 +52,7 @@ armToken=$(az account get-access-token --resource https://apps.azureiotcentral.c
 
 # Create API token
 echo Create API token to interact with Central app "https://e2etest-iotc-iiot-asset-app.azureiotcentral.com"
-apiToken=$(curl -X PUT -d '{"roles":[{"role":"ca310b8d-2f4a-44e0-a36e-957c202cd8d4"}]}' -H "Content-Type:application/json" -H "Authorization:Bearer $armToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/apiTokens/${token_id} 2>/dev/null | jq -r '.token');
+apiToken=$(curl -X PUT -d '{"roles":[{"role":"ca310b8d-2f4a-44e0-a36e-957c202cd8d4"}]}' -H "Content-Type:application/json" -H "Authorization:Bearer $armToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/apiTokens/${token_id} | jq -r '.token');
 
 if [ "$apiToken" == "null" ]; then 
 	echo Failed to create API token. Exit.
@@ -60,7 +60,7 @@ if [ "$apiToken" == "null" ]; then
 fi;
 
 echo Create a new device
-devicestate_before=$(curl -X PUT -d '{"displayName":"'$device_displayName'","instanceOf":"'$device_template'","simulated":false,"approved":true}' -H "Content-Type: application/json" -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/devices/${device_id} 2>/dev/null | jq -r '.provisioned')
+devicestate_before=$(curl -X PUT -d '{"displayName":"'$device_displayName'","instanceOf":"'$device_template'","simulated":false,"approved":true}' -H "Content-Type: application/json" -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/devices/${device_id} | jq -r '.provisioned')
 echo New device state is provisioned=$devicestate_before
 
 if [ "$devicestate_before" != "false" ]; then 
@@ -72,7 +72,7 @@ else
 fi;
 
 echo Get device credentials
-creds=$(curl -X GET -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/devices/${device_id}/credentials 2>/dev/null)
+creds=$(curl -X GET -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/devices/${device_id}/credentials)
 scope_id=$(jq -r '.idScope' <<< "$creds")
 primary_key=$(jq -r '.symmetricKey.primaryKey' <<< "$creds")
 
@@ -83,7 +83,7 @@ echo Run the Azure IoT Edge Installer
 #&& rm -rf azure-iot-edge-installer.sh
 
 # device state should be provisioned after running the script
-devicestate_after=$(curl -X GET -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/devices/${device_id} 2>/dev/null | jq -r '.provisioned')
+devicestate_after=$(curl -X GET -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/devices/${device_id} | jq -r '.provisioned')
 echo After running azure-iot-edge-installer.sh, new device state is provisioned=$devicestate_before
 
 if [ "$devicestate_after" != "true" ]; then 
