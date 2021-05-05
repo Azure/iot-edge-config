@@ -30,8 +30,9 @@ stages:
 
   - job: GithubRelease
     dependsOn:
-      - PublishFile
-    condition: succeeded('PublishFile')
+      - LinuxUnitTests
+      - RaspberryPiUnitTests
+    condition: and(succeeded('LinuxUnitTests'), succeeded('RaspberryPiUnitTests')) 
     steps:
     - script: |  
         mkdir dest
@@ -47,9 +48,8 @@ stages:
 
   - job: PublishFile
     dependsOn:
-      - LinuxUnitTests
-      - RaspberryPiUnitTests
-    condition: and(succeeded('LinuxUnitTests'), succeeded('RaspberryPiUnitTests'))      
+      - PublishFile
+    condition: succeeded('PublishFile')      
     steps:
     - task: CopyFiles@2
       inputs:
