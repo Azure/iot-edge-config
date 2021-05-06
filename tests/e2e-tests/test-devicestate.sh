@@ -112,10 +112,10 @@ scope_id=$(jq -r '.idScope' <<< "$creds")
 primary_key=$(jq -r '.symmetricKey.primaryKey' <<< "$creds")
 
 echo Run the Azure IoT Edge Installer
-#wget https://github.com/Azure/iot-edge-config/releases/download/latest/azure-iot-edge-installer.sh \
-#&& chmod +x azure-iot-edge-installer.sh \
-#&& ./azure-iot-edge-installer.sh -scopeId $scope_id -symmetricKey $primary_key \
-#&& rm -rf azure-iot-edge-installer.sh
+wget https://github.com/Azure/iot-edge-config/releases/download/latest/azure-iot-edge-installer.sh \
+&& chmod +x azure-iot-edge-installer.sh \
+&& ./azure-iot-edge-installer.sh \
+&& rm -rf azure-iot-edge-installer.sh
 
 # device state should be provisioned after running the script
 out=$(curl -X GET -H "Authorization:$apiToken" https://e2etest-iotc-iiot-asset-app.azureiotcentral.com/api/preview/devices/${device_id})
