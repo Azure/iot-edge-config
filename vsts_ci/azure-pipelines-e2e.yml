@@ -25,6 +25,7 @@ stages:
           az extension add --name azure-iot
           az --version
           az account set -s $(AzureSubscriptionId)
+      displayName: 'Set Azure resources'
         
   - job: LinuxE2ETests
     pool:
