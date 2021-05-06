@@ -22,6 +22,7 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
+          az upgrade
           az extension add --name azure-iot
           az --version
           az account set -s $(AzureSubscriptionId)
