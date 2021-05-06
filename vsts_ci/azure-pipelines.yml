@@ -38,7 +38,7 @@ stages:
         cp src/azure-iot-edge-installer.sh dest/ 
       displayName: Create dest/ directory
     - task: GitHubRelease@1
-      displayName: 'GitHub release (create)'
+      displayName: 'GitHub release (create) RC'
       inputs:
         gitHubConnection: 'github.com_cindydeng1998'
         tagPattern: '^v?[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$'
