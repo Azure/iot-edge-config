@@ -24,7 +24,7 @@ stages:
         inlineScript: |
           az extension add --name azure-iot
           az --version
-          az account set -s "377c3343-75bb-4244-98a3-0fb84a830c4b"
+          az account set -s $(AzureSubscriptionId)
         
   - job: LinuxE2ETests
     pool:

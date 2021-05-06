@@ -1,6 +1,28 @@
-# Insert file header
+###################################### 
+# test-devicestate
+# 
+# End to end test to validate that the azure-iot-edge-installer.sh
+# succesfully gets the Central device to provisioned state
+# ARGUMENTS:
+#	subscription - The Azure subscription where the Central app is created
+# OUTPUTS:
+#	Write output to stdout
+# RETURN:
+#	0 if test succeeds, 1 otherwise
+######################################
 
-# Insert function header
+###################################### 
+# Clean up test resources (device and API token)
+# ARGUMENTS:
+#	armToken - Azure Resource Manager token for itneracting with the Azure subscription
+# 	apiToken - the API token used for interaction with Central app
+#	device_id - the ID of the newly created device
+#	token_id - the API token ID used for interaction with Central app
+# OUTPUTS:
+#	Write output to stdout
+# RETURN:
+#	Void
+######################################
 function cleanup() {
 	echo Starting cleanup
 	
@@ -39,7 +61,7 @@ function cleanup() {
 }
 
 # Azure IoT DDE team subscription
-subscription=377c3343-75bb-4244-98a3-0fb84a830c4b
+subscription=$1
 
 # Create a random number to make sure create new resources per each run
 let num=$RANDOM*$RANDOM
@@ -62,7 +84,8 @@ out=$(curl -X PUT -d '{"roles":[{"role":"ca310b8d-2f4a-44e0-a36e-957c202cd8d4"}]
 echo $out
 apiToken=$(jq -r '.token' <<< "$out")
 
-if [ "$apiToken" == "null" ]; then 
+if [ "$apiToken" == "null" ]; 
+then 
 	echo Failed to create API token. Exit.
 	exit $test_result;
 fi;
@@ -73,7 +96,8 @@ echo $out
 devicestate_before=$(jq -r '.provisioned' <<< "$out")
 echo New device state is provisioned=$devicestate_before
 
-if [ "$devicestate_before" != "false" ]; then 
+if [ "$devicestate_before" != "false" ]; 
+then 
 	echo "Error: New device must not be provisioned. Cleanup and exit."
 	cleanup "$armToken" "$apiToken" "$device_id" "$token_id"
 	exit $test_result
@@ -99,7 +123,8 @@ echo $out
 devicestate_after=$(jq -r '.provisioned' <<< "$out")
 echo After running azure-iot-edge-installer.sh, new device state is provisioned=$devicestate_before
 
-if [ "$devicestate_after" != "true" ]; then 
+if [ "$devicestate_after" != "true" ]; 
+then 
 	echo "Error: Device must be provisioned. Exit."; 
 else
 	echo "Device is provisioned as expected. Success."; 

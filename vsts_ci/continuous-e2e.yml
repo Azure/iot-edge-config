@@ -7,7 +7,7 @@ steps:
     inlineScript: |
       cd tests/e2e-tests
       chmod +x test-devicestate.sh
-      ./test-devicestate.sh
+      ./test-devicestate.sh $(AzureSubscriptionId)
         
 - script: |
     cd tests/e2e-tests
