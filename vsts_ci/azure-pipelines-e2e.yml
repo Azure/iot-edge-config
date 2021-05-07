@@ -16,11 +16,31 @@ stages:
         sudo apt update
         sudo apt install jq
       displayName: 'Install jq'
-    - task: AzureKeyVault@1
+    - task: AzureCLI@2
       inputs:
         azureSubscription: 'Azure IoT DDE team subscription(377c3343-75bb-4244-98a3-0fb84a830c4b)'
-        KeyVaultName: 'azure-iot-edgetools-kv'
-        SecretsFilter: 'ddeiotedgetestpw'
+        scriptType: 'ps'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          Write-Host "##vso[task.setvariable variable=SpId;]$env:servicePrincipalId"
+          Write-Host "##vso[task.setvariable variable=SpKey;]$env:servicePrincipalKey"
+          Write-Host "##vso[task.setvariable variable=TenantId;]$env:tenantId"
+          Write-Host "##vso[task.setvariable variable=TestVar;]JustForTest"
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Write your PowerShell commands here.
+          Write-Host "Hello World"
+          Write-Host $env:SpId
+          Write-Host $env:SpKey
+          Write-Host $env:TenantId
+          Write-Host $env:TestVar
+#    - task: AzureKeyVault@1
+#      inputs:
+#        azureSubscription: 'Azure IoT DDE team subscription(377c3343-75bb-4244-98a3-0fb84a830c4b)'
+#        KeyVaultName: 'azure-iot-edgetools-kv'
+#        SecretsFilter: 'ddeiotedgetestpw'
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
