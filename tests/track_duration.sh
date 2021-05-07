@@ -57,6 +57,11 @@ do
     shift
 done
 
+if [ $count -lt 0 ];
+then
+    exit 0
+fi
+
 if [ "$test_command" == "" ];
 then
     exit 0
@@ -92,10 +97,11 @@ printf "| %-40s| %-40s| %-30s| %-20s|\n" 'OS Identity' Test Timestamp Duration
 printf "%s\n" '-------------------------------------------------------------------------------------------------------------------------------------------'
 for ((iter=0; iter < $count; iter++))
 do
-	printf "%s, %s, %s, %.3f\r\n" "$os_name $os_kernel" $test_name "$time_stamp" ${runs[$iter]} >> "$csv_file"
+    printf "%s, %s, %s, %.3f\r\n" "$os_name $os_kernel" $test_name "$time_stamp" ${runs[$iter]} >> "$csv_file"
     printf "| %-40s| %-40s| %-30s| %-20.3f|\n" "$os_name $os_kernel" $test_name "$time_stamp" ${runs[$iter]}
 done
 printf "%s\n" '-------------------------------------------------------------------------------------------------------------------------------------------'
+printf "\r\n%s, %s, %s, %.3f\r\n" "$os_name $os_kernel" $test_name "$time_stamp" $average_time >> "$csv_file"
 printf "| %-40s| %-40s| %-30s| %-20.3f|\n" "$os_name $os_kernel" $test_name "$time_stamp" $average_time
 
 #generate JSON
@@ -104,10 +110,11 @@ printf "    \"OS Identity\": \"%s\",\r\n" "$os_name $os_kernel" >> "$jsn_file"
 printf "    \"Test Name\": \"%s\",\r\n" $test_name >> "$jsn_file"
 printf "    \"Timestamp\": \"%s\",\r\n" "$time_stamp" >> "$jsn_file"
 printf "    \"Iterations\": [\r\n" >> "$jsn_file"
-for ((iter=0; iter < $count; iter++))
+for ((iter=0; iter < $count-1; iter++))
 do
     printf "        { \"Iteration\": "%d", \"Duration\": "%.3f" },\r\n" $iter ${runs[$iter]} >> "$jsn_file"
 done
+printf "        { \"Iteration\": "%d", \"Duration\": "%.3f" }\r\n" $iter ${runs[$count]} >> "$jsn_file"
 printf "    ],\r\n" >> "$jsn_file"
 printf "    \"Average\": "%.3f"\r\n" $average_time >> "$jsn_file"
 printf "}\r\n" >> "$jsn_file"
