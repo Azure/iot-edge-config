@@ -16,6 +16,11 @@ stages:
         sudo apt update
         sudo apt install jq
       displayName: 'Install jq'
+    - task: AzureKeyVault@1
+      inputs:
+        azureSubscription: 'Azure IoT DDE team subscription(377c3343-75bb-4244-98a3-0fb84a830c4b)'
+        KeyVaultName: 'azure-iot-edgetools-kv'
+        SecretsFilter: 'ddeiotedgetestpw'
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
@@ -25,9 +30,10 @@ stages:
           az upgrade
           az extension add --name azure-iot
           az --version
+          az login -u "ddeiotedgetest@microsoft.com" -p "$(ddeiotedgetestpw)"
           az account set -s $(AzureSubscriptionId)
       displayName: 'Set Azure resources'
-        
+    
   - job: LinuxE2ETests
     pool:
       vmImage: ubuntu-18.04
