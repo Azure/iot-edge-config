@@ -1,18 +1,24 @@
+# import utils
+source utils.sh
+
+VERSION_TAG="v0.0.0-rc0"
+
 # script 
 echo "Running azure-iot-edge-installer.sh"
 
 # if helper scripts dont exist, fetch via wget 
-if [ -d "iot-edge-installer" ] 
+if [ -d "iot-edge-installer" ]
 then
     echo "Directory iot-edge-installer exists." 
 else
     mkdir iot-edge-installer
     cd iot-edge-installer
-    wget https://github.com/Azure/iot-edge-config/releases/latest/download/validate-tier1-os.sh
-    wget https://github.com/Azure/iot-edge-config/releases/latest/download/install-container-management.sh
-    wget https://github.com/Azure/iot-edge-config/releases/latest/download/install-edge-runtime.sh
-    wget https://github.com/Azure/iot-edge-config/releases/latest/download/validate-post-install.sh
-    echo "Downloaded helper files to temporary directory /iot-edge-installer"
+    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/validate-tier1-os.sh
+    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/install-container-management.sh
+    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/install-edge-runtime.sh
+    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/validate-post-install.sh
+    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/utils.sh
+    echo "Downloaded helper files to temporary directory ./iot-edge-installer"
 fi
 
 # add permission to run
