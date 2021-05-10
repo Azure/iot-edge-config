@@ -7,9 +7,13 @@ steps:
     inlineScript: |
       cd tests
       ls -alF
-      pip3 install setuptools
+      python3 --version
+      pip3 --version
       pip3 install -r requirements.txt
       chmod +x ./track_duration.sh
       chmod +x ./perf_tests.sh
+      chmod +x ./e2e-tests/test-devicestate.sh
+      ls -alF
+      ls -alF e2e-tests/test-devicestate.sh
       ./perf_tests.sh $(NumberOfRuns)
   displayName: 'Run All Performance Tests'
