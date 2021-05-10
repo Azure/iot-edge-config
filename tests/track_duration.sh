@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Stop script on NZEC
 set -e
@@ -10,9 +10,6 @@ exec 3>&1
 source common_functions.sh
 
 #
-time_stamp=`date '+%Y-%m-%d %H:%M:%S'`
-os_name="`uname`"
-os_kernel="`uname -r`"
 verbose=false
 count=1
 test_command=""
@@ -28,10 +25,6 @@ do
         -c|--count|-[Cc]ount)
             shift
             count=$1
-            ;;
-        --iot_hub)
-            shift
-            IH_CONN_STR=$1
             ;;
         -t|--test|-[Tt]est)
             shift
@@ -49,7 +42,6 @@ do
             echo "Options:"
             echo "  --verbose,-Verbose             Display diagnostics information."
             echo "  --count,-Count                 Specify number of runs."
-            echo "  --iot_hub                      Specify iot hub connection string."
             echo "  -?,--?,-h,--help,-Help         Shows this help message"
             echo ""
             exit 0
@@ -71,6 +63,13 @@ if [ "$test_command" == "" ];
 then
     exit 0
 fi
+
+#
+IH_CONN_STR=$(az iot hub device-identity connection-string show -n e2etest-iotc-hub -d e2etest_iotc_d | awk '/connection/ { print $2 }' | sed -e 's;";;g')
+
+time_stamp=`date '+%Y-%m-%d %H:%M:%S'`
+os_name="`uname`"
+os_kernel="`uname -r`"
 
 total=0.0
 verbose_output ""
