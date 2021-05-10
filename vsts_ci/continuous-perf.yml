@@ -7,7 +7,7 @@ steps:
     inlineScript: |
       cd tests
       pip3 install -r requirements.txt
-      chmod +x track_duration.sh
-      chmod +x perf_tests.sh
+      chmod +x ./track_duration.sh
+      chmod +x ./perf_tests.sh
       ./perf_tests.sh $(NumberOfRuns)
   displayName: 'Run All Performance Tests'
