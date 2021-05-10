@@ -1,12 +1,28 @@
 #!/usr/bin/env bash
 
+###################################### 
+# track_duration
+#
+# compute duration of runs for a given command and report them as messages
+# to a predefined device associated with a specific azure iot hub
+# ARGUMENTS:
+#   v/verbose   if set, generates verbose logs
+#   c/count     specify the number of runs
+#   t/test      sepcify which command to run. Must be the last parameter
+#               all arguments will be passed as is to the specified command
+# OUTPUTS:
+#   sends duration reports to the cloud
+# RETURN:
+#   0 on success, -1 otherwise
+######################################
+
 # Stop script on NZEC
 set -e
 
 # Exposing stream 3 as a pipe to standard output of the script itself
 exec 3>&1
 
-#bring in the library
+# bring in the library
 source common_functions.sh
 
 #
@@ -82,7 +98,7 @@ do
     runs[$curr-1]=$(bc <<< $end-$start)
     total=$(bc <<< $total+${runs[$curr-1]})
     verbose_output "run $curr took $(bc <<< $end-$start) seconds"
-    python3 ih_send_one_message.py "$IH_CONN_STR" "{\"OSName\": \"$os_name\", \"Kernel\": \"$os_kernel\", \"TestName\": \"$test_name\", \"TimeStamp\": \"$time_stamp\", \"Duration\": ${runs[$iter]}}"
+    python3 send_one_message_to_iot_hub_device.py "$IH_CONN_STR" "{\"OSName\": \"$os_name\", \"Kernel\": \"$os_kernel\", \"TestName\": \"$test_name\", \"TimeStamp\": \"$time_stamp\", \"Duration\": ${runs[$iter]}}"
 done
 
 verbose_output ""

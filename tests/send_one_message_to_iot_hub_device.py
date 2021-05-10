@@ -19,3 +19,4 @@ client = IoTHubDeviceClient.create_from_connection_string(arguments.connection_s
 client.send_message(arguments.message)
 print(arguments.message)
 
+client.shutdown()
