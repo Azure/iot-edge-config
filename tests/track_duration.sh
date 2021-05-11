@@ -72,12 +72,12 @@ done
 
 if [ $count -lt 0 ];
 then
-    exit 0
+    exit -1
 fi
 
 if [ "$test_command" == "" ];
 then
-    exit 0
+    exit -2
 fi
 
 #
@@ -104,3 +104,5 @@ done
 verbose_output ""
 verbose_output "average run time for '$test_command' is: $(echo "scale = 3; $total/$count" | bc) seconds"
 verbose_output "----------------------------------------------------------------------------------------------\n"
+
+exit 0
