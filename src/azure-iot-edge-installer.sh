@@ -32,13 +32,20 @@ chmod +x validate-post-install.sh
 # create flag:variable_name dictionary
 declare -A flag_to_variable_dict
 
-# add flag:variable name dictionary entries
+# add flag:variable_name dictionary entries
+# if you require new flags to be parsed, add more lines here
 flag_to_variable_dict[-v]="VERBOSE_LOGGING"
+flag_to_variable_dict[--verbose]="VERBOSE_LOGGING"
 flag_to_variable_dict[-dp]="DEVICE_PROVISIONING"
+flag_to_variable_dict[--device-provisioning]="DEVICE_PROVISIONING"
 flag_to_variable_dict[-ap]="AZURE_CLOUD_IDENTITY_PROVIDER"
+flag_to_variable_dict[--azure-cloud-identity-provider]="AZURE_CLOUD_IDENTITY_PROVIDER"
 flag_to_variable_dict[-s]="SCOPE_ID"
+flag_to_variable_dict[--scope-id]="SCOPE_ID"
 flag_to_variable_dict[-r]="REGISTRATION_ID"
+flag_to_variable_dict[--registration-id]="REGISTRATION_ID"
 flag_to_variable_dict[-k]="SYMMETRIC_KEY"
+flag_to_variable_dict[--symmetric-key]="SYMMETRIC_KEY"
 
 # create flag:variable_name dictionary
 declare -A parsed_cmd
