@@ -3,45 +3,50 @@
 ###################################### 
 # validate-tier1-os.sh
 # 
-# Utility function to check if the current OS is a tier 1 OS as per the definition below
-# https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1
+# Utility function to check if the current OS is a part of OS array
 # ARGUMENTS:
-#	None
+#	Current OS ID
+#   Current OS VERSION ID
+#   List of OSes to compare
 # OUTPUTS:
 #	Write output to stdout
 # RETURN:
-#	0 if OS is tier 1, 1 otherwise
+#	0 if OS is part of the OS array, 1 otherwise
 ######################################
-
-function is_os_tier1() {	
+function is_os_array() {	
 	
-	local os_is_tier1=1
+	declare -A OS
 	
-	. /etc/os-release
-			
-	case $ID in
-		
-		ubuntu)
-			echo "OS is Ubuntu"
-			if [ "$VERSION_ID" == "18.04" ];
+	local os_id=$1
+	local os_version_id=$2
+	local os_array=$3	
+	
+	for i in "${os_array[@]}";
+	do
+		eval "${os_array["$i"]}"
+		if [ "${OS[ID]}" == "$os_id" ];
+		then
+			if [ "${OS[VERSION_ID]}" == "*" ];
 			then
-				echo "Version is 18.04";
-				os_is_tier1=0
+				return 0;
+			elif [ "${OS[VERSION_ID]}" == "$os_version_id" ];
+			then
+				return 0;
 			fi;
-			;;
-		
-		raspbian)
-			echo "OS is Raspbian";
-			os_is_tier1=0
-			;;
-		
-		*)
-			echo "OS is not Tier 1"
-			;;
-	esac
+		fi;
+	done
 	
-	return $os_is_tier1
+	return 1;	
 }
 
-is_os_tier1
+# tier 1 OS list as per the definition below
+# https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1
+Ubuntu1804="declare -A OS=([ID]='ubuntu' [VERSION_ID]='18.04')"
+Raspbian="declare -A OS=([ID]='raspbian' [VERSION_ID]='*')"
+
+declare -A Tier1OSList=(["0"]=${Ubuntu1804} ["1"]=${Raspbian})
+
+. /etc/os-release
+
+is_os_array $ID $VERSION_ID $Tier1OSList
 echo $?
