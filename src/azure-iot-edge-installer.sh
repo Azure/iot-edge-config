@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # import utils
 source utils.sh
 
@@ -27,7 +29,34 @@ chmod +x install-container-management.sh
 chmod +x install-edge-runtime.sh
 chmod +x validate-post-install.sh
 
-# run scripts in order
+# create flag:variable_name dictionary
+declare -A flag_to_variable_dict
+
+# add flag:variable name dictionary entries
+flag_to_variable_dict[-v]="VERBOSE_LOGGING"
+flag_to_variable_dict[-dp]="DEVICE_PROVISIONING"
+flag_to_variable_dict[-ap]="AZURE_CLOUD_IDENTITY_PROVIDER"
+flag_to_variable_dict[-s]="SCOPE_ID"
+flag_to_variable_dict[-r]="REGISTRATION_ID"
+flag_to_variable_dict[-k]="SYMMETRIC_KEY"
+
+# create flag:variable_name dictionary
+declare -A parsed_cmd
+
+# parse command line inputs
+cmd_parser $@
+
+# fetch output from parser
+parsed_cmd="$(cmd_parser)"
+
+# sample usage
+echo ""
+echo "Verbose Logging: ${parsed_cmd[VERBOSE_LOGGING]}"
+echo "Device provisioning: ${parsed_cmd[DEVICE_PROVISIONING]}"
+echo "Azure Cloud Identity Provider: ${parsed_cmd[AZURE_CLOUD_IDENTITY_PROVIDER]}"
+echo ""
+
+# run scripts in order, can take parsed input from above
 ./validate-tier1-os.sh
 ./install-container-management.sh
 ./install-edge-runtime.sh
