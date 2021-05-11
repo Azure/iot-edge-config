@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 VERSION_TAG="v0.0.0-rc0"
-#OUTPUT_FILE = &1
 
 #
 line_prefix() {
@@ -10,26 +9,34 @@ line_prefix() {
 }
 
 log() {
-    if [[ $# > 1 ]]; then
+    if [[ $# > 1 ]];
+    then
         local TYPE=$1; shift
         local LP=$(line_prefix "[$TYPE]: ")
         local FS=$1; shift
-        printf "$LP$FS\n" $@ >> "$OUTPUT_FILE"
+        if [[ "$OUTPUT_FILE" == "" ]];
+        then
+            printf "$LP$FS\n" $@
+        else
+            printf "$LP$FS\n" $@ >> "$OUTPUT_FILE"
+        fi
     fi
 }
 
 #
-#
+# logger 
 log_init() {
     local BASE_NAME=`basename $0`
     local TD=$TEMPDIR
-    if [[ "$TD" == "" ]]; then
+    if [[ "$TD" == "" ]];
+    then
         TD="/tmp"
     fi
     OUTPUT_FILE=$TD"/"$(echo ${BASE_NAME%.*})-$(echo `date '+%Y-%m-%d'`).log
     touch $OUTPUT_FILE
 }
 
+#
 log_error() {
     log "ERR" "$@"
 }
@@ -49,4 +56,4 @@ log_debug() {
     log "DEBUG" "$@"
 }
 
-export log_init log_error log_info log_warn log_debug
+export -f log_init log_error log_info log_warn log_debug
