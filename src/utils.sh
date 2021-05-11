@@ -9,9 +9,18 @@ line_prefix() {
     echo "$TIME_STAMP $1"
 }
 
+log() {
+    if [[ $# > 1 ]]; then
+        local TYPE=$1; shift
+        local LP=$(line_prefix "[$TYPE]: ")
+        local FS=$1; shift
+        printf "$LP$FS\n" $@ >> "$OUTPUT_FILE"
+    fi
+}
+
 #
 #
-output_init() {
+log_init() {
     local BASE_NAME=`basename $0`
     local TD=$TEMPDIR
     if [[ "$TD" == "" ]]; then
@@ -21,34 +30,23 @@ output_init() {
     touch $OUTPUT_FILE
 }
 
-#
-output_error() {
-    if [[ $# > 0 ]]; then
-        local FS=$1
-        shift
-        local LP=$(line_prefix "[ERR]: ")
-        printf "$LP$FS\n" $@ >> "$OUTPUT_FILE"
-    fi
+log_error() {
+    log "ERR" "$@"
 }
 
 #
-output_info() {
-    if [[ $# > 0 ]]; then
-        local FS=$1
-        shift
-        local LP=$(line_prefix "[INFO]: ")
-        printf "$LP$FS\n" $@ >> "$OUTPUT_FILE"
-    fi
+log_info() {
+    log "INFO" "$@"
 }
 
 #
-output_warn() {
-    if [[ $# > 0 ]]; then
-        local FS=$1
-        shift
-        local LP=$(line_prefix "[WARN]: ")
-        printf "$LP$FS\n" $@ >> "$OUTPUT_FILE"
-    fi
+log_warn() {
+    log "WARN" "$@"
 }
 
-export output_init output_error output_info output_warn
+#
+log_debug() {
+    log "DEBUG" "$@"
+}
+
+export log_init log_error log_info log_warn log_debug
