@@ -1,19 +1,21 @@
 steps:
-- task: AzureCLI@2
+- task: UsePythonVersion@0
+  displayName: "Use Python 3.8"
+  inputs:
+    versionSpec: 3.8
+
+- task: AzureCLI@3
+  displayName: 'Run All Performance Tests'
   inputs:
     azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
       cd tests
-      ls -alF
       python3 --version
       pip3 --version
       pip3 install -r requirements.txt
       chmod +x ./track_duration.sh
       chmod +x ./perf_tests.sh
       chmod +x ./e2e-tests/test-devicestate.sh
-      ls -alF
-      ls -alF e2e-tests/test-devicestate.sh
       ./perf_tests.sh $(NumberOfRuns)
-  displayName: 'Run All Performance Tests'
