@@ -4,7 +4,7 @@ steps:
   inputs:
     versionSpec: 3.8
 
-- task: AzureCLI@3
+- task: AzureCLI@2
   displayName: 'Run All Performance Tests'
   inputs:
     azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
@@ -18,4 +18,8 @@ steps:
       chmod +x ./track_duration.sh
       chmod +x ./perf_tests.sh
       chmod +x ./e2e-tests/test-devicestate.sh
+      az config set extension.use_dynamic_install=yes_without_prompt
+      az extension add --name azure-iot
+      az --version
+      az account set -s $(AzureSubscriptionId)
       ./perf_tests.sh $(NumberOfRuns)
