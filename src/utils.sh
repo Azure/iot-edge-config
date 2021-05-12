@@ -37,7 +37,8 @@ function cmd_parser() {
 
     for arg in "$@"
     do
-        if [[ $arg == -* ]]; then
+        if [[ $arg == -* ]]; 
+        then
             # iterate over all the keys in dictionary
             for k in ${!flag_to_variable_dict[*]} ; do
                 # if arg==key, then we store into flag_to_val_dict 
