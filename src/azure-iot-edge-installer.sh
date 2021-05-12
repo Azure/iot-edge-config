@@ -1,5 +1,6 @@
 # import utils
 source utils.sh
+source validate-tier1-os.sh
 
 VERSION_TAG="v0.0.0-rc0"
 
@@ -27,8 +28,16 @@ chmod +x install-container-management.sh
 chmod +x install-edge-runtime.sh
 chmod +x validate-post-install.sh
 
+# check if current OS is Tier 1
+. /etc/os-release
+is_os_tier1 $ID $VERSION_ID
+if [ "$?" != "0" ]
+then 
+	echo "This OS is not supported. Exit."
+	# log_error "This OS is not supported. Exit."
+fi
+
 # run scripts in order
-./validate-tier1-os.sh
 ./install-container-management.sh
 ./install-edge-runtime.sh
 ./validate-post-install.sh
