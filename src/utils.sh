@@ -7,7 +7,7 @@ add_option_args() {
     if [[ $# > 1 ]];
     then
         local option_flag=$1; shift
-        local var_name=$1 shift
+        local var_name=$1; shift
         flag_to_variable_dict[$option_flag]=$var_name
     fi
 
@@ -40,7 +40,8 @@ function cmd_parser() {
             # iterate over all the keys in dictionary
             for k in ${!flag_to_variable_dict[*]} ; do
                 # if arg==key, then we store into flag_to_val_dict 
-                if [ "$arg" == "$k" ]; then 
+                if [ "$arg" == "$k" ]; 
+                then 
                     # set parsed_cmd, which is varname:value
                     parsed_cmd[${flag_to_variable_dict[$k]}]=$2
                     break
