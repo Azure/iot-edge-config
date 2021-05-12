@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###################################### 
 # test-devicestate
 # 
@@ -136,7 +136,7 @@ wget https://github.com/Azure/iot-edge-config/releases/latest/download/azure-iot
 out=$(curl -X GET -H "Authorization:$apiToken" https://${centralapp_name}.azureiotcentral.com/api/preview/devices/${device_id})
 echo $out
 devicestate_after=$(jq -r '.provisioned' <<< "$out")
-echo After running azure-iot-edge-installer.sh, new device state is provisioned=$devicestate_before
+echo After running azure-iot-edge-installer.sh, new device state is provisioned=$devicestate_after
 
 if [ "$devicestate_after" != "true" ]; 
 then 
@@ -148,4 +148,5 @@ fi;
 
 # Clean up
 cleanup "$armToken" "$apiToken" "$device_id" "$token_id" "$rg" "$centralapp_name"
+echo test_result: $test_result
 exit $test_result
