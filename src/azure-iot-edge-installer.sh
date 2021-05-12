@@ -2,25 +2,29 @@
 
 # import utils
 source utils.sh
+log_init
 
 VERSION_TAG="v0.0.0-rc0"
 
 # script 
-echo "Running azure-iot-edge-installer.sh"
+log_info "Running azure-iot-edge-installer.sh"
 
 # if helper scripts dont exist, fetch via wget 
 if [ -d "iot-edge-installer" ]
 then
-    echo "Directory iot-edge-installer exists." 
+    log_info "Directory iot-edge-installer exists." 
 else
+    log_info "Preparing install directory."
     mkdir iot-edge-installer
     cd iot-edge-installer
+
+    log_info "Downloding helper files to temporary directory ./iot-edge-installer"
     wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/validate-tier1-os.sh
     wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/install-container-management.sh
     wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/install-edge-runtime.sh
     wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/validate-post-install.sh
     wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/utils.sh
-    echo "Downloaded helper files to temporary directory ./iot-edge-installer"
+    log_info "Downloaded helper files to temporary directory ./iot-edge-installer"
 fi
 
 # add permission to run
@@ -49,6 +53,7 @@ cd ..
 # cleanup
 if [ -d "iot-edge-installer" ] 
 then
+    log_info "Removing temporary directory files for iot-edge-installer."
     rm -rf iot-edge-installer
-    echo "Removed temporary directory files for iot-edge-installer" 
+    log_info "Removed temporary directory files for iot-edge-installer."
 fi
