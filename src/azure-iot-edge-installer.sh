@@ -29,38 +29,14 @@ chmod +x install-container-management.sh
 chmod +x install-edge-runtime.sh
 chmod +x validate-post-install.sh
 
-# create flag:variable_name dictionary
-declare -A flag_to_variable_dict
-
-# add flag:variable_name dictionary entries
-# if you require new flags to be parsed, add more lines here
-flag_to_variable_dict[-v]="VERBOSE_LOGGING"
-flag_to_variable_dict[--verbose]="VERBOSE_LOGGING"
-flag_to_variable_dict[-dp]="DEVICE_PROVISIONING"
-flag_to_variable_dict[--device-provisioning]="DEVICE_PROVISIONING"
-flag_to_variable_dict[-ap]="AZURE_CLOUD_IDENTITY_PROVIDER"
-flag_to_variable_dict[--azure-cloud-identity-provider]="AZURE_CLOUD_IDENTITY_PROVIDER"
-flag_to_variable_dict[-s]="SCOPE_ID"
-flag_to_variable_dict[--scope-id]="SCOPE_ID"
-flag_to_variable_dict[-r]="REGISTRATION_ID"
-flag_to_variable_dict[--registration-id]="REGISTRATION_ID"
-flag_to_variable_dict[-k]="SYMMETRIC_KEY"
-flag_to_variable_dict[--symmetric-key]="SYMMETRIC_KEY"
-
-# create flag:variable_name dictionary
-declare -A parsed_cmd
-
-# parse command line inputs
-cmd_parser $@
-
-# fetch output from parser
-parsed_cmd="$(cmd_parser)"
+# parse command line inputs and fetch output from parser
+declare -A parsed_cmds="$(cmd_parser $@)"
 
 # sample usage
 echo ""
-echo "Verbose Logging: ${parsed_cmd[VERBOSE_LOGGING]}"
-echo "Device provisioning: ${parsed_cmd[DEVICE_PROVISIONING]}"
-echo "Azure Cloud Identity Provider: ${parsed_cmd[AZURE_CLOUD_IDENTITY_PROVIDER]}"
+echo "Verbose Logging: ${parsed_cmds[VERBOSE_LOGGING]}"
+echo "Device provisioning: ${parsed_cmds[DEVICE_PROVISIONING]}"
+echo "Azure Cloud Identity Provider: ${parsed_cmds[AZURE_CLOUD_IDENTITY_PROVIDER]}"
 echo ""
 
 # run scripts in order, can take parsed input from above
