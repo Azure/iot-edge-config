@@ -42,3 +42,22 @@ function is_os_tier1() {
 
     return 1
 }
+
+function get_platform() {
+	local os_id=$1
+	local os_version_id=$2
+	
+	case $os_id in
+        ubuntu)
+            if [ $os_version_id == "18.04" ];            
+				return "ubuntu/18.04"
+			fi
+            ;;
+
+        raspbian)
+            return "debian/stretch"
+            ;;
+    esac
+	
+	return ""
+}

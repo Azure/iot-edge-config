@@ -38,10 +38,20 @@ chmod +x validate-post-install.sh
 is_os_tier1 $ID $VERSION_ID
 if [ "$?" != "0" ]
 then 
-    log_error "This OS is not supported. Exit."
+    log_error "This OS is not supported. Please visit this link for more information https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1. Exit."
 fi
 
-# run scripts in order
+# parse command line inputs and fetch output from parser
+declare -A parsed_cmds="$(cmd_parser $@)"
+
+# sample usage
+echo ""
+echo "Verbose Logging: ${parsed_cmds[VERBOSE_LOGGING]}"
+echo "Device provisioning: ${parsed_cmds[DEVICE_PROVISIONING]}"
+echo "Azure Cloud Identity Provider: ${parsed_cmds[AZURE_CLOUD_IDENTITY_PROVIDER]}"
+echo ""
+
+# run scripts in order, can take parsed input from above
 ./install-container-management.sh
 ./install-edge-runtime.sh
 ./validate-post-install.sh
