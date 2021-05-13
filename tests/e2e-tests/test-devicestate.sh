@@ -5,68 +5,68 @@
 # End to end test to validate that the azure-iot-edge-installer.sh
 # succesfully gets the Central device to provisioned state
 # ARGUMENTS:
-#	subscription - The Azure subscription where the Central app is created
+#    subscription - The Azure subscription where the Central app is created
 # OUTPUTS:
-#	Write output to stdout
+#    Write output to stdout
 # RETURN:
-#	0 if test succeeds, 1 otherwise
+#    0 if test succeeds, 1 otherwise
 ######################################
 
 ###################################### 
 # Clean up test resources
 # ARGUMENTS:
-#	armToken - Azure Resource Manager token for itneracting with the Azure subscription
-# 	apiToken - the API token used for interaction with Central app
-#	device_id - the ID of the newly created device
-#	token_id - the API token ID used for interaction with Central app
+#    armToken - Azure Resource Manager token for itneracting with the Azure subscription
+#     apiToken - the API token used for interaction with Central app
+#    device_id - the ID of the newly created device
+#    token_id - the API token ID used for interaction with Central app
 #   rg - resource group name for central app
 #   centralapp_name - central app name
 # OUTPUTS:
-#	Write output to stdout
+#    Write output to stdout
 # RETURN:
-#	Void
+#    Void
 ######################################
 function cleanup() {
-	echo Starting cleanup
-	
-	local armToken=$1
-	local apiToken=$2
-	local device_id=$3
-	local token_id=$4
-	local rg=$5
-	local centralapp_name=$6
+    echo Starting cleanup
+    
+    local armToken=$1
+    local apiToken=$2
+    local device_id=$3
+    local token_id=$4
+    local rg=$5
+    local centralapp_name=$6
 
-	# Clean up device if it exists
-	local out=$(curl -X GET -H "Authorization:$apiToken" https://${centralapp_name}.azureiotcentral.com/api/preview/devices/${device_id})
-	echo $out
-	local device_exists=$(jq -r '.id' <<< "$out")
-	if [ "$device_exists" == "$device_id" ];
-	then
-		echo Device ${device_id} exists
-		echo Delete device ${device_id}
-		curl -X DELETE -H "Authorization:Bearer $armToken" https://${centralapp_name}.azureiotcentral.com/api/preview/devices/${device_id}
-	else
-		echo Device ${device_id} does not exist
-	fi;
+    # Clean up device if it exists
+    local out=$(curl -X GET -H "Authorization:$apiToken" https://${centralapp_name}.azureiotcentral.com/api/preview/devices/${device_id})
+    echo $out
+    local device_exists=$(jq -r '.id' <<< "$out")
+    if [ "$device_exists" == "$device_id" ];
+    then
+        echo Device ${device_id} exists
+        echo Delete device ${device_id}
+        curl -X DELETE -H "Authorization:Bearer $armToken" https://${centralapp_name}.azureiotcentral.com/api/preview/devices/${device_id}
+    else
+        echo Device ${device_id} does not exist
+    fi;
 
-	# Clean up API token if it exists
-	local out=$(curl -X GET -H "Authorization:$apiToken" https://${centralapp_name}.azureiotcentral.com/api/preview/apiTokens/${token_id})
-	echo $out
-	local apiToken_exists=$(jq -r '.id' <<< "$out")
-	if [ "$apiToken_exists" == "$token_id" ];
-	then
-		echo API token ${token_id} exists
-		echo Delete API token ${token_id}
-		curl -X DELETE -H "Authorization:Bearer $armToken" https://${centralapp_name}.azureiotcentral.com/api/preview/apiTokens/${token_id}
-	else
-		echo API token ${token_id} does not exist
-	fi;
+    # Clean up API token if it exists
+    local out=$(curl -X GET -H "Authorization:$apiToken" https://${centralapp_name}.azureiotcentral.com/api/preview/apiTokens/${token_id})
+    echo $out
+    local apiToken_exists=$(jq -r '.id' <<< "$out")
+    if [ "$apiToken_exists" == "$token_id" ];
+    then
+        echo API token ${token_id} exists
+        echo Delete API token ${token_id}
+        curl -X DELETE -H "Authorization:Bearer $armToken" https://${centralapp_name}.azureiotcentral.com/api/preview/apiTokens/${token_id}
+    else
+        echo API token ${token_id} does not exist
+    fi;
 
-	# Clean up central app
-	echo Clean up central app
-	az iot central app delete -g ${rg} -n ${centralapp_name} -y
+    # Clean up central app
+    echo Clean up central app
+    az iot central app delete -g ${rg} -n ${centralapp_name} -y
 
-	echo Completed cleanup
+    echo Completed cleanup
 }
 
 # Azure IoT DDE team subscription
@@ -101,8 +101,8 @@ apiToken=$(jq -r '.token' <<< "$out")
 
 if [ "$apiToken" == "null" ]; 
 then 
-	echo Failed to create API token. Exit.
-	exit $test_result;
+    echo Failed to create API token. Exit.
+    exit $test_result;
 fi;
 
 echo Create a new device
@@ -113,11 +113,11 @@ echo New device state is provisioned=$devicestate_before
 
 if [ "$devicestate_before" != "false" ]; 
 then 
-	echo "Error: New device must not be provisioned. Cleanup and exit."
-	cleanup "$armToken" "$apiToken" "$device_id" "$token_id" "$rg" "$centralapp_name"
-	exit $test_result
+    echo "Error: New device must not be provisioned. Cleanup and exit."
+    cleanup "$armToken" "$apiToken" "$device_id" "$token_id" "$rg" "$centralapp_name"
+    exit $test_result
 else
-	echo "Device is not provisioned as expected. Continue."; 
+    echo "Device is not provisioned as expected. Continue."; 
 fi;
 
 echo Get device credentials
@@ -140,10 +140,10 @@ echo After running azure-iot-edge-installer.sh, new device state is provisioned=
 
 if [ "$devicestate_after" != "true" ]; 
 then 
-	echo "Error: Device must be provisioned. Exit."; 
+    echo "Error: Device must be provisioned. Exit."; 
 else
-	echo "Device is provisioned as expected. Success."; 
-	$test_result=0 # success
+    echo "Device is provisioned as expected. Success."; 
+    $test_result=0 # success
 fi;
 
 # Clean up

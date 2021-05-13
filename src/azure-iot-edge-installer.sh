@@ -20,8 +20,9 @@ download_bash_script() {
         log_info "downloading '%s'" $file_name
 
         # attempt to download to a temporary file.
-        #wget $url_text -q -O $tmp_file
-		cp ../$file_name .
+        wget $url_text -q -O $tmp_file
+        # uncomment for testing
+        #cp ../$file_name .
 
         # validate request
         exit_code=$?

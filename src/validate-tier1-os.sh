@@ -49,7 +49,7 @@ function is_os_tier1() {
 function get_platform() {
     local os_id=$1
     local os_version_id=$2
-	local os_platform=""
+    local os_platform=""
     
     case $os_id in
         ubuntu)
@@ -64,5 +64,5 @@ function get_platform() {
             ;;
     esac
     
-	echo "$os_platform"
+    echo "$os_platform"
 }
