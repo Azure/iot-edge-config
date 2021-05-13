@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # import utils
-source utils.sh
-source validate-tier1-os.sh
+source src/utils.sh
+source src/validate-tier1-os.sh
 
 ensure_sudo 
 log_init
@@ -70,8 +70,6 @@ then
     log_error "This OS is not supported. Please visit this link for more information https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1. Exit."
 fi
 
-$platform=get_platform $ID $VERSION_ID
-
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
 
@@ -83,6 +81,7 @@ echo "Azure Cloud Identity Provider: ${parsed_cmds[AZURE_CLOUD_IDENTITY_PROVIDER
 echo ""
 
 # run scripts in order, can take parsed input from above
+platform=$(get_platform "$ID" "$VERSION_ID")
 ./install-container-management.sh $platform
 ./install-edge-runtime.sh
 ./validate-post-install.sh
