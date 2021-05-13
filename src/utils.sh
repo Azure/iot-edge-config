@@ -93,6 +93,8 @@ log_init() {
     fi
     OUTPUT_FILE=$TD"/"$(echo ${BASE_NAME%.*})-$(echo `date '+%Y-%m-%d'`).log
     touch $OUTPUT_FILE
+
+    echo "All logs will be appended to this file '"$OUTPUT_FILE"'"
 }
 
 #
@@ -122,7 +124,7 @@ ensure_sudo() {
     if [[ $EUID -ne 0 ]];
     then
         echo "$0 is not running as root. "
-        sudo "$0"
+        sudo $0 $@
         exit $?
     fi
 }
@@ -131,7 +133,7 @@ export -f ensure_sudo
 
 #
 prepare_apt() {
-    if [[ $# != 1]];
+    if [ $# != 1];
     then
         exit 1
     else

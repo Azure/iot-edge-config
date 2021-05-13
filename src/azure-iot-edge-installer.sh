@@ -2,7 +2,7 @@
 
 # import utils
 source utils.sh
-ensure_sudo 
+ensure_sudo "$@"
 log_init
 
 VERSION_TAG="v0.0.0-rc0"
