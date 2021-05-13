@@ -65,9 +65,9 @@ declare -A parsed_cmds="$(cmd_parser $@)"
 
 # sample usage
 echo ""
-echo "Verbose Logging: ${parsed_cmds[VERBOSE_LOGGING]}"
-echo "Device provisioning: ${parsed_cmds[DEVICE_PROVISIONING]}"
-echo "Azure Cloud Identity Provider: ${parsed_cmds[AZURE_CLOUD_IDENTITY_PROVIDER]}"
+echo "Scope ID: ${parsed_cmds[SCOPE_ID]}"
+echo "Registration/Device ID: ${parsed_cmds[REGISTRATION_ID]}"
+echo "Symmetric Key: ${parsed_cmds[SYMMETRIC_KEY]}"
 echo ""
 
 # run scripts in order, can take parsed input from above

@@ -20,7 +20,7 @@ source = "dps"\
 global_endpoint = "https://global.azure-devices-provisioning.net"\
 id_scope = \"'$SCOPE_ID'\"\
 \
-# [provisioning.attestation]\
+[provisioning.attestation]\
 method = "symmetric_key"\
 registration_id = \"'$REGISTRATION_ID'\"\
 \
