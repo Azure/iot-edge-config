@@ -10,6 +10,5 @@ then
     echo "docker command is already available."
 else
     log_info "Running install-container-management.sh"
-
     apt install moby-engine -y
 fi

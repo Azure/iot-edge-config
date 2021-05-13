@@ -4,7 +4,9 @@
 TOPDIR=$(dirname $0)
 
 # import utils
+
 source $TOPDIR/utils.sh
+source $TOPDIR/validate-tier1-os.sh
 ensure_sudo "$@"
 log_init
 
@@ -22,6 +24,8 @@ download_bash_script() {
 
         # attempt to download to a temporary file.
         wget $url_text -q -O $tmp_file
+        # uncomment for testing local changes
+        #cp ../$TOPDIR/$file_name .
 
         # validate request
         exit_code=$?
@@ -63,6 +67,14 @@ download_bash_script validate-post-install.sh
 download_bash_script utils.sh
 log_info "download_bash_scripted helper files to temporary directory ./iot-edge-installer"
 
+# check if current OS is Tier 1
+. /etc/os-release
+is_os_tier1 $ID $VERSION_ID
+if [ "$?" != "0" ]
+then 
+    log_error "This OS is not supported. Please visit this link for more information https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1. Exit."
+fi
+
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
 
@@ -75,7 +87,8 @@ echo ""
 
 # run scripts in order, can take parsed input from above
 ./validate-tier1-os.sh
-./install-container-management.sh
+platform=$(get_platform "$ID" "$VERSION_ID")
+./install-container-management.sh $platform
 ./install-edge-runtime.sh ${parsed_cmds[SCOPE_ID]} ${parsed_cmds[REGISTRATION_ID]} ${parsed_cmds[SYMMETRIC_KEY]}
 ./validate-post-install.sh
 cd ..
