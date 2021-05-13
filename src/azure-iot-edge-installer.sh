@@ -4,34 +4,63 @@
 source utils.sh
 source validate-tier1-os.sh
 
+ensure_sudo 
+log_init
+
 VERSION_TAG="v0.0.0-rc0"
 
-log_init
+#
+download_bash_script() {
+    if [[ $# == 1 ]];
+    then
+        local file_name=$1
+        local url_text=https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/$file_name
+        local tmp_file=$(echo `mktemp -u`)
+
+        log_info "downloading '%s'" $file_name
+
+        # attempt to download to a temporary file.
+        wget $url_text -q -O $tmp_file
+
+        # validate request
+        exit_code=$?
+        if [[ $exit_code != 0 ]];
+        then
+            log_error "Failed to download '%s'" $file_name
+            echo  "Failed to download '" $file_name "' - error" $exit_code
+
+            rm $tmp_file
+            exit $exit_code
+        else
+            log_info "downloaded '%s'" $file_name
+
+            mv -f $tmp_file $file_name
+            chmod +x $file_name
+        fi
+    fi
+}
+
+# script 
 log_info "Running azure-iot-edge-installer.sh"
 
 # if helper scripts dont exist, fetch via wget 
 if [ -d "iot-edge-installer" ]
 then
-    log_info "Directory iot-edge-installer exists." 
+    log_info "Directory iot-edge-installer already exists." 
 else
     log_info "Preparing install directory."
     mkdir iot-edge-installer
-    cd iot-edge-installer
-
-    log_info "Downloding helper files to temporary directory ./iot-edge-installer"
-    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/validate-tier1-os.sh
-    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/install-container-management.sh
-    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/install-edge-runtime.sh
-    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/validate-post-install.sh
-    wget https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/utils.sh
-    log_info "Downloaded helper files to temporary directory ./iot-edge-installer"
 fi
 
-# add permission to run
-chmod +x validate-tier1-os.sh
-chmod +x install-container-management.sh
-chmod +x install-edge-runtime.sh
-chmod +x validate-post-install.sh
+cd iot-edge-installer
+
+log_info "Downloding helper files to temporary directory ./iot-edge-installer"
+download_bash_script validate-tier1-os.sh
+download_bash_script install-container-management.sh
+download_bash_script install-edge-runtime.sh
+download_bash_script validate-post-install.sh
+download_bash_script utils.sh
+log_info "download_bash_scripted helper files to temporary directory ./iot-edge-installer"
 
 # check if current OS is Tier 1
 . /etc/os-release
@@ -40,6 +69,8 @@ if [ "$?" != "0" ]
 then 
     log_error "This OS is not supported. Please visit this link for more information https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1. Exit."
 fi
+
+$platform=get_platform $ID $VERSION_ID
 
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
@@ -52,12 +83,12 @@ echo "Azure Cloud Identity Provider: ${parsed_cmds[AZURE_CLOUD_IDENTITY_PROVIDER
 echo ""
 
 # run scripts in order, can take parsed input from above
-./install-container-management.sh
+./install-container-management.sh $platform
 ./install-edge-runtime.sh
 ./validate-post-install.sh
 cd ..
 
-# cleanup
+# cleanup, always
 if [ -d "iot-edge-installer" ] 
 then
     log_info "Removing temporary directory files for iot-edge-installer."
