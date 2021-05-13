@@ -1,6 +1,6 @@
 #script to install edge runtime 1.2
-echo "Running install-edge-runtime.sh"
 
+# update
 # sudo apt-get update
 
 # install Azure IoT Edge Runtime 1.2
@@ -9,12 +9,17 @@ echo "Running install-edge-runtime.sh"
 # create .toml from template 
 # sudo cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml
 
+CONNECTION_STRING=$1
+
+# replace with connection string
 sed -i '/## Manual provisioning with connection string/,/## Manual provisioning with symmetric key/c\
 ## Manual provisioning with connection string\
+\
 [provisioning]\
-source = $1\
-connection_string = $2\
-
+source = "manual"\
+connection_string = \"'$CONNECTION_STRING'\" \
+\
+\
 ## Manual provisioning with symmetric key\
 '  sample.toml
 
