@@ -46,7 +46,7 @@ echo ""
 # run scripts in order, can take parsed input from above
 ./validate-tier1-os.sh
 ./install-container-management.sh
-./install-edge-runtime.sh
+./install-edge-runtime.sh ${parsed_cmds[SCOPE_ID]} ${parsed_cmds[REGISTRATION_ID]} ${parsed_cmds[SYMMETRIC_KEY]}
 ./validate-post-install.sh
 cd ..
 
