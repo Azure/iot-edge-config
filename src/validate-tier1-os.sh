@@ -14,7 +14,7 @@
 #    0 if OS is tier 1, 1 otherwise
 ######################################
 
-source src/utils.sh
+source utils.sh
 
 function is_os_tier1() {    
 

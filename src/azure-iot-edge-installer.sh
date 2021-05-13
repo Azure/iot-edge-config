@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # import utils
-source src/utils.sh
-source src/validate-tier1-os.sh
+source utils.sh
+source validate-tier1-os.sh
 
 ensure_sudo 
 log_init
@@ -20,7 +20,8 @@ download_bash_script() {
         log_info "downloading '%s'" $file_name
 
         # attempt to download to a temporary file.
-        wget $url_text -q -O $tmp_file
+        #wget $url_text -q -O $tmp_file
+		cp ../$file_name .
 
         # validate request
         exit_code=$?
@@ -88,9 +89,9 @@ platform=$(get_platform "$ID" "$VERSION_ID")
 cd ..
 
 # cleanup, always
-if [ -d "iot-edge-installer" ] 
-then
-    log_info "Removing temporary directory files for iot-edge-installer."
-    rm -rf iot-edge-installer
-    log_info "Removed temporary directory files for iot-edge-installer."
-fi
+#if [ -d "iot-edge-installer" ] 
+#then
+#    log_info "Removing temporary directory files for iot-edge-installer."
+#    rm -rf iot-edge-installer
+#    log_info "Removed temporary directory files for iot-edge-installer."
+#fi
