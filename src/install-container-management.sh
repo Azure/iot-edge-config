@@ -3,7 +3,12 @@
 source utils.sh
 ensure_sudo
 
-log_info "Running install-container-management.sh"
+if [ -x "$(command -v docker)" ];
+then
+    echo "container is already installed"
+else
+    log_info "Running install-container-management.sh"
 
-prepare_apt
-apt install moby-engine -y
+    prepare_apt
+    apt install moby-engine -y
+fi
