@@ -116,3 +116,42 @@ log_debug() {
 }
 
 export -f log_init log_error log_info log_warn log_debug
+
+#
+ensure_sudo() {
+    if [[ $EUID -ne 0 ]];
+    then
+        echo "$0 is not running as root. "
+        sudo "$0"
+        exit $?
+    fi
+}
+
+export -f ensure_sudo
+
+#
+prepare_apt() {
+    if [[ $# != 1]];
+    then
+        exit 1
+    else
+        local platform=$1
+        if [[ "$platform" == "" ]];
+        then
+            log_error "Unsupported platform."
+            exit 2
+        else
+            sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
+
+            # sources list
+            log_info "Adding microsoft sources repository lists."
+            wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list
+
+            # the key
+            wget https://packages.microsoft.com/keys/microsoft.asc -q -O /dev/stdout | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg
+
+            # update
+            apt update
+        fi
+    fi
+}
