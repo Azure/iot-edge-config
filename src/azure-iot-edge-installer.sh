@@ -33,7 +33,17 @@ chmod +x install-container-management.sh
 chmod +x install-edge-runtime.sh
 chmod +x validate-post-install.sh
 
-# run scripts in order
+# parse command line inputs and fetch output from parser
+declare -A parsed_cmds="$(cmd_parser $@)"
+
+# sample usage
+echo ""
+echo "Verbose Logging: ${parsed_cmds[VERBOSE_LOGGING]}"
+echo "Device provisioning: ${parsed_cmds[DEVICE_PROVISIONING]}"
+echo "Azure Cloud Identity Provider: ${parsed_cmds[AZURE_CLOUD_IDENTITY_PROVIDER]}"
+echo ""
+
+# run scripts in order, can take parsed input from above
 ./validate-tier1-os.sh
 ./install-container-management.sh
 ./install-edge-runtime.sh
