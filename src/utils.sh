@@ -116,3 +116,47 @@ log_debug() {
 }
 
 export -f log_init log_error log_info log_warn log_debug
+
+#
+ensure_sudo() {
+    if [[ $EUID -ne 0 ]];
+    then
+        echo "$0 is not running as root. "
+        sudo "$0"
+        exit $?
+    fi
+}
+
+export -f ensure_sudo
+
+#
+source /etc/os-release
+prepare_apt() {
+
+    case $ID in
+        ubuntu)
+            if [ $VERSION_ID != "18.04" ];
+            then
+                log_error "PREPARE_APT- OS VERSION: '%s' is not supported." $VERSION_ID
+                exit 1
+            fi
+            platform="ubuntu/18.04"
+            ;;
+
+        raspbian)
+            platform="debian/stretch"
+            ;;
+    esac
+
+    sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
+
+    # PI
+    # sources list
+    wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list
+
+    # the key
+    wget https://packages.microsoft.com/keys/microsoft.asc -q -O /dev/stdout | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg
+
+    # update
+    apt update
+}
