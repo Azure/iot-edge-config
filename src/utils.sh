@@ -130,33 +130,28 @@ ensure_sudo() {
 export -f ensure_sudo
 
 #
-source /etc/os-release
 prepare_apt() {
+    if [[ $# != 1]];
+    then
+        exit 1
+    else
+        local platform=$1
+        if [[ "$platform" == "" ]];
+        then
+            log_error "Unsupported platform."
+            exit 2
+        else
+            sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
 
-    case $ID in
-        ubuntu)
-            if [ $VERSION_ID != "18.04" ];
-            then
-                log_error "PREPARE_APT- OS VERSION: '%s' is not supported." $VERSION_ID
-                exit 1
-            fi
-            platform="ubuntu/18.04"
-            ;;
+            # sources list
+            log_info "Adding microsoft sources repository lists."
+            wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list
 
-        raspbian)
-            platform="debian/stretch"
-            ;;
-    esac
+            # the key
+            wget https://packages.microsoft.com/keys/microsoft.asc -q -O /dev/stdout | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg
 
-    sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
-
-    # PI
-    # sources list
-    wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list
-
-    # the key
-    wget https://packages.microsoft.com/keys/microsoft.asc -q -O /dev/stdout | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg
-
-    # update
-    apt update
+            # update
+            apt update
+        fi
+    fi
 }

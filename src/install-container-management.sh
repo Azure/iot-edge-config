@@ -5,7 +5,7 @@ ensure_sudo
 
 if [ -x "$(command -v docker)" ];
 then
-    echo "container is already installed"
+    echo "docker command is already available."
 else
     log_info "Running install-container-management.sh"
 
