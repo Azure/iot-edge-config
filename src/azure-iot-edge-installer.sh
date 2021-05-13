@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
+# where am i
+TOPDIR=$(dirname $0)
+
 # import utils
-source utils.sh
-ensure_sudo 
+source $TOPDIR/utils.sh
+ensure_sudo "$@"
 log_init
 
 VERSION_TAG="v0.0.0-rc0"
