@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
+# where am i
+TOPDIR=$(dirname $0)
+
 # import utils
-source utils.sh
+source $TOPDIR/utils.sh
 ensure_sudo "$@"
 log_init
 
