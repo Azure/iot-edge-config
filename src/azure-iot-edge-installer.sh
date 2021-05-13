@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
-# import utils
-source utils.sh
-source validate-tier1-os.sh
+# where am i
+TOPDIR=$(dirname $0)
 
-ensure_sudo 
+# import utils
+
+source $TOPDIR/utils.sh
+source $TOPDIR/validate-tier1-os.sh
+ensure_sudo "$@"
 log_init
 
 VERSION_TAG="v0.0.0-rc0"
@@ -21,8 +24,8 @@ download_bash_script() {
 
         # attempt to download to a temporary file.
         wget $url_text -q -O $tmp_file
-        # uncomment for testing
-        #cp ../$file_name .
+        # uncomment for testing local changes
+        # cp ../$TOPDIR/$file_name .
 
         # validate request
         exit_code=$?
