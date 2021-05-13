@@ -13,11 +13,14 @@
 # RETURN:
 #    0 if OS is tier 1, 1 otherwise
 ######################################
+
+source src/utils.sh
+
 function is_os_tier1() {    
 
     local os_id=$1
     local os_version_id=$2
-	log_info "OS ID: '%s'; OS Version ID: '%s'" $os_id $os_version_id
+    log_info "OS ID: '%s'; OS Version ID: '%s'" $os_id $os_version_id
 
     case $os_id in
 
@@ -44,20 +47,21 @@ function is_os_tier1() {
 }
 
 function get_platform() {
-	local os_id=$1
-	local os_version_id=$2
-	
-	case $os_id in
+    local os_id=$1
+    local os_version_id=$2
+    
+    case $os_id in
         ubuntu)
-            if [ $os_version_id == "18.04" ];            
-				return "ubuntu/18.04"
-			fi
+            if [ $os_version_id == "18.04" ];  
+            then
+                return "ubuntu/18.04"
+            fi
             ;;
 
         raspbian)
             return "debian/stretch"
             ;;
     esac
-	
-	return ""
+    
+    return ""
 }
