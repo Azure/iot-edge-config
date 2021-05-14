@@ -129,7 +129,7 @@ primary_key=$(jq -r '.symmetricKey.primaryKey' <<< "$creds")
 echo Run the Azure IoT Edge Installer
 wget https://github.com/Azure/iot-edge-config/releases/latest/download/azure-iot-edge-installer.sh \
 && chmod +x azure-iot-edge-installer.sh \
-&& ./azure-iot-edge-installer.sh \
+&& ./azure-iot-edge-installer.sh --scope-id "$scope_id" --registration-id "$device_id" --symmetric-key "$primary_key"\
 && rm -rf azure-iot-edge-installer.sh
 
 # device state should be provisioned after running the script
