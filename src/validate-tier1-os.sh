@@ -1,68 +1,80 @@
 #!/usr/bin/env bash
 
-###################################### 
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+######################################
 # validate-tier1-os.sh
 # 
 # Utility function to check if the current OS is a tier 1 OS as per the definition below
 # https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1
 # ARGUMENTS:
-#    Current OS ID
-#   Current OS VERSION ID
+#    Current OS ID - taken from /etc/os-release
+#    Current OS VERSION ID - taken from /etc/os-release
+#    Current OS VERSION CODENAME - taken from /etc/os-release
 # OUTPUTS:
 #    Write output to stdout
 # RETURN:
 #    0 if OS is tier 1, 1 otherwise
 ######################################
 
-source utils.sh
+function is_os_tier1() {
+    log_info "OS ID: '%s'; OS Version ID: '%s'; VERSION_CODENAME: '%s'" $ID $VERSION_ID $VERSION_CODENAME
 
-function is_os_tier1() {    
-
-    local os_id=$1
-    local os_version_id=$2
-    log_info "OS ID: '%s'; OS Version ID: '%s'" $os_id $os_version_id
-
-    case $os_id in
-
+    case $ID in
         ubuntu)
-            echo "OS is Ubuntu"
-            if [ "$os_version_id" == "18.04" ];
+            if [ "$VERSION_ID" == "18.04" ];
             then
-                echo "Version is 18.04"
                 return 0
-            fi;
+            fi
             ;;
 
         raspbian)
-            echo "OS is Raspbian"
-            return 0
+            if [ "$VERSION_CODENAME" == "stretch" ];
+            then
+                return 0
+            fi
             ;;
 
         *)
-            echo "OS is not Tier 1"
+            log_error "OS is not Tier 1"
             ;;
     esac
 
     return 1
 }
 
+
+######################################
+# get_platform
+# 
+# Utility function to construct the os_platform string which is used
+#    for locating binaries.
+# ARGUMENTS:
+#    Current OS ID - taken from /etc/os-release
+#    Current OS VERSION ID - taken from /etc/os-release
+#    Current OS VERSION CODENAME - taken from /etc/os-release
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#    os_platform string (e.g. ubuntu/18.04)
+######################################
+
 function get_platform() {
-    local os_id=$1
-    local os_version_id=$2
     local os_platform=""
-    
-    case $os_id in
+
+    case $ID in
         ubuntu)
-            if [ $os_version_id == "18.04" ];  
-            then
-                os_platform="ubuntu/18.04"
-            fi
+            os_platform="$ID/$VERSION_ID"
             ;;
 
         raspbian)
-            os_platform="debian/stretch"
+            os_platform="$ID_LIKE/$VERSION_CODENAME"
             ;;
     esac
-    
+
     echo "$os_platform"
 }
+
+export -f is_os_tier1 get_platform
+
