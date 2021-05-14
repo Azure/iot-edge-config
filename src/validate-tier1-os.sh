@@ -18,13 +18,11 @@
 ######################################
 
 function is_os_tier1() {
-    local os_id=$1
-    local os_version_id=$2
-    log_info "OS ID: '%s'; OS Version ID: '%s'" $os_id $os_version_id
+    log_info "OS ID: '%s'; OS Version ID: '%s'; VERSION_CODENAME: '%s'" $ID $VERSION_ID $VERSION_CODENAME
 
-    case $os_id in
+    case $ID in
         ubuntu)
-            if [ "$os_version_id" == "18.04" ];
+            if [ "$VERSION_ID" == "18.04" ];
             then
                 return 0
             fi
@@ -38,7 +36,7 @@ function is_os_tier1() {
             ;;
 
         *)
-            echo "OS is not Tier 1"
+            log_error "OS is not Tier 1"
             ;;
     esac
 
@@ -49,20 +47,17 @@ function get_platform() {
     local os_id=$1
     local os_version_id=$2
     local os_platform=""
-    
-    case $os_id in
+
+    case $ID in
         ubuntu)
-            if [ $os_version_id == "18.04" ];  
-            then
-                os_platform="ubuntu/18.04"
-            fi
+            os_platform="$ID/$VERSION_ID"
             ;;
 
         raspbian)
-            os_platform="debian/stretch"
+            os_platform="$ID/$VERSION_CODENAME"
             ;;
     esac
-    
+
     echo "$os_platform"
 }
 
