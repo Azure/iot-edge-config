@@ -65,6 +65,7 @@ line_prefix() {
     echo "$TIME_STAMP $1"
 }
 
+#
 log() {
     if [[ $# > 1 ]];
     then
@@ -117,20 +118,22 @@ log_debug() {
 
 export -f log_init log_error log_info log_warn log_debug
 
+######################################
+# prepare_apt
 #
-ensure_sudo() {
-    if [[ $EUID -ne 0 ]];
-    then
-        echo "$0 is not running as root. "
-        sudo $0 $@
-        exit $?
-    fi
-}
-
-export -f ensure_sudo
-
+#    installs Azure IoT Edge Runtime 1.2
+#    generates the edge's configuration file from template and
+#       fills in the DPS provisioning section from provided parameters
 #
-prepare_apt() {
+# ARGUMENTS:
+#    OS_PLATFORM - a string specifying the location of specific platform files
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function prepare_apt() {
     if [ $# != 1 ];
     then
         exit 1
