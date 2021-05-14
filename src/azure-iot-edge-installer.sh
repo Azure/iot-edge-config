@@ -105,7 +105,7 @@ then
 else
     # run scripts in order, can take parsed input from above
     platform=$(get_platform "$ID" "$VERSION_ID")
-    prepare_apt "$ID/$VERSION_ID"
+    prepare_apt $platform
 
     source install-container-management.sh
     install_container_management
