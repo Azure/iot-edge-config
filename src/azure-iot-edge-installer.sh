@@ -1,16 +1,44 @@
 #!/usr/bin/env bash
 
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+
 # where am i
 TOPDIR=$(dirname $0)
 
 # import utils
-
 source $TOPDIR/utils.sh
-source $TOPDIR/validate-tier1-os.sh
 ensure_sudo "$@"
 log_init
 
 VERSION_TAG="v0.0.0-rc0"
+
+# add flag:variable_name dictionary entries
+add_option_args -v "VERBOSE_LOGGING"
+add_option_args --verbose "VERBOSE_LOGGING"
+add_option_args -dp "DEVICE_PROVISIONING"
+add_option_args --device-provisioning "DEVICE_PROVISIONING"
+add_option_args -ap "AZURE_CLOUD_IDENTITY_PROVIDER"
+add_option_args --azure-cloud-identity-provider "AZURE_CLOUD_IDENTITY_PROVIDER"
+add_option_args -s "SCOPE_ID"
+add_option_args --scope-id "SCOPE_ID"
+add_option_args -r "REGISTRATION_ID"
+add_option_args --registration-id "REGISTRATION_ID"
+add_option_args -k "SYMMETRIC_KEY"
+add_option_args --symmetric-key "SYMMETRIC_KEY"
+
+# parse command line inputs and fetch output from parser
+declare -A parsed_cmds="$(cmd_parser $@)"
+
+# validate that all arguments are acceptable / known
+if [[ ${#@} > 0 && ${#parsed_cmds[*]} == 0 ]];
+then
+    array=("$*")
+    echo Unknown argument "${array[*]}"
+    echo Usage
+    exit 1
+fi
 
 #
 download_bash_script() {
@@ -20,12 +48,12 @@ download_bash_script() {
         local url_text=https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/$file_name
         local tmp_file=$(echo `mktemp -u`)
 
-        log_info "downloading '%s'" $file_name
+        log_info "attempting to download '%s'." $file_name
 
         # attempt to download to a temporary file.
         wget $url_text -q -O $tmp_file
         # uncomment for testing local changes
-        #cp ../$TOPDIR/$file_name .
+        # cp ../$TOPDIR/$file_name .
 
         # validate request
         exit_code=$?
@@ -59,40 +87,35 @@ fi
 
 cd iot-edge-installer
 
-log_info "Downloding helper files to temporary directory ./iot-edge-installer"
+log_info "Downloading helper files to temporary directory ./iot-edge-installer"
 download_bash_script validate-tier1-os.sh
 download_bash_script install-container-management.sh
 download_bash_script install-edge-runtime.sh
 download_bash_script validate-post-install.sh
 download_bash_script utils.sh
-log_info "download_bash_scripted helper files to temporary directory ./iot-edge-installer"
+log_info "downloaded helper files to temporary directory ./iot-edge-installer"
 
 # check if current OS is Tier 1
-. /etc/os-release
-is_os_tier1 $ID $VERSION_ID
-if [ "$?" != "0" ]
+source /etc/os-release
+source validate-tier1-os.sh
+is_os_tier1
+if [ "$?" != "0" ];
 then 
-    log_error "This OS is not supported. Please visit this link for more information https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1. Exit."
+    log_error "This OS is not supported. Please visit this link for more information https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1."
+else
+    # run scripts in order, can take parsed input from above
+    platform=$(get_platform)
+    prepare_apt $platform
+
+    source install-container-management.sh
+    install_container_management
+
+    ./install-edge-runtime.sh
+    ./validate-post-install.sh
 fi
 
-# parse command line inputs and fetch output from parser
-declare -A parsed_cmds="$(cmd_parser $@)"
-
-# sample usage
-echo ""
-echo "Verbose Logging: ${parsed_cmds[VERBOSE_LOGGING]}"
-echo "Device provisioning: ${parsed_cmds[DEVICE_PROVISIONING]}"
-echo "Azure Cloud Identity Provider: ${parsed_cmds[AZURE_CLOUD_IDENTITY_PROVIDER]}"
-echo ""
-
-# run scripts in order, can take parsed input from above
-platform=$(get_platform "$ID" "$VERSION_ID")
-./install-container-management.sh $platform
-./install-edge-runtime.sh
-./validate-post-install.sh
-cd ..
-
 # cleanup, always
+cd ..
 if [ -d "iot-edge-installer" ] 
 then
     log_info "Removing temporary directory files for iot-edge-installer."

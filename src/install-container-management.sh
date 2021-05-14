@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
-source utils.sh
-ensure_sudo
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
-if [ -x "$(command -v docker)" ];
-then
-    echo "docker command is already available."
-else
-    log_info "Running install-container-management.sh"
-        
-    prepare_apt $1
-    apt install moby-engine -y
-fi
+install_container_management() {
+    if [ -x "$(command -v docker)" ];
+    then
+        log_info "docker command is already available."
+    else
+        log_info "Running install-container-management.sh"
+
+        apt install moby-engine -y
+    fi
+}
