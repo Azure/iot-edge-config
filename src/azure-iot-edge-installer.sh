@@ -98,13 +98,13 @@ log_info "downloaded helper files to temporary directory ./iot-edge-installer"
 # check if current OS is Tier 1
 source /etc/os-release
 source validate-tier1-os.sh
-is_os_tier1 $ID $VERSION_ID
+is_os_tier1
 if [ "$?" != "0" ];
 then 
     log_error "This OS is not supported. Please visit this link for more information https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1."
 else
     # run scripts in order, can take parsed input from above
-    platform=$(get_platform "$ID" "$VERSION_ID")
+    platform=$(get_platform)
     prepare_apt $platform
 
     source install-container-management.sh
@@ -116,9 +116,9 @@ fi
 
 # cleanup, always
 cd ..
-# if [ -d "iot-edge-installer" ] 
-# then
-#     log_info "Removing temporary directory files for iot-edge-installer."
-#     rm -rf iot-edge-installer
-#     log_info "Removed temporary directory files for iot-edge-installer."
-# fi
+if [ -d "iot-edge-installer" ] 
+then
+    log_info "Removing temporary directory files for iot-edge-installer."
+    rm -rf iot-edge-installer
+    log_info "Removed temporary directory files for iot-edge-installer."
+fi

@@ -144,7 +144,7 @@ prepare_apt() {
             sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
 
             # sources list
-            log_info "Adding microsoft sources repository lists."
+            log_info "Adding'%s' to repository lists." $sources
             wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list
 
             # the key
