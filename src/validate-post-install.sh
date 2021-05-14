@@ -15,7 +15,6 @@
 # RETURN:
 #    0 if service is running, 1 otherwise
 ######################################
-source utils.sh
 
 function is_service_running() {
     local service_name=${1,,}

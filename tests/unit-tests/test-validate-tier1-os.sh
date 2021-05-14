@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+source ../../src/utils.sh
 source ../../src/validate-tier1-os.sh
 source ../../tests/test_utils.sh
 

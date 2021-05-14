@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+source ../../src/utils.sh
 source ../../src/validate-post-install.sh
 source ../../tests/test_utils.sh
 
