@@ -122,7 +122,7 @@ else
     install_container_management
 
     source install-edge-runtime.sh
-    install_edge_runtime()
+    install_edge_runtime
 
     source validate-post-install.sh
     validate_post_install
