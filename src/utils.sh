@@ -131,7 +131,7 @@ export -f ensure_sudo
 
 #
 prepare_apt() {
-    if [ $# != 1];
+    if [ $# != 1 ];
     then
         exit 1
     else

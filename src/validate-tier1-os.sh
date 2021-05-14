@@ -31,7 +31,10 @@ function is_os_tier1() {
             ;;
 
         raspbian)
-            return 0
+            if [ "$VERSION_CODENAME" == "stretch" ];
+            then
+                return 0
+            fi
             ;;
 
         *)
