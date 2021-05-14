@@ -9,12 +9,7 @@ trigger:
 stages:
 - stage: UnitTest
   displayName: Unit Tests
-  jobs:
-  - job: SetupScript
-    steps:
-    - script: echo Hello, world!
-      displayName: 'Run a one-line script'
-  
+  jobs:  
   - job: LinuxUnitTests
     pool:
       vmImage: ubuntu-18.04

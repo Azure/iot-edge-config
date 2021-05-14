@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Running test-validate-post-install.sh"
+
 source ../../src/utils.sh
 source ../../src/validate-post-install.sh
 source ../../tests/test_utils.sh

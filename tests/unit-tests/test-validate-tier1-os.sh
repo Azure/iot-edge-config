@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Running test-validate-tier1-os.sh"
+
 source ../../src/utils.sh
 source ../../src/validate-tier1-os.sh
 source ../../tests/test_utils.sh

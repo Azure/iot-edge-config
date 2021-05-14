@@ -1,6 +1,4 @@
 steps:
-- script: echo Hello Linux!
-  displayName: 'Echo Hello Linux'
 
 - script: |
     cd tests/unit-tests
