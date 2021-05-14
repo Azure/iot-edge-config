@@ -60,7 +60,7 @@ function download_bash_script() {
 }
 
 # script
-printf "Running azure-iot-edge-installer.sh\n" > /dev/stdout
+printf "Welcome to azure-iot-edge-installer\n" > /dev/stdout
 
 # if helper scripts dont exist, fetch via wget 
 if [ -d "iot-edge-installer" ];
@@ -85,15 +85,11 @@ printf "Downloaded helper files to temporary directory ./iot-edge-installer\n" >
 source utils.sh
 log_init
 
-VERSION_TAG="v0.0.0-rc0"
+VERSION_TAG="v0.0.1"
 
 # add flag:variable_name dictionary entries
 add_option_args -v "VERBOSE_LOGGING"
 add_option_args --verbose "VERBOSE_LOGGING"
-add_option_args -dp "DEVICE_PROVISIONING"
-add_option_args --device-provisioning "DEVICE_PROVISIONING"
-add_option_args -ap "AZURE_CLOUD_IDENTITY_PROVIDER"
-add_option_args --azure-cloud-identity-provider "AZURE_CLOUD_IDENTITY_PROVIDER"
 add_option_args -s "SCOPE_ID"
 add_option_args --scope-id "SCOPE_ID"
 add_option_args -r "REGISTRATION_ID"
@@ -109,14 +105,14 @@ if [[ ${#@} > 0 && ${#parsed_cmds[*]} == 0 ]];
 then
     array=("$*")
     echo Unknown argument "${array[*]}"
-    echo Usage
+    echo Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>
     exit 1
 fi
 
 if [[ "${parsed_cmds["SCOPE_ID"]}" == "" || "${parsed_cmds["REGISTRATION_ID"]}" == "" || "${parsed_cmds["SYMMETRIC_KEY"]}" == "" ]];
 then
     echo Missing argument
-    echo Usage
+    echo Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>
     exit 1
 fi
 
