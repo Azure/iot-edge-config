@@ -51,25 +51,25 @@ download_bash_script() {
         log_info "attempting to download '%s'." $file_name
 
         # attempt to download to a temporary file.
-        # wget $url_text -q -O $tmp_file
+        wget $url_text -q -O $tmp_file
         # uncomment for testing local changes
-        cp ../$TOPDIR/$file_name .
+        # cp ../$TOPDIR/$file_name .
 
         # validate request
-        # exit_code=$?
-        # if [[ $exit_code != 0 ]];
-        # then
-        #     log_error "Failed to download '%s'" $file_name
-        #     echo  "Failed to download '" $file_name "' - error" $exit_code
+        exit_code=$?
+        if [[ $exit_code != 0 ]];
+        then
+            log_error "Failed to download '%s'" $file_name
+            echo  "Failed to download '" $file_name "' - error" $exit_code
 
-        #     rm $tmp_file
-        #     exit $exit_code
-        # else
-        #     log_info "downloaded '%s'" $file_name
+            rm $tmp_file
+            exit $exit_code
+        else
+            log_info "downloaded '%s'" $file_name
 
-        #     mv -f $tmp_file $file_name
-        #     chmod +x $file_name
-        # fi
+            mv -f $tmp_file $file_name
+            chmod +x $file_name
+        fi
     fi
 }
 

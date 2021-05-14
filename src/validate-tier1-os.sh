@@ -52,7 +52,7 @@ function get_platform() {
             ;;
 
         raspbian)
-            os_platform="$ID/$VERSION_CODENAME"
+            os_platform="$ID_LIKE/$VERSION_CODENAME"
             ;;
     esac
 
