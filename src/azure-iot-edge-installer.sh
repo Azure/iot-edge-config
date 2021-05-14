@@ -113,6 +113,13 @@ then
     exit 1
 fi
 
+if [[ "${parsed_cmds["SCOPE_ID"]}" == "" || "${parsed_cmds["REGISTRATION_ID"]}" == "" || "${parsed_cmds["SYMMETRIC_KEY"]}" == "" ]];
+then
+    echo Missing argument
+    echo Usage
+    exit 1
+fi
+
 # check if current OS is Tier 1
 source /etc/os-release
 source validate-tier1-os.sh
@@ -129,7 +136,7 @@ else
     install_container_management
 
     source install-edge-runtime.sh
-    install_edge_runtime
+    install_edge_runtime ${parsed_cmds["SCOPE_ID"]}  ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
 
     source validate-post-install.sh
     validate_post_install

@@ -23,6 +23,13 @@
 ######################################
 
 function install_edge_runtime() {
+    if [[ $# != 3 || "$1" == "" || "$2" == "" || "$3" == "" ]];
+    then
+        log_error "Scope ID, Registration ID, and the Symmertic Key are required"
+        return
+    fi
+
+    log_info "install_edge_runtime..."
     apt-get install aziot-edge -y
 
     # create .toml from template
@@ -35,21 +42,21 @@ function install_edge_runtime() {
 
     log_info "set '%s'; '%s'; '%s'" $SCOPE_ID $REGISTRATION_ID $SYMMETRIC_KEY
     sed -i '/## DPS provisioning with symmetric key/,/## DPS provisioning with X.509 certificate/c\
-    ## DPS provisioning with symmetric key\
-    [provisioning]\
-    source = "dps"\
-    global_endpoint = "https://global.azure-devices-provisioning.net"\
-    id_scope = \"'$SCOPE_ID'\"\
-    \
-    [provisioning.attestation]\
-    method = "symmetric_key"\
-    registration_id = \"'$REGISTRATION_ID'\"\
-    \
-    symmetric_key = { value = \"'$SYMMETRIC_KEY'\" }                                                                         # inline key (base64), or...\
-    # symmetric_key = { uri = "file:///var/secrets/device-id.key" }                                                          # file URI, or...\
-    # symmetric_key = { uri = "pkcs11:slot-id=0;object=device%20id?pin-value=1234" }                                         # PKCS#11 URI\
-    \
-    ## DPS provisioning with X.509 certificate\
+## DPS provisioning with symmetric key\
+[provisioning]\
+source = "dps"\
+global_endpoint = "https://global.azure-devices-provisioning.net"\
+id_scope = \"'$SCOPE_ID'\"\
+\
+[provisioning.attestation]\
+method = "symmetric_key"\
+registration_id = \"'$REGISTRATION_ID'\"\
+\
+symmetric_key = { value = \"'$SYMMETRIC_KEY'\" }                                                                         # inline key (base64), or...\
+# symmetric_key = { uri = "file:///var/secrets/device-id.key" }                                                          # file URI, or...\
+# symmetric_key = { uri = "pkcs11:slot-id=0;object=device%20id?pin-value=1234" }                                         # PKCS#11 URI\
+\
+## DPS provisioning with X.509 certificate\
     '  /etc/aziot/config.toml
 
     log_info "Apply settings - this will restart the edge"
