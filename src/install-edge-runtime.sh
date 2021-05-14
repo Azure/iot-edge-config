@@ -22,14 +22,22 @@
 #
 ######################################
 
+
 function install_edge_runtime() {
     if [[ $# != 3 || "$1" == "" || "$2" == "" || "$3" == "" ]];
     then
-        log_error "Scope ID, Registration ID, and the Symmertic Key are required"
+        log_error "Scope ID, Registration ID, and the Symmetric Key are required"
         return
     fi
 
-    log_info "install_edge_runtime..."
+    if [ -x "$(command -v iotedge)" ];
+    then
+        log_error "Edge runtime is already available."
+        return
+    else
+        log_info "install_edge_runtime..."
+    fi
+    
     apt-get install aziot-edge -y
 
     # create .toml from template
