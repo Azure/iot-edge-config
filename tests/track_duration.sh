@@ -23,7 +23,7 @@ set -e
 exec 3>&1
 
 # bring in the library
-source common_functions.sh
+source test_utils.sh
 
 #
 verbose=false
