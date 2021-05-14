@@ -77,3 +77,4 @@ function get_platform() {
 }
 
 export -f is_os_tier1 get_platform
+
