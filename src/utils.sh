@@ -129,8 +129,22 @@ ensure_sudo() {
 
 export -f ensure_sudo
 
+######################################
+# prepare_apt
 #
-prepare_apt() {
+#    installs Azure IoT Edge Runtime 1.2
+#    generates the edge's configuration file from template and
+#       fills in the DPS provisioning section from provided parameters
+#
+# ARGUMENTS:
+#    OS_PLATFORM - a string specifying the location of specific platform files
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function prepare_apt() {
     if [ $# != 1 ];
     then
         exit 1

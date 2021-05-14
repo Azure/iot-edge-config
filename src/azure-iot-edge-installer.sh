@@ -40,8 +40,19 @@ then
     exit 1
 fi
 
+
+######################################
+# download_bash_script
 #
-download_bash_script() {
+#    downloads a single bash script from release according to VERSION_TAG
+# ARGUMENTS:
+#    file_name to be downloaded from release
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+######################################
+
+function download_bash_script() {
     if [[ $# == 1 ]];
     then
         local file_name=$1
@@ -77,7 +88,7 @@ download_bash_script() {
 log_info "Running azure-iot-edge-installer.sh"
 
 # if helper scripts dont exist, fetch via wget 
-if [ -d "iot-edge-installer" ]
+if [ -d "iot-edge-installer" ];
 then
     log_info "Directory iot-edge-installer already exists." 
 else

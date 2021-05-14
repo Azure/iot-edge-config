@@ -5,17 +5,33 @@
 
 #script to install edge runtime 1.2
 
-# install Azure IoT Edge Runtime 1.2
-install_edge_runtime() {
+######################################
+# install_edge_runtime
+#
+#    installs Azure IoT Edge Runtime 1.2
+#    generates the edge's configuration file from template and
+#       fills in the DPS provisioning section from provided parameters
+#
+# ARGUMENTS:
+#    SCOPE_ID
+#    REGISTRATION_ID
+#    SYMMETRIC_KEY
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function install_edge_runtime() {
     apt-get install aziot-edge -y
 
     # create .toml from template
     log_info "create .toml from template."
     cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml
 
-    SCOPE_ID=$1
-    REGISTRATION_ID=$2
-    SYMMETRIC_KEY=$3
+    local SCOPE_ID=$1
+    local REGISTRATION_ID=$2
+    local SYMMETRIC_KEY=$3
 
     log_info "set '%s'; '%s'; '%s'" $SCOPE_ID $REGISTRATION_ID $SYMMETRIC_KEY
     sed -i '/## DPS provisioning with symmetric key/,/## DPS provisioning with X.509 certificate/c\

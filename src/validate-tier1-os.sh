@@ -3,14 +3,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-###################################### 
+######################################
 # validate-tier1-os.sh
 # 
 # Utility function to check if the current OS is a tier 1 OS as per the definition below
 # https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1
 # ARGUMENTS:
-#    Current OS ID
-#    Current OS VERSION ID
+#    Current OS ID - taken from /etc/os-release
+#    Current OS VERSION ID - taken from /etc/os-release
+#    Current OS VERSION CODENAME - taken from /etc/os-release
 # OUTPUTS:
 #    Write output to stdout
 # RETURN:
@@ -42,6 +43,22 @@ function is_os_tier1() {
 
     return 1
 }
+
+
+######################################
+# get_platform
+# 
+# Utility function to construct the os_platform string which is used
+#    for locating binaries.
+# ARGUMENTS:
+#    Current OS ID - taken from /etc/os-release
+#    Current OS VERSION ID - taken from /etc/os-release
+#    Current OS VERSION CODENAME - taken from /etc/os-release
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#    os_platform string (e.g. ubuntu/18.04)
+######################################
 
 function get_platform() {
     local os_platform=""
