@@ -65,6 +65,7 @@ line_prefix() {
     echo "$TIME_STAMP $1"
 }
 
+#
 log() {
     if [[ $# > 1 ]];
     then
@@ -116,18 +117,6 @@ log_debug() {
 }
 
 export -f log_init log_error log_info log_warn log_debug
-
-#
-ensure_sudo() {
-    if [[ $EUID -ne 0 ]];
-    then
-        echo "$0 is not running as root. "
-        sudo $0 $@
-        exit $?
-    fi
-}
-
-export -f ensure_sudo
 
 ######################################
 # prepare_apt
