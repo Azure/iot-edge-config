@@ -24,7 +24,6 @@
 
 
 function install_edge_runtime() {
-
     if [[ $# != 3 || "$1" == "" || "$2" == "" || "$3" == "" ]];
     then
         log_error "Scope ID, Registration ID, and the Symmetric Key are required"
