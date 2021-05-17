@@ -11,7 +11,6 @@
 # ARGUMENTS:
 #    Current OS ID - taken from /etc/os-release
 #    Current OS VERSION ID - taken from /etc/os-release
-#    Current OS VERSION CODENAME - taken from /etc/os-release
 # OUTPUTS:
 #    Write output to stdout
 # RETURN:
@@ -19,7 +18,7 @@
 ######################################
 
 function is_os_tier1() {
-    log_info "OS ID: '%s'; OS Version ID: '%s'; VERSION_CODENAME: '%s'" $ID $VERSION_ID $VERSION_CODENAME
+    log_info "OS ID: '%s'; OS Version ID: '%s'" $ID $VERSION_ID
 
     case $ID in
         ubuntu)
@@ -30,7 +29,7 @@ function is_os_tier1() {
             ;;
 
         raspbian)
-            if [ "$VERSION_CODENAME" == "stretch" ];
+            if [ "$VERSION_ID" == "9" ];
             then
                 return 0
             fi

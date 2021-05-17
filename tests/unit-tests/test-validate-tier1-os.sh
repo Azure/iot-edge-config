@@ -12,7 +12,7 @@ test_ubuntu1804() {
 
 test_raspbian() {
     ID="raspbian"
-    VERSION_ID="10"
+    VERSION_ID="9"
     is_os_tier1 "$ID" "$VERSION_ID"
     assert_eq 0 $?
 }
