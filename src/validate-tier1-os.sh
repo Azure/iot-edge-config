@@ -30,7 +30,7 @@ function is_os_tier1() {
             ;;
 
         raspbian)
-            if [ "$VERSION_CODENAME" == "stretch" ];
+            if [ "$VERSION_CODENAME" == "stretch" ] || [ "$VERSION_ID" == "9" ];
             then
                 return 0
             fi
@@ -69,7 +69,7 @@ function get_platform() {
             ;;
 
         raspbian)
-            os_platform="$ID_LIKE/$VERSION_CODENAME"
+            os_platform="$ID_LIKE/stretch"
             ;;
     esac
 
