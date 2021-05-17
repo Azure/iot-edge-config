@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-VERSION_TAG="v0.0.0-rc0"
+VERSION_TAG="v0.0.1"
 
 # create flag:variable_name dictionary
 declare -A flag_to_variable_dict

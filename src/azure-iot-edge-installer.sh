@@ -107,7 +107,9 @@ fi
 
 if [[ "${parsed_cmds["SCOPE_ID"]}" == "" || "${parsed_cmds["REGISTRATION_ID"]}" == "" || "${parsed_cmds["SYMMETRIC_KEY"]}" == "" ]];
 then
-    echo Missing argument ${!parsed_cmds[@]} "-" ${parsed_cmds[@]}
+    echo Missing argument
+    echo     defined: "'"${!parsed_cmds[@]}"'"
+    echo     given: "'"${parsed_cmds[@]}"'"
     echo Usage
     exit 1
 fi
