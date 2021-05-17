@@ -9,6 +9,8 @@ then
     exit 1
 fi
 
+VERSION_TAG="v0.0.1"
+
 # where am i
 TOPDIR=$(dirname $0)
 
@@ -39,6 +41,7 @@ function download_bash_script() {
             printf "Testing local file '%s'\n" "../$TOPDIR/$file_name" > /dev/stdout
             cp ../$TOPDIR/$file_name .
         else
+            printf "wget '%s' -q -O" $url_text $tmp_file > /dev/stdout
             wget $url_text -q -O $tmp_file
 
             # validate request
@@ -84,8 +87,6 @@ printf "Downloaded helper files to temporary directory ./iot-edge-installer\n" >
 # import utils
 source utils.sh
 log_init
-
-VERSION_TAG="v0.0.0-rc0"
 
 # add flag:variable_name dictionary entries
 add_option_args "VERBOSE_LOGGING" -v --verbose
