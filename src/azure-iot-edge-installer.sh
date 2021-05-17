@@ -88,18 +88,10 @@ log_init
 VERSION_TAG="v0.0.0-rc0"
 
 # add flag:variable_name dictionary entries
-add_option_args -v "VERBOSE_LOGGING"
-add_option_args --verbose "VERBOSE_LOGGING"
-add_option_args -dp "DEVICE_PROVISIONING"
-add_option_args --device-provisioning "DEVICE_PROVISIONING"
-add_option_args -ap "AZURE_CLOUD_IDENTITY_PROVIDER"
-add_option_args --azure-cloud-identity-provider "AZURE_CLOUD_IDENTITY_PROVIDER"
-add_option_args -s "SCOPE_ID"
-add_option_args --scope-id "SCOPE_ID"
-add_option_args -r "REGISTRATION_ID"
-add_option_args --registration-id "REGISTRATION_ID"
-add_option_args -k "SYMMETRIC_KEY"
-add_option_args --symmetric-key "SYMMETRIC_KEY"
+add_option_args "VERBOSE_LOGGING" -v --verbose
+add_option_args "SCOPE_ID" -s --scope-id
+add_option_args "REGISTRATION_ID" -r --registration-id
+add_option_args "SYMMETRIC_KEY" -k --symmetric-key
 
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
@@ -115,7 +107,7 @@ fi
 
 if [[ "${parsed_cmds["SCOPE_ID"]}" == "" || "${parsed_cmds["REGISTRATION_ID"]}" == "" || "${parsed_cmds["SYMMETRIC_KEY"]}" == "" ]];
 then
-    echo Missing argument
+    echo Missing argument ${!parsed_cmds[@]} "-" ${parsed_cmds[@]}
     echo Usage
     exit 1
 fi

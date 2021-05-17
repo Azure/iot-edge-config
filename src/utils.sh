@@ -8,51 +8,96 @@ VERSION_TAG="v0.0.0-rc0"
 # create flag:variable_name dictionary
 declare -A flag_to_variable_dict
 
-add_option_args() {
+######################################
+# add_option_args
+#
+#    declare a valid command-line argument(s)
+#
+# ARGUMENTS:
+#    OPTION_NAME    The name of the argument (e.g "VERBOSE")
+#    a list of one or more argument switches (e.g "-v", "--verbose")
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function add_option_args() {
     if [[ $# > 1 ]];
     then
-        local option_flag=$1; shift
-        local var_name=$1; shift
-        flag_to_variable_dict[$option_flag]=$var_name
+        local option_name=$1; shift
+        while [ $# -ne 0 ];
+        do
+            flag_to_variable_dict[$1]=$option_name
+            shift
+        done
     fi
 }
 
-# generic command line parser
-function cmd_parser() {
-    # create flag:variable_name dictionary
-    declare -A parsed_cmd
+######################################
+# clear_option_args
+#
+#    clears the list of valid command-line arguments
+#
+# ARGUMENTS:
+#
+# OUTPUTS:
+#
+# RETURN:
+#
+######################################
 
-    for arg in "$@"
+function clear_option_args() {
+    flag_to_variable_dict=()
+}
+
+function cmd_parser() {
+    # create flag:variable_name dictionary and initialize to empty string
+    declare -A parsed_cmd
+    for key in ${!flag_to_variable_dict[*]};
     do
-        if [[ $arg == -* ]];
+        parsed_cmd[${flag_to_variable_dict[$key]}]=""
+    done
+
+    while [ $# -ne 0 ];
+    do
+        if [[ $1 == -* ]];
         then
-            # iterate over all the keys in dictionary
-            local valid_arg="false"
-            for k in ${!flag_to_variable_dict[*]};
+            local valid_argument=false
+            # for each key in the dictionary
+            for key in ${!flag_to_variable_dict[*]};
             do
-                # if arg==key, then we store into flag_to_val_dict 
-                if [ "$arg" == "$k" ];
-                then 
-                    # set parsed_cmd, which is varname:value
-                    parsed_cmd[${flag_to_variable_dict[$k]}]=$2
-                    valid_arg="true"
+                if [ "$1" == "$key" ]
+                then
+                    valid_argument=true
+                    if [[ $# == 1 || $2 == -* ]];
+                    then
+                        parsed_cmd[${flag_to_variable_dict[$key]}]=true
+                    else
+                        parsed_cmd[${flag_to_variable_dict[$key]}]=$2
+                        shift
+                    fi
                     break
                 fi
             done
 
             # found an unknown argument
-            if [[ "$valid_arg" == "false" ]];
+            if [[ "$valid_argument" == "false" ]];
             then
                 parsed_cmd=()
                 break
             fi
+        else
+            parsed_cmd=()
+            break
         fi
-        shift # Remove argument name from processing
+
+        shift
     done
 
     # view content of entire dictionary
     echo '('
-    for key in  "${!parsed_cmd[@]}";
+    for key in "${!parsed_cmd[@]}";
     do
         echo "[$key]=${parsed_cmd[$key]}"
     done
@@ -121,9 +166,7 @@ export -f log_init log_error log_info log_warn log_debug
 ######################################
 # prepare_apt
 #
-#    installs Azure IoT Edge Runtime 1.2
-#    generates the edge's configuration file from template and
-#       fills in the DPS provisioning section from provided parameters
+#    adds the needed microsoft sources list and key to the apt repository
 #
 # ARGUMENTS:
 #    OS_PLATFORM - a string specifying the location of specific platform files
