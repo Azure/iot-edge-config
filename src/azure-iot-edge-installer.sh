@@ -5,7 +5,7 @@
 
 if [[ $EUID -ne 0 ]];
 then
-    echo "ERROR: $0 requires elevated priveledges.. "
+    echo "ERROR: $0 requires elevated privileges.. "
     exit 1
 fi
 
@@ -41,7 +41,7 @@ function download_bash_script() {
             printf "Testing local file '%s'\n" "../$TOPDIR/$file_name" > /dev/stdout
             cp ../$TOPDIR/$file_name .
         else
-            printf "wget '%s' -q -O '%s'" $url_text $tmp_file > /dev/stdout
+            printf "wget '%s' -q -O '%s'\n" $url_text $tmp_file > /dev/stdout
             wget $url_text -q -O $tmp_file
 
             # validate request
