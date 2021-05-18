@@ -5,7 +5,7 @@
 
 if [[ $EUID -ne 0 ]];
 then
-    echo "ERROR: $0 requires elevated privileges.. "
+    echo "$(echo -en "\e[31m")ERROR: $(echo -en "\e[00m")$0 requires elevated privileges.. "
     exit 1
 fi
 
@@ -145,3 +145,5 @@ then
     rm -rf iot-edge-installer
     log_info "Removed temporary directory files for iot-edge-installer."
 fi
+
+announce_my_log_file "All logs were appended to" $OUTPUT_FILE

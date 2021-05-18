@@ -6,6 +6,14 @@
 # create flag:variable_name dictionary
 declare -A flag_to_variable_dict
 
+RED=$(echo -en "\e[31m")
+GREEN=$(echo -en "\e[32m")
+MAGENTA=$(echo -en "\e[35m")
+DEFAULT=$(echo -en "\e[00m")
+BOLD=$(echo -en "\e[01m")
+BLINK=$(echo -en "\e[5m")
+
+
 ######################################
 # add_option_args
 #
@@ -48,6 +56,20 @@ function add_option_args() {
 function clear_option_args() {
     flag_to_variable_dict=()
 }
+
+######################################
+# clear_option_args
+#
+#    populates a dictionary of arguments and values from
+#    a given command line
+#
+# ARGUMENTS:
+#    command line
+# OUTPUTS:
+#
+# RETURN:
+#    dictionary
+######################################
 
 function cmd_parser() {
     # create flag:variable_name dictionary and initialize to empty string
@@ -125,6 +147,11 @@ log() {
 }
 
 #
+function announce_my_log_file() {
+    printf '\n------\n%s%s%s%s%s\n------\n\n' "$GREEN" "$BOLD" "$BLINK" "$1 '$2'" "$DEFAULT"
+}
+
+#
 # logger 
 log_init() {
     local BASE_NAME=`basename $0`
@@ -136,7 +163,7 @@ log_init() {
     OUTPUT_FILE=$TD"/"$(echo ${BASE_NAME%.*})-$(echo `date '+%Y-%m-%d'`).log
     touch $OUTPUT_FILE
 
-    echo "All logs will be appended to this file '"$OUTPUT_FILE"'"
+    announce_my_log_file "All logs will be appended to file" $OUTPUT_FILE
 }
 
 #
@@ -159,7 +186,7 @@ log_debug() {
     log "DEBUG" "$@"
 }
 
-export -f log_init log_error log_info log_warn log_debug
+export -f announce_my_log_file log_init log_error log_info log_warn log_debug
 
 ######################################
 # prepare_apt

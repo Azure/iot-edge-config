@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+source src/utils.sh
 source src/validate-tier1-os.sh
 source tests/test_utils.sh
 
@@ -28,3 +29,5 @@ test_tier2() {
 test_ubuntu1804
 test_raspbian
 test_tier2
+
+show_test_totals

@@ -1,26 +1,12 @@
 #!/usr/bin/env bash
 
-if command -v tput &>/dev/null && tty -s; then
-  RED=$(tput setaf 1)
-  GREEN=$(tput setaf 2)
-  MAGENTA=$(tput setaf 5)
-  NORMAL=$(tput sgr0)
-  BOLD=$(tput bold)
-else
-  RED=$(echo -en "\e[31m")
-  GREEN=$(echo -en "\e[32m")
-  MAGENTA=$(echo -en "\e[35m")
-  NORMAL=$(echo -en "\e[00m")
-  BOLD=$(echo -en "\e[01m")
-fi
-
 #
 error_output() {
-    printf "%b\n" "${RED:-}Error: $1${NORMAL:-}" >&2
+    printf "%b\n" "${RED:-}Error: $1${DEFAULT:-}" >&2
 }
 
 output() {
-    printf "%b\n" "${BOLD:-}${NORMAL:-} $1" >&2
+    printf "%b\n" "${BOLD:-}${DEFAULT:-} $1" >&2
 }
 
 verbose_output() {
@@ -41,6 +27,20 @@ assert_eq() {
 
     NR_TOTALS=$(bc <<< $NR_TOTALS+1)
     if [ "$expected" == "$actual" ];
+    then
+        NR_PASSING=$(bc <<< $NR_PASSING+1)
+    else
+        NR_FAILING=$(bc <<< $NR_FAILING+1)
+        error_output "expected: $expected; actual: $actual"
+    fi
+}
+
+assert_not_eq() {
+    local expected=$1; shift
+    local actual=$1; shift
+
+    NR_TOTALS=$(bc <<< $NR_TOTALS+1)
+    if [ "$expected" != "$actual" ];
     then
         NR_PASSING=$(bc <<< $NR_PASSING+1)
     else
@@ -71,4 +71,4 @@ show_test_totals() {
     printf "\n\n"
 }
 
-export -f assert_eq assert_file show_test_totals
+export -f assert_eq assert_not_eq assert_file show_test_totals
