@@ -137,6 +137,9 @@ chmod +x azure-iot-edge-installer.sh
 sudo LOCAL_E2E=1 ./azure-iot-edge-installer.sh --scope-id "$scope_id" --registration-id "$device_id" --symmetric-key "$primary_key"
 rm -rf azure-iot-edge-installer.sh
 
+# give 2 mins for changes to propagate to central app
+sleep 120
+
 # device state should be provisioned after running the script
 out=$(curl -X GET -H "Authorization:$apiToken" https://${centralapp_name}.azureiotcentral.com/api/preview/devices/${device_id})
 echo $out
