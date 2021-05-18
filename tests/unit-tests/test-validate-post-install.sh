@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-source ../../src/utils.sh
+source ../../src/validate-post-install.sh
 source ../test_utils.sh
 
 test_service_running() {

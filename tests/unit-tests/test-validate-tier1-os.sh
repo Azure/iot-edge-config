@@ -3,8 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-source src/validate-tier1-os.sh
-source tests/test_utils.sh
+source ../../src/validate-tier1-os.sh
+source ../test_utils.sh
 
 test_ubuntu1804() {
     ID="ubuntu"
