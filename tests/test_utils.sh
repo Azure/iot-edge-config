@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 if command -v tput &>/dev/null && tty -s; then
   RED=$(tput setaf 1)
   GREEN=$(tput setaf 2)
