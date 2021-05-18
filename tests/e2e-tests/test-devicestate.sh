@@ -151,7 +151,7 @@ then
     echo "Error: Device must be provisioned. Exit."; 
 else
     echo "Device is provisioned as expected. Success."; 
-    $test_result=0 # success
+    test_result=0 # success
 fi;
 
 # Clean up
