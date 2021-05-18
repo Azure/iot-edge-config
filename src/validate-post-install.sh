@@ -46,7 +46,8 @@ function validate_post_install() {
 
     for i in "${iotedge_services[@]}"
     do
-        is_service_running ${iotedge_services[$i]} "$status"
+        #is_service_running ${iotedge_services[$i]} "$status"
+        is_service_running $i "$status"
     done
 
     log_info "Post install validation completed."
