@@ -3,8 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-source src/validate-post-install.sh
-source tests/test_utils.sh
+source ../../src/utils.sh
+source ../test_utils.sh
 
 test_service_running() {
     is_service_running "servicenameA" "servicenameA Running"
