@@ -58,7 +58,7 @@ function clear_option_args() {
 }
 
 ######################################
-# clear_option_args
+# cmd_parser
 #
 #    populates a dictionary of arguments and values from
 #    a given command line
