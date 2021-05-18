@@ -41,7 +41,7 @@ stages:
 
   - job: RaspberryPiE2ETests
     pool:
-      vmImage: ubuntu-latest
+      vmImage: ubuntu-18.04
     steps:
     - template: continuous-e2e.yml
     dependsOn: SetupScript
