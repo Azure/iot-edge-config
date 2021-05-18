@@ -156,5 +156,5 @@ fi;
 
 # Clean up
 cleanup "$armToken" "$apiToken" "$device_id" "$token_id" "$rg" "$centralapp_name"
-echo test_result: $test_result
+
 exit $test_result

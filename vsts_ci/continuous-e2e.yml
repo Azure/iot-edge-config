@@ -12,4 +12,14 @@ steps:
       chmod +x test-devicestate.sh
       ./test-devicestate.sh $(AzureSubscriptionId)
   displayName: 'Run All E2E Tests'
+- task: CopyFiles@2
+  inputs:
+    contents: '/tmp/azure-iot-edge-installer-*.log'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+  displayName: 'Copy logs'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: $(Build.ArtifactStagingDirectory)
+    artifactName: AzureIotEdgeInstallerLogs
+  displayName: 'Publish logs'
 
