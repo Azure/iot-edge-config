@@ -6,6 +6,40 @@
 # create flag:variable_name dictionary
 declare -A flag_to_variable_dict
 
+#
+OPT_IN=false
+
+######################################
+# set_opt_in_selection
+#
+#    declare a valid command-line argument(s)
+#
+# ARGUMENTS:
+#    does_the_user_consent_to_sending_telemetry
+#
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function set_opt_in_selection() {
+    if [[ $# == 1 && $1 == true ]];
+    then
+        OPT_IN=true
+        log_info "Telemetry will be collected for the purpose of tool's improvements."
+    else
+        OPT_IN=false
+        log_info "The user has opted out of sending usage telemetry."
+    fi
+}
+
+function get_opt_in_selection() {
+    echo "$OPT_IN"
+}
+
+export -f set_opt_in_selection get_opt_in_selection
+
 ######################################
 # add_option_args
 #
@@ -54,7 +88,7 @@ function cmd_parser() {
     declare -A parsed_cmd
     for key in ${!flag_to_variable_dict[*]};
     do
-        parsed_cmd[${flag_to_variable_dict[$key]}]=""
+        parsed_cmd[${flag_to_variable_dict[$key]}]=false
     done
 
     while [ $# -ne 0 ];

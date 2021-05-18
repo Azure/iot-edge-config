@@ -89,6 +89,7 @@ source utils.sh
 log_init
 
 # add flag:variable_name dictionary entries
+add_option_args "TELEMETRY_OPT_IN" -t --telemetry-opt-in
 add_option_args "VERBOSE_LOGGING" -v --verbose
 add_option_args "SCOPE_ID" -s --scope-id
 add_option_args "REGISTRATION_ID" -r --registration-id
@@ -96,6 +97,8 @@ add_option_args "SYMMETRIC_KEY" -k --symmetric-key
 
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
+
+set_opt_in_selection "${parsed_cmds["TELEMETRY_OPT_IN"]}"
 
 # validate that all arguments are acceptable / known
 if [[ ${#@} > 0 && ${#parsed_cmds[*]} == 0 ]];
