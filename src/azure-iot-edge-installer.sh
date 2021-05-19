@@ -32,28 +32,28 @@ function download_bash_script() {
         local url_text=https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/$file_name
         local tmp_file=$(echo `mktemp -u`)
 
-        printf "attempting to download '%s'.\n" $file_name > /dev/stdout
+        printf "attempting to download '%s'.\n" $file_name
 
         # attempt to download to a temporary file.
         # use 'sudo LOCAL_E2E=1 ./azure-iot-edge-installer.sh {}' to validate local source...
         if [ "$LOCAL_E2E" == "1" ];
         then
-            printf "Testing local file '%s'\n" "../$TOPDIR/$file_name" > /dev/stdout
+            printf "Testing local file '%s'\n" "../$TOPDIR/$file_name"
             cp ../$TOPDIR/$file_name .
         else
-            printf "wget '%s' -q -O '%s'\n" $url_text $tmp_file > /dev/stdout
+            printf "wget '%s' -q -O '%s'\n" $url_text $tmp_file
             wget $url_text -q -O $tmp_file
 
             # validate request
             exit_code=$?
             if [[ $exit_code != 0 ]];
             then
-                printf "ERROR: Failed to download '%s'; error: %d\n" $file_name $exit_code > /dev/stdout
+                printf "ERROR: Failed to download '%s'; error: %d\n" $file_name $exit_code
 
                 rm $tmp_file
                 exit $exit_code
             else
-                printf "downloaded '%s'\n" $file_name > /dev/stdout
+                printf "downloaded '%s'\n" $file_name
 
                 mv -f $tmp_file $file_name
                 chmod +x $file_name
@@ -63,34 +63,34 @@ function download_bash_script() {
 }
 
 # script
-printf "Welcome to azure-iot-edge-installer\n" > /dev/stdout
-printf "\n%s\n" "-------------------------" > /dev/stdout
-printf "Telemetry\n" > /dev/stdout
-printf "%s\n" "---------" > /dev/stdout
-printf "The azure-iot-edge-installer collects usage data in order to improve your experience.\n" > /dev/stdout
-printf "The data is anonymous and does not include commandline argument values.\n" > /dev/stdout
-printf "The data is collected by Microsoft.\n" > /dev/stdout
-printf "You can change your telemetry settings by adding -nt or --telemetry-opt-out to the command line.\n" > /dev/stdout
+printf "Welcome to azure-iot-edge-installer\n"
+printf "\n%s\n" "-------------------------"
+printf "Telemetry\n"
+printf "%s\n" "---------"
+printf "The azure-iot-edge-installer collects usage data in order to improve your experience.\n"
+printf "The data is anonymous and does not include commandline argument values.\n"
+printf "The data is collected by Microsoft.\n"
+printf "You can change your telemetry settings by adding -nt or --telemetry-opt-out to the command line.\n"
 printf "\n"
 
 # if helper scripts dont exist, fetch via wget 
 if [ -d "iot-edge-installer" ];
 then
-    printf "Directory iot-edge-installer already exists.\n"  > /dev/stdout
+    printf "Directory iot-edge-installer already exists.\n" 
 else
-    printf "Preparing install directory.\n" > /dev/stdout
+    printf "Preparing install directory.\n"
     mkdir iot-edge-installer
 fi
 
 cd iot-edge-installer
 
-printf "Downloading helper files to temporary directory ./iot-edge-installer\n" > /dev/stdout
+printf "Downloading helper files to temporary directory ./iot-edge-installer\n"
 download_bash_script validate-tier1-os.sh
 download_bash_script install-container-management.sh
 download_bash_script install-edge-runtime.sh
 download_bash_script validate-post-install.sh
 download_bash_script utils.sh
-printf "Downloaded helper files to temporary directory ./iot-edge-installer\n" > /dev/stdout
+printf "Downloaded helper files to temporary directory ./iot-edge-installer\n"
 
 # import utils
 source utils.sh

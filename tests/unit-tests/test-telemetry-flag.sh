@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 exec 3>&1
 
 # bring in the utils library

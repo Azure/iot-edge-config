@@ -174,7 +174,7 @@ log() {
         then
             printf "$LP$FS\n" $@ >> "$OUTPUT_FILE"
         fi
-        printf "$LP$FS\n" $@ > /dev/stdout
+        printf "$LP$FS\n" $@
     fi
 }
 
