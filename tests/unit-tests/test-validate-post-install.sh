@@ -43,3 +43,5 @@ test_service_ready
 test_service_not_running
 test_service_missing
 test_service_casesensitive
+
+show_test_totals

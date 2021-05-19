@@ -32,3 +32,5 @@ test_tier2() {
 test_ubuntu1804
 test_raspbian
 test_tier2
+
+show_test_totals
