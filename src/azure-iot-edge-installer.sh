@@ -142,10 +142,13 @@ else
     install_container_management
 
     source install-edge-runtime.sh
-    install_edge_runtime ${parsed_cmds["SCOPE_ID"]}  ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
+    OK=$(install_edge_runtime ${parsed_cmds["SCOPE_ID"]}  ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]})
 
-    source validate-post-install.sh
-    validate_post_install
+    if [ $OK == true ];
+    then
+        source validate-post-install.sh
+        validate_post_install
+    fi
 fi
 
 # cleanup, always

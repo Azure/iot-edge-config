@@ -267,9 +267,9 @@ function prepare_apt() {
             fi
 
             # update
-            apt update
+            apt-get update
             exit_code=$?
-            log_info "'apt update' returned %d\n" exit_code
+            log_info "'apt-get update' returned %d\n" exit_code
         fi
     fi
 }
