@@ -12,4 +12,5 @@ steps:
     ./test-validate-tier1-os.sh
     ./test-cmd-parser.sh
     ./test-logger.sh
+    ./test-telemetry-flag.sh
   displayName: 'Run All Linux Unit Tests'
