@@ -26,7 +26,8 @@ set -e
 exec 3>&1
 
 # bring in the library
-source test_utils.sh
+MY_LOCATION=$(dirname $0)
+source ${MY_LOCATION}/test_utils.sh
 
 #
 verbose=false
@@ -101,7 +102,7 @@ do
     runs[$curr-1]=$(bc <<< $end-$start)
     total=$(bc <<< $total+${runs[$curr-1]})
     verbose_output "run $curr took $(bc <<< $end-$start) seconds"
-    python3 send_one_message_to_iot_hub_device.py "$IH_CONN_STR" "{\"OSName\": \"$os_name\", \"Kernel\": \"$os_kernel\", \"TestName\": \"$test_name\", \"TimeStamp\": \"$time_stamp\", \"Duration\": ${runs[$iter]}}"
+    python3 ${MY_LOCATION}/send_one_message_to_iot_hub_device.py "$IH_CONN_STR" "{\"OSName\": \"$os_name\", \"Kernel\": \"$os_kernel\", \"TestName\": \"$test_name\", \"TimeStamp\": \"$time_stamp\", \"Duration\": ${runs[$iter]}}"
 done
 
 verbose_output ""

@@ -13,6 +13,38 @@ DEFAULT=$(echo -en "\e[00m")
 BOLD=$(echo -en "\e[01m")
 BLINK=$(echo -en "\e[5m")
 
+OPT_IN=false
+
+######################################
+# set_opt_out_selection
+#
+#    records the user's choice of opting out of telemetry
+#
+# ARGUMENTS:
+#    does_the_user_NOT_consent_to_sending_telemetry
+#
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function set_opt_out_selection() {
+    if [[ $# == 1 && $1 == true ]];
+    then
+        OPT_IN=false
+        log_info "The user has opted out of sending usage telemetry."
+    else
+        OPT_IN=true
+        log_info "The user has opted in for sending usage telemetry."
+    fi
+}
+
+function get_opt_in_selection() {
+    echo "$OPT_IN"
+}
+
+export -f set_opt_out_selection get_opt_in_selection
 
 ######################################
 # add_option_args
@@ -76,7 +108,7 @@ function cmd_parser() {
     declare -A parsed_cmd
     for key in ${!flag_to_variable_dict[*]};
     do
-        parsed_cmd[${flag_to_variable_dict[$key]}]=""
+        parsed_cmd[${flag_to_variable_dict[$key]}]=false
     done
 
     while [ $# -ne 0 ];
@@ -142,7 +174,7 @@ log() {
         then
             printf "$LP$FS\n" $@ >> "$OUTPUT_FILE"
         fi
-        printf "$LP$FS\n" $@ > /dev/stdout
+        printf "$LP$FS\n" $@
     fi
 }
 
@@ -217,12 +249,27 @@ function prepare_apt() {
             # sources list
             log_info "Adding'%s' to repository lists." $sources
             wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list
+            exit_code=$?
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "prepare_apt() step 1 failed with error: %d\n" exit_code
+                exit 3
+            fi
 
             # the key
             wget https://packages.microsoft.com/keys/microsoft.asc -q -O /dev/stdout | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg
+            exit_code=$?
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "prepare_apt() step 2 failed with error %d\n" exit_code
+                rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
+                exit 4
+            fi
 
             # update
             apt update
+            exit_code=$?
+            log_info "'apt update' returned %d\n" exit_code
         fi
     fi
 }
