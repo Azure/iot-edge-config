@@ -10,12 +10,12 @@ declare -A flag_to_variable_dict
 OPT_IN=false
 
 ######################################
-# set_opt_in_selection
+# set_opt_out_selection
 #
-#    declare a valid command-line argument(s)
+#    records the user's choice of opting out of telemetry
 #
 # ARGUMENTS:
-#    does_the_user_consent_to_sending_telemetry
+#    does_the_user_NOT_consent_to_sending_telemetry
 #
 # OUTPUTS:
 #    Write output to stdout
@@ -23,14 +23,14 @@ OPT_IN=false
 #
 ######################################
 
-function set_opt_in_selection() {
+function set_opt_out_selection() {
     if [[ $# == 1 && $1 == true ]];
     then
-        OPT_IN=true
-        log_info "Telemetry will be collected for the purpose of tool's improvements."
-    else
         OPT_IN=false
         log_info "The user has opted out of sending usage telemetry."
+    else
+        OPT_IN=true
+        log_info "The user has opted in for sending usage telemetry."
     fi
 }
 

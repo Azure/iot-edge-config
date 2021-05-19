@@ -64,6 +64,14 @@ function download_bash_script() {
 
 # script
 printf "Welcome to azure-iot-edge-installer\n" > /dev/stdout
+printf "\n%s\n" "-------------------------" > /dev/stdout
+printf "Telemetry\n" > /dev/stdout
+printf "%s\n" "---------" > /dev/stdout
+printf "The azure-iot-edge-installer collects usage data in order to improve your experience.\n" > /dev/stdout
+printf "The data is anonymous and does not include commandline argument values.\n" > /dev/stdout
+printf "The data is collected by Microsoft.\n" > /dev/stdout
+printf "You can change your telemetry settings by adding -nt or --telemetry-opt-out to the command line.\n" > /dev/stdout
+printf "\n"
 
 # if helper scripts dont exist, fetch via wget 
 if [ -d "iot-edge-installer" ];
@@ -89,7 +97,7 @@ source utils.sh
 log_init
 
 # add flag:variable_name dictionary entries
-add_option_args "TELEMETRY_OPT_IN" -t --telemetry-opt-in
+add_option_args "TELEMETRY_OPT_OUT" -nt --telemetry-opt-out
 add_option_args "VERBOSE_LOGGING" -v --verbose
 add_option_args "SCOPE_ID" -s --scope-id
 add_option_args "REGISTRATION_ID" -r --registration-id
@@ -98,7 +106,7 @@ add_option_args "SYMMETRIC_KEY" -k --symmetric-key
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
 
-set_opt_in_selection "${parsed_cmds["TELEMETRY_OPT_IN"]}"
+set_opt_out_selection ${parsed_cmds["TELEMETRY_OPT_OUT"]}
 
 # validate that all arguments are acceptable / known
 if [[ ${#@} > 0 && ${#parsed_cmds[*]} == 0 ]];

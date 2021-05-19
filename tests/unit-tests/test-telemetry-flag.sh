@@ -7,13 +7,13 @@ source ../../src/utils.sh
 source ../test_utils.sh
 
 function test_flag_on() {
-    set_opt_in_selection true
-    assert_eq $(get_opt_in_selection) true
+    set_opt_out_selection true
+    assert_eq $(get_opt_in_selection) false
 }
 
 function test_flag_off() {
-    set_opt_in_selection false
-    assert_eq $(get_opt_in_selection) false
+    set_opt_out_selection false
+    assert_eq $(get_opt_in_selection) true
 }
 
 test_flag_on
