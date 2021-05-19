@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 #
 error_output() {
     printf "%b\n" "${RED:-}Error: $1${DEFAULT:-}" >&2
