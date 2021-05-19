@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 steps:  
 - task: AzureCLI@2
   inputs:
@@ -9,4 +12,3 @@ steps:
       chmod +x test-devicestate.sh
       ./test-devicestate.sh $(AzureSubscriptionId)
   displayName: 'Run All E2E Tests'
-

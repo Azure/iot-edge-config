@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 ###################################### 
 # test-devicestate
 # 
@@ -127,10 +131,14 @@ scope_id=$(jq -r '.idScope' <<< "$creds")
 primary_key=$(jq -r '.symmetricKey.primaryKey' <<< "$creds")
 
 echo Run the Azure IoT Edge Installer
-wget https://github.com/Azure/iot-edge-config/releases/latest/download/azure-iot-edge-installer.sh \
-&& chmod +x azure-iot-edge-installer.sh \
-&& ./azure-iot-edge-installer.sh \
-&& rm -rf azure-iot-edge-installer.sh
+#wget -O azure-iot-edge-installer.sh https://github.com/Azure/iot-edge-config/releases/latest/download/azure-iot-edge-installer.sh \
+cd ./../../src
+chmod +x azure-iot-edge-installer.sh
+sudo LOCAL_E2E=1 ./azure-iot-edge-installer.sh --scope-id "$scope_id" --registration-id "$device_id" --symmetric-key "$primary_key"
+rm -rf azure-iot-edge-installer.sh
+
+# give 2 mins for changes to propagate to central app
+sleep 120
 
 # device state should be provisioned after running the script
 out=$(curl -X GET -H "Authorization:$apiToken" https://${centralapp_name}.azureiotcentral.com/api/preview/devices/${device_id})
@@ -143,10 +151,10 @@ then
     echo "Error: Device must be provisioned. Exit."; 
 else
     echo "Device is provisioned as expected. Success."; 
-    $test_result=0 # success
+    test_result=0 # success
 fi;
 
 # Clean up
 cleanup "$armToken" "$apiToken" "$device_id" "$token_id" "$rg" "$centralapp_name"
-echo test_result: $test_result
+
 exit $test_result

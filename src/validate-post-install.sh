@@ -44,9 +44,9 @@ function validate_post_install() {
                                  "aziot-certd"
                                  "aziot-tpmd")
 
-    for i in "${iotedge_services[@]}"
+    for service_name in "${iotedge_services[@]}"
     do
-        is_service_running ${iotedge_services[$i]} "$status"
+        is_service_running $service_name "$status"
     done
 
     log_info "Post install validation completed."
