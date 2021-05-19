@@ -249,12 +249,27 @@ function prepare_apt() {
             # sources list
             log_info "Adding'%s' to repository lists." $sources
             wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list
+            exit_code=$?
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "prepare_apt() step 1 failed with error: %d\n" exit_code
+                exit 3
+            fi
 
             # the key
             wget https://packages.microsoft.com/keys/microsoft.asc -q -O /dev/stdout | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg
+            exit_code=$?
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "prepare_apt() step 2 failed with error %d\n" exit_code
+                rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
+                exit 4
+            fi
 
             # update
             apt update
+            exit_code=$?
+            log_info "'apt update' returned %d\n" exit_code
         fi
     fi
 }
