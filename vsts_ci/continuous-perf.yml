@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 steps:
 - task: UsePythonVersion@0
   displayName: "Use Python 3.8"

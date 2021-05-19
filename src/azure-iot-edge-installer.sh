@@ -63,7 +63,7 @@ function download_bash_script() {
 }
 
 # script
-printf "Running azure-iot-edge-installer.sh\n" > /dev/stdout
+printf "Welcome to azure-iot-edge-installer\n" > /dev/stdout
 
 # if helper scripts dont exist, fetch via wget 
 if [ -d "iot-edge-installer" ];
@@ -105,7 +105,7 @@ if [[ ${#@} > 0 && ${#parsed_cmds[*]} == 0 ]];
 then
     array=("$*")
     echo Unknown argument "${array[*]}"
-    echo Usage
+    echo "Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>"
     exit 1
 fi
 
@@ -114,7 +114,7 @@ then
     echo Missing argument
     echo     defined: "'"${!parsed_cmds[@]}"'"
     echo     given: "'"${parsed_cmds[@]}"'"
-    echo Usage
+    echo "Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>"
     exit 1
 fi
 
