@@ -281,7 +281,7 @@ function prepare_apt() {
 
             if [[ $exit_code != 0 ]];
             then
-                log_error "prepare_apt() step 2 failed with error %d\n" exit_code
+                log_error "prepare_apt() step 2 failed with error %d\n" $exit_code
                 rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
                 exit 4
             fi

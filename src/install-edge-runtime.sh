@@ -8,9 +8,9 @@
 ######################################
 # install_edge_runtime
 #
-#    installs Azure IoT Edge Runtime 1.2
-#    generates the edge's configuration file from template and
-#       fills in the DPS provisioning section from provided parameters
+#    - installs Azure IoT Edge Runtime 1.2
+#    - generates the edge's configuration file from template and
+#      fills in the DPS provisioning section from provided parameters
 #
 # ARGUMENTS:
 #    SCOPE_ID
@@ -19,7 +19,7 @@
 # OUTPUTS:
 #    Write output to stdout
 # RETURN:
-#
+#    updates the global variable OK_TO_CONTINUE in case of success to true.
 ######################################
 
 function install_edge_runtime() {
@@ -41,7 +41,7 @@ function install_edge_runtime() {
     exit_code=$?
     if [[ $exit_code != 0 ]];
     then
-        log_info "'apt-get install aziot-edge' returned %d\n" exit_code
+        log_info "'apt-get install aziot-edge' returned %d\n" $exit_code
         return
     fi
 
@@ -51,7 +51,7 @@ function install_edge_runtime() {
     exit_code=$?
     if [[ $exit_code != 0 ]];
     then
-        log_info "'cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml' returned %d\n" exit_code
+        log_info "'cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml' returned %d\n" $exit_code
         return
     fi
 
