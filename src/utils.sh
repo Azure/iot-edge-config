@@ -14,6 +14,7 @@ BOLD=$(echo -en "\e[01m")
 BLINK=$(echo -en "\e[5m")
 
 OPT_IN=false
+OK_TO_CONTINUE=false
 
 ######################################
 # set_opt_out_selection
@@ -108,7 +109,7 @@ function cmd_parser() {
     declare -A parsed_cmd
     for key in ${!flag_to_variable_dict[*]};
     do
-        parsed_cmd[${flag_to_variable_dict[$key]}]=false
+        parsed_cmd[${flag_to_variable_dict[$key]}]=""
     done
 
     while [ $# -ne 0 ];
@@ -249,15 +250,16 @@ function prepare_apt() {
             # sources list
             log_info "Adding'%s' to repository lists." $sources
             wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list
-            exit_code=$?
+            local exit_code=$?
             if [[ $exit_code != 0 ]];
             then
                 log_error "prepare_apt() step 1 failed with error: %d\n" exit_code
                 exit 3
             fi
 
-            # the key
-            wget https://packages.microsoft.com/keys/microsoft.asc -q -O /dev/stdout | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg
+            log_info "Downloading key\n"
+            local tmp_file=$(echo `mktemp -u`)
+            wget https://packages.microsoft.com/keys/microsoft.asc -q -O $tmp_file
             exit_code=$?
             if [[ $exit_code != 0 ]];
             then
@@ -266,10 +268,29 @@ function prepare_apt() {
                 exit 4
             fi
 
+            # unpack the key
+            local gpg_file=/etc/apt/trusted.gpg.d/microsoft.gpg
+            if [[ -f $gpg_file ]];
+            then
+                rm -f $gpg_file &> /dev/null
+            fi
+            gpg --dearmor --output $gpg_file $tmp_file
+            exit_code=$?
+
+            rm -f $tmp_file &> /dev/null
+
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "prepare_apt() step 2 failed with error %d\n" exit_code
+                rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
+                exit 4
+            fi
+            log_info "Downloaded key\n"
+
             # update
             apt-get update
             exit_code=$?
-            log_info "'apt-get update' returned %d\n" exit_code
+            log_info "'apt-get update' returned %d\n" $exit_code
         fi
     fi
 }

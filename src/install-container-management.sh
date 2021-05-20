@@ -26,11 +26,8 @@ install_container_management() {
         exit_code=$?
         if [[ $exit_code != 0 ]];
         then
+            OK_TO_CONTINUE=false
             log_info "'apt-get install moby-engine' returned %d\n" exit_code
-            echo false
-            return
         fi
     fi
-
-    echo true
 }

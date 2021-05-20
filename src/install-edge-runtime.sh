@@ -26,14 +26,12 @@ function install_edge_runtime() {
     if [[ $# != 3 || "$1" == "" || "$2" == "" || "$3" == "" ]];
     then
         log_error "Scope ID, Registration ID, and the Symmetric Key are required"
-        echo false
         return
     fi
 
     if [ -x "$(command -v iotedge)" ];
     then
         log_error "Edge runtime is already available."
-        echo false
         return
     else
         log_info "install_edge_runtime..."
@@ -44,7 +42,6 @@ function install_edge_runtime() {
     if [[ $exit_code != 0 ]];
     then
         log_info "'apt-get install aziot-edge' returned %d\n" exit_code
-        echo false
         return
     fi
 
@@ -55,7 +52,6 @@ function install_edge_runtime() {
     if [[ $exit_code != 0 ]];
     then
         log_info "'cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml' returned %d\n" exit_code
-        echo false
         return
     fi
 
@@ -85,5 +81,5 @@ symmetric_key = { value = \"'$SYMMETRIC_KEY'\" }                                
     log_info "Apply settings - this will restart the edge"
     iotedge config apply
 
-    echo true
+    OK_TO_CONTINUE=true
 }
