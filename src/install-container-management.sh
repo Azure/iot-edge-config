@@ -12,7 +12,7 @@
 # OUTPUTS:
 #    Write output to stdout
 # RETURN:
-#
+#    updates the global variable OK_TO_CONTINUE in case of failure to false.
 ######################################
 
 install_container_management() {
@@ -22,6 +22,12 @@ install_container_management() {
     else
         log_info "Running install-container-management.sh"
 
-        apt install moby-engine -y
+        apt-get install moby-engine -y
+        exit_code=$?
+        if [[ $exit_code != 0 ]];
+        then
+            OK_TO_CONTINUE=false
+            log_info "'apt-get install moby-engine' returned %d\n" $exit_code
+        fi
     fi
 }

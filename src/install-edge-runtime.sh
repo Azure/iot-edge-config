@@ -8,9 +8,9 @@
 ######################################
 # install_edge_runtime
 #
-#    installs Azure IoT Edge Runtime 1.2
-#    generates the edge's configuration file from template and
-#       fills in the DPS provisioning section from provided parameters
+#    - installs Azure IoT Edge Runtime 1.2
+#    - generates the edge's configuration file from template and
+#      fills in the DPS provisioning section from provided parameters
 #
 # ARGUMENTS:
 #    SCOPE_ID
@@ -19,9 +19,8 @@
 # OUTPUTS:
 #    Write output to stdout
 # RETURN:
-#
+#    updates the global variable OK_TO_CONTINUE in case of success to true.
 ######################################
-
 
 function install_edge_runtime() {
     if [[ $# != 3 || "$1" == "" || "$2" == "" || "$3" == "" ]];
@@ -37,12 +36,24 @@ function install_edge_runtime() {
     else
         log_info "install_edge_runtime..."
     fi
-    
+
     apt-get install aziot-edge -y
+    exit_code=$?
+    if [[ $exit_code != 0 ]];
+    then
+        log_info "'apt-get install aziot-edge' returned %d\n" $exit_code
+        return
+    fi
 
     # create .toml from template
     log_info "create .toml from template."
     cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml
+    exit_code=$?
+    if [[ $exit_code != 0 ]];
+    then
+        log_info "'cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml' returned %d\n" $exit_code
+        return
+    fi
 
     local SCOPE_ID=$1
     local REGISTRATION_ID=$2
@@ -69,4 +80,6 @@ symmetric_key = { value = \"'$SYMMETRIC_KEY'\" }                                
 
     log_info "Apply settings - this will restart the edge"
     iotedge config apply
+
+    OK_TO_CONTINUE=true
 }
