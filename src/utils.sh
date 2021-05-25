@@ -273,7 +273,7 @@ function prepare_apt() {
             sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
 
             # sources list
-            log_info "Adding'%s' to repository lists." $sources
+            log_info "Adding '%s' to sources list." $sources
             wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             local exit_code=$?
             if [[ $exit_code != 0 ]];
@@ -281,6 +281,7 @@ function prepare_apt() {
                 log_error "prepare_apt() step 1 failed with error: %d\n" exit_code
                 exit ${EXIT_CODES[4]}
             fi
+            log_info "Added '%s' to sources list." $sources
 
             log_info "Downloading key"
             local tmp_file=$(echo `mktemp -u`)
@@ -313,10 +314,11 @@ function prepare_apt() {
             log_info "Downloaded key"
 
             # update
+            log_info "update - Retrieve new lists of packages"
             apt-get update 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
             long_running_command $!
             exit_code=$?
-            log_info "'apt-get update' returned %d\n" $exit_code
+            log_info "update step completed with exit code: %d\n" $exit_code
         fi
     fi
 }
@@ -347,17 +349,17 @@ function long_running_command() {
             for next_symbol in '-' '\\' '|' '/';
             do
                 echo -en "$next_symbol\b"
-                sleep 0.3
+                sleep 0.2
                 local MYPS=$(ps | awk '/'$BG_PROCESS_ID'/ {print $1}')
                 if [ "$MYPS" == "" ];
                 then
+                    BG_PROCESS_ID=-1
                     BG_PROCESS_ACTIVE=false
                     break
                 fi
             done
+            echo -en "\b"
         done
-        echo -e "\b"
-        BG_PROCESS_ID=-1
     fi
 }
 
@@ -407,14 +409,14 @@ function handle_ctrl_c() {
 
 function handle_exit() {
     local e_code=$?
-    log_info "exit %d\n" $e_code
+    log_info "Exit %d\n" $e_code
 
     # cleanup, always
     cd ..
-    if [ -d "iot-edge-installer" ] 
+    if [ -d "iot-edge-installer" ]
     then
         log_info "Removing temporary directory files for iot-edge-installer."
-        rm -rf iot-edge-installer
+        rm -rf iot-edge-installer 
         log_info "Removed temporary directory files for iot-edge-installer."
     fi
 

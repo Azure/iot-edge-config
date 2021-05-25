@@ -35,19 +35,20 @@ function install_edge_runtime() {
         exit ${EXIT_CODES[9]}
     fi
 
-    log_info "install_edge_runtime..."
+    log_info "Installing edge runtime..."
 
     apt-get install aziot-edge -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
     long_running_command $!
     exit_code=$?
     if [[ $exit_code != 0 ]];
     then
-        log_info "'apt-get install aziot-edge' returned %d" $exit_code
+        log_info "aziot-edged installation failed with exit code: %d" $exit_code
         exit ${EXIT_CODES[10]}
     fi
+    log_info "Installed edge runtime..."
 
     # create .toml from template
-    log_info "create .toml from template."
+    log_info "Create instanance configuration .toml from template."
     cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml &>/dev/null
     exit_code=$?
     if [[ $exit_code != 0 ]];
@@ -60,7 +61,7 @@ function install_edge_runtime() {
     local REGISTRATION_ID=$2
     local SYMMETRIC_KEY=$3
 
-    log_info "set '%s'; '%s'; '%s'" $SCOPE_ID $REGISTRATION_ID $SYMMETRIC_KEY
+    log_info "Set DPS provisioning parameters."
     sed -i '/## DPS provisioning with symmetric key/,/## DPS provisioning with X.509 certificate/c\
 ## DPS provisioning with symmetric key\
 [provisioning]\
@@ -77,7 +78,7 @@ symmetric_key = { value = \"'$SYMMETRIC_KEY'\" }                                
 # symmetric_key = { uri = "pkcs11:slot-id=0;object=device%20id?pin-value=1234" }                                         # PKCS#11 URI\
 \
 ## DPS provisioning with X.509 certificate\
-    '  /etc/aziot/config.toml &>/dev/null
+    '  /etc/aziot/config.toml 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
 
     exit_code=$?
     if [[ $exit_code != 0 ]];
@@ -87,5 +88,10 @@ symmetric_key = { value = \"'$SYMMETRIC_KEY'\" }                                
     fi
 
     log_info "Apply settings - this will restart the edge"
-    iotedge config apply
+    iotedge config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+    exit_code=$?
+    if [[ $exit_code == 0 ]];
+    then
+        log_info "IotEdge has been configured successfully"
+    fi
 }
