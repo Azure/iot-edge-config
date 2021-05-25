@@ -6,6 +6,7 @@
 # create flag:variable_name dictionary
 declare -A flag_to_variable_dict
 
+# output color indicators
 RED=$(echo -en "\e[31m")
 GREEN=$(echo -en "\e[32m")
 MAGENTA=$(echo -en "\e[35m")
@@ -13,8 +14,28 @@ DEFAULT=$(echo -en "\e[00m")
 BOLD=$(echo -en "\e[01m")
 BLINK=$(echo -en "\e[5m")
 
+# OPT_IN - set to true if the user opts in for sending telemetry information to us.
 OPT_IN=false
-OK_TO_CONTINUE=false
+
+# EXIT_CODES - an array of intigers indicating an exit status
+declare -a EXIT_CODES=(0    # success
+                       1    # invalid argument is given at the command line
+                       2    # a required argument is missing
+                       3    # os is not supported
+                       4    # step 1 of apt-get failed
+                       5    # step 2 of apt-get failed
+                       6    # step 3 of apt-get failed
+                       7    # step 4 of apt-get failed
+                       8    # failed to install moby-engine
+                       9    # a version of edge-runtime is already installed
+                       10   # step 1 of installing edge-runtime failed
+                       11   # step 2 of installing edge-runtime failed
+                       12   # step 3 of installing edge-runtime failed
+                       13   # step 4 of installing edge-runtime failed
+                       14   # ctrl-c or kill
+                      )
+
+CORRELATION_VECTOR=""
 
 ######################################
 # set_opt_out_selection
@@ -31,7 +52,7 @@ OK_TO_CONTINUE=false
 ######################################
 
 function set_opt_out_selection() {
-    if [[ $# == 1 && $1 == true ]];
+    if [ $1 == true ];
     then
         OPT_IN=false
         log_info "The user has opted out of sending usage telemetry."
@@ -39,6 +60,15 @@ function set_opt_out_selection() {
         OPT_IN=true
         log_info "The user has opted in for sending usage telemetry."
     fi
+
+    # handle correlation vector
+    if [ -z $2 ];
+    then
+        CORRELATION_VECTOR=$(uuidgen)
+    else
+        CORRELATION_VECTOR=$2
+    fi
+
 }
 
 function get_opt_in_selection() {
@@ -197,6 +227,12 @@ log_init() {
     touch $OUTPUT_FILE
 
     announce_my_log_file "All logs will be appended to file" $OUTPUT_FILE
+
+    STDOUT_REDIRECT=$TD"/"$(echo ${BASE_NAME%.*})-$(echo `date '+%Y-%m-%d'`).out
+    echo "-----------------------------------" `date '+%H:%M:%S.%N'` "-----------------------------------" >> $STDOUT_REDIRECT
+
+    STDERR_REDIRECT=$TD"/"$(echo ${BASE_NAME%.*})-$(echo `date '+%Y-%m-%d'`).err
+    echo "-----------------------------------" `date '+%H:%M:%S.%N'` "-----------------------------------" >> $STDERR_REDIRECT
 }
 
 #
@@ -237,35 +273,36 @@ export -f announce_my_log_file log_init log_error log_info log_warn log_debug
 function prepare_apt() {
     if [ $# != 1 ];
     then
-        exit 1
+        exit ${EXIT_CODES[2]}
     else
         local platform=$1
         if [[ "$platform" == "" ]];
         then
             log_error "Unsupported platform."
-            exit 2
+            exit ${EXIT_CODES[3]}
         else
             sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
 
             # sources list
             log_info "Adding'%s' to repository lists." $sources
-            wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list
+            wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             local exit_code=$?
             if [[ $exit_code != 0 ]];
             then
                 log_error "prepare_apt() step 1 failed with error: %d\n" exit_code
-                exit 3
+                exit ${EXIT_CODES[4]}
             fi
+            log_info "Added'%s' to repository lists." $sources
 
-            log_info "Downloading key\n"
+            log_info "Downloading key"
             local tmp_file=$(echo `mktemp -u`)
-            wget https://packages.microsoft.com/keys/microsoft.asc -q -O $tmp_file
+            wget https://packages.microsoft.com/keys/microsoft.asc -q -O $tmp_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             exit_code=$?
             if [[ $exit_code != 0 ]];
             then
                 log_error "prepare_apt() step 2 failed with error %d\n" exit_code
                 rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
-                exit 4
+                exit ${EXIT_CODES[5]}
             fi
 
             # unpack the key
@@ -283,14 +320,174 @@ function prepare_apt() {
             then
                 log_error "prepare_apt() step 2 failed with error %d\n" $exit_code
                 rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
-                exit 4
+                exit ${EXIT_CODES[6]}
             fi
-            log_info "Downloaded key\n"
+            log_info "Downloaded key"
 
             # update
-            apt-get update
+            log_info "update - Retrieve new lists of packages"
+            apt-get update 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+            long_running_command $!
             exit_code=$?
-            log_info "'apt-get update' returned %d\n" $exit_code
+            log_info "update step completed with exit code: %d\n" $exit_code
         fi
     fi
 }
+
+BG_PROCESS_ACTIVE=false
+BG_PROCESS_ID=-1
+######################################
+# long_running_process
+#
+#    while a long-running process executes, shows 'busy' waiting feedback
+#
+# ARGUMENTS:
+#    the ID of a bg process
+#
+# OUTPUTS:
+# RETURN:
+#
+######################################
+
+function long_running_command() {
+    if [[ $# == 1 ]];
+    then
+        BG_PROCESS_ID=$1
+        BG_PROCESS_ACTIVE=true
+
+        while [ $BG_PROCESS_ACTIVE == true ];
+        do
+            for next_symbol in '-' '\\' '|' '/';
+            do
+                echo -en "$next_symbol\b"
+                sleep 0.2
+                local MYPS=$(ps -a | awk '/'$BG_PROCESS_ID'/ {print $1}')
+                if [ "$MYPS" == "" ];
+                then
+                    BG_PROCESS_ID=-1
+                    BG_PROCESS_ACTIVE=false
+                    break
+                fi
+            done
+            echo -e "\b"
+        done
+    fi
+}
+
+######################################
+# handle_ctrl_c
+#
+#     will be called when 'ctrl-c' or kill-9 is issued by the user.
+#     if a bg process has been launched, wait for it to finish.
+#
+# ARGUMENTS:
+#
+# OUTPUTS:
+#
+# RETURN:
+#
+######################################
+
+function handle_ctrl_c() {
+    log_info "ctrl C\n"
+    if [[ "$BG_PROCESS_ID" != "-1" ]];
+    then
+        while kill -0 $BG_PROCESS_ID &> /dev/null;
+        do
+            wait $BG_PROCESS_ID;
+        done
+
+        BG_PROCESS_ACTIVE=false
+        BG_PROCESS_ID=-1
+    fi
+
+    exit ${EXIT_CODES[14]}
+}
+
+######################################
+# handle_exit
+#
+#    will report telemetry if user has opted in
+#    will be called whenever an exit is encountered
+#
+# ARGUMENTS:
+#    exit code
+#
+# OUTPUTS:
+# RETURN:
+#
+######################################
+
+function handle_exit() {
+    local e_code=$?
+    log_info "Exit %d\n" $e_code
+
+    send_appinsight_telemetry e_code
+
+    # cleanup, always
+    cd ..
+    if [ -d "iot-edge-installer" ]
+    then
+        log_info "Removing temporary directory files for iot-edge-installer."
+        rm -rf iot-edge-installer 
+        log_info "Removed temporary directory files for iot-edge-installer."
+    fi
+
+    announce_my_log_file "All logs were appended to" $OUTPUT_FILE
+}
+
+######################################
+# handlers_init
+#
+# ARGUMENTS:
+#    initialize handlers
+#
+# OUTPUTS:
+# RETURN:
+#
+######################################
+
+function handlers_init() {
+    trap handle_ctrl_c SIGINT
+    trap handle_exit EXIT
+}
+
+export -f handlers_init
+
+# Constants
+InstrumentationKey="e83c2a5c-35d1-4a37-a5fe-b4f0f6e8e2a5"
+IngestionEndpoint="https://dc.services.visualstudio.com/v2/track"
+EventName="Azure-IoT-Edge-Installer-Summary"
+DeviceUniqueID="xinzedPC"
+CurrentTime=$(echo `date '+%Y-%m-%dT%H:%M:%S.%N'`)
+SchemaVersion="1.0"
+
+######################################
+# send_appinsight_telemetry
+#
+#    Send Application Insights event as a REST POST request with JSON body containing telemetry
+#
+# ARGUMENTS:
+#    CustomProperties: "status":[EXIT_CODE]
+#    CustomMeasurements: "duration":    
+#
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function send_appinsight_telemetry ()
+{
+    local customPropertiesObj='"status":'$1''
+
+    # validate that the user has opted in for telemetry collection
+    local optin=$(get_opt_in_selection )
+    if [[ $optin == true ]];
+    then
+        wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{"duration":57}}}}' $IngestionEndpoint
+    fi
+}
+
+export -f send_appinsight_telemetry
+
