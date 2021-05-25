@@ -115,7 +115,7 @@ then
     array=("$*")
     echo Unknown argument "${array[*]}"
     echo "Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>"
-    exit $EXIT_CODES[1]
+    exit ${EXIT_CODES[1]}
 fi
 
 if [[ "${parsed_cmds["SCOPE_ID"]}" == "" || "${parsed_cmds["REGISTRATION_ID"]}" == "" || "${parsed_cmds["SYMMETRIC_KEY"]}" == "" ]];
@@ -124,7 +124,7 @@ then
     echo     defined: "'"${!parsed_cmds[@]}"'"
     echo     given: "'"${parsed_cmds[@]}"'"
     echo "Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>"
-    exit $EXIT_CODES[2]
+    exit ${EXIT_CODES[2]}
 fi
 
 # check if current OS is Tier 1
@@ -134,7 +134,7 @@ is_os_tier1
 if [ "$?" != "0" ];
 then 
     log_error "This OS is not supported. Please visit this link for more information https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1."
-    exit $EXIT_CODES[3]
+    exit ${EXIT_CODES[3]}
 fi
 
 # run scripts in order, can take parsed input from above
@@ -150,4 +150,4 @@ install_edge_runtime ${parsed_cmds["SCOPE_ID"]}  ${parsed_cmds["REGISTRATION_ID"
 source validate-post-install.sh
 validate_post_install
 
-exit $EXIT_CODES[0]
+exit ${EXIT_CODES[0]}

@@ -262,35 +262,35 @@ export -f announce_my_log_file log_init log_error log_info log_warn log_debug
 function prepare_apt() {
     if [ $# != 1 ];
     then
-        exit EXIT_CODES[2]
+        exit ${EXIT_CODES[2]}
     else
         local platform=$1
         if [[ "$platform" == "" ]];
         then
             log_error "Unsupported platform."
-            exit EXIT_CODES[3]
+            exit ${EXIT_CODES[3]}
         else
             sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
 
             # sources list
             log_info "Adding'%s' to repository lists." $sources
-            wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT &
+            wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT
             local exit_code=$?
             if [[ $exit_code != 0 ]];
             then
                 log_error "prepare_apt() step 1 failed with error: %d\n" exit_code
-                exit EXIT_CODES[4]
+                exit ${EXIT_CODES[4]}
             fi
 
-            log_info "Downloading key\n"
+            log_info "Downloading key"
             local tmp_file=$(echo `mktemp -u`)
-            wget https://packages.microsoft.com/keys/microsoft.asc -q -O $tmp_file 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT &
+            wget https://packages.microsoft.com/keys/microsoft.asc -q -O $tmp_file 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT
             exit_code=$?
             if [[ $exit_code != 0 ]];
             then
                 log_error "prepare_apt() step 2 failed with error %d\n" exit_code
                 rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
-                exit EXIT_CODES[5]
+                exit ${EXIT_CODES[5]}
             fi
 
             # unpack the key
@@ -308,16 +308,15 @@ function prepare_apt() {
             then
                 log_error "prepare_apt() step 2 failed with error %d\n" $exit_code
                 rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
-                exit EXIT_CODES[6]
+                exit ${EXIT_CODES[6]}
             fi
-            log_info "Downloaded key\n"
+            log_info "Downloaded key"
 
             # update
             ap-get update 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT &
             long_running_command $!
             exit_code=$?
             log_info "'apt-get update' returned %d\n" $exit_code
-            exit EXIT_CODES[7]
         fi
     fi
 }
@@ -389,7 +388,7 @@ function handle_ctrl_c() {
         BG_PROCESS_ID=-1
     fi
 
-    exit $EXIT_CODES[14]
+    exit ${EXIT_CODES[14]}
 }
 
 ######################################

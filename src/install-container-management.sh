@@ -27,8 +27,8 @@ install_container_management() {
         exit_code=$?
         if [[ $exit_code != 0 ]];
         then
-            log_info "'apt-get install moby-engine' returned %d\n" $exit_code
-            exit $EXIT_CODES[8]
+            log_info "'apt-get install moby-engine' returned %d" $exit_code
+            exit ${EXIT_CODES[8]}
         fi
     fi
 }
