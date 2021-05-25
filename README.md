@@ -1,4 +1,4 @@
-# Azure IoT Edge configuration tool
+# Azure IoT Edge configuration tool [![Build Status](https://dev.azure.com/mseng/VSIoT/_apis/build/status/Azure%20IoT%20Edge/iotedgehubdev?branchName=master)](https://dev.azure.com/Azure-IoT-DDE-EdgeExperience/IoTEdgeConfig/_build?definitionId=28&branchName=main)
 
 Azure IoT Edge configuration tool (the Tool) is a command-line tool that installs and configures Azure IoT Edge on a device. The Tool greatly simplifies the configuration of IoT Edge by automating several steps into single command.
 
