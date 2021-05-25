@@ -313,7 +313,7 @@ function prepare_apt() {
             log_info "Downloaded key"
 
             # update
-            ap-get update 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+            apt-get update 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
             long_running_command $!
             exit_code=$?
             log_info "'apt-get update' returned %d\n" $exit_code
