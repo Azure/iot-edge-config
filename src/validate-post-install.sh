@@ -28,11 +28,11 @@ function is_service_running() {
         log_error "Run these commands to gather additional logs:"
         log_error "sudo iotedge system logs"
         log_error "sudo iotedge check"
-        echo false
+        return 1
     fi
 
     log_info "'%s' is running." $service_name
-	echo true
+	return 0
 }
 
 function validate_post_install() {
