@@ -30,8 +30,9 @@ function is_service_running() {
         log_error "sudo iotedge check"
         return 1
     fi
+
     log_info "'%s' is running." $service_name
-    return 0 
+    return 0
 }
 
 function validate_post_install() {

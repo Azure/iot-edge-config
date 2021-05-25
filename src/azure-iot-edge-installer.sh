@@ -95,6 +95,7 @@ printf "Downloaded helper files to temporary directory ./iot-edge-installer\n"
 # import utils
 source utils.sh
 log_init
+handlers_init
 
 # add flag:variable_name dictionary entries
 add_option_args "TELEMETRY_OPT_OUT" -nt --telemetry-opt-out
@@ -114,7 +115,7 @@ then
     array=("$*")
     echo Unknown argument "${array[*]}"
     echo "Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>"
-    exit 1
+    exit ${EXIT_CODES[1]}
 fi
 
 if [[ "${parsed_cmds["SCOPE_ID"]}" == "" || "${parsed_cmds["REGISTRATION_ID"]}" == "" || "${parsed_cmds["SYMMETRIC_KEY"]}" == "" ]];
@@ -123,7 +124,7 @@ then
     echo     defined: "'"${!parsed_cmds[@]}"'"
     echo     given: "'"${parsed_cmds[@]}"'"
     echo "Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>"
-    exit 1
+    exit ${EXIT_CODES[2]}
 fi
 
 # check if current OS is Tier 1
@@ -133,36 +134,20 @@ is_os_tier1
 if [ "$?" != "0" ];
 then 
     log_error "This OS is not supported. Please visit this link for more information https://docs.microsoft.com/en-us/azure/iot-edge/support?view=iotedge-2020-11#tier-1."
-else
-    # run scripts in order, can take parsed input from above
-    platform=$(get_platform)
-    prepare_apt $platform
-
-    OK_TO_CONTINUE=true
-    source install-container-management.sh
-    install_container_management
-
-    if [[ $OK_TO_CONTINUE == true ]];
-    then
-        OK_TO_CONTINUE=false
-        source install-edge-runtime.sh
-        install_edge_runtime ${parsed_cmds["SCOPE_ID"]}  ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
-
-        if [[ $OK_TO_CONTINUE == true ]];
-        then
-            source validate-post-install.sh
-            validate_post_install
-        fi
-    fi
+    exit ${EXIT_CODES[3]}
 fi
 
-# cleanup, always
-cd ..
-if [ -d "iot-edge-installer" ] 
-then
-    log_info "Removing temporary directory files for iot-edge-installer."
-    rm -rf iot-edge-installer
-    log_info "Removed temporary directory files for iot-edge-installer."
-fi
+# run scripts in order, can take parsed input from above
+platform=$(get_platform)
+prepare_apt $platform
 
-announce_my_log_file "All logs were appended to" $OUTPUT_FILE
+source install-container-management.sh
+install_container_management
+
+source install-edge-runtime.sh
+install_edge_runtime ${parsed_cmds["SCOPE_ID"]}  ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
+
+source validate-post-install.sh
+validate_post_install
+
+exit ${EXIT_CODES[0]}
