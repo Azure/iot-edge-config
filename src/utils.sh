@@ -274,8 +274,7 @@ function prepare_apt() {
 
             # sources list
             log_info "Adding'%s' to repository lists." $sources
-            wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT &
-            long_running_command $!
+            wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT
             local exit_code=$?
             if [[ $exit_code != 0 ]];
             then
@@ -285,8 +284,7 @@ function prepare_apt() {
 
             log_info "Downloading key"
             local tmp_file=$(echo `mktemp -u`)
-            wget https://packages.microsoft.com/keys/microsoft.asc -q -O $tmp_file 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT &
-            long_running_command $!
+            wget https://packages.microsoft.com/keys/microsoft.asc -q -O $tmp_file 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT
             exit_code=$?
             if [[ $exit_code != 0 ]];
             then
