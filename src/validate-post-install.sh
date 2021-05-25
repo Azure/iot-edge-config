@@ -32,7 +32,7 @@ function is_service_running() {
     fi
 
     log_info "'%s' is running." $service_name
-	return 0
+    return 0
 }
 
 function validate_post_install() {
