@@ -26,33 +26,34 @@ function install_edge_runtime() {
     if [[ $# != 3 || "$1" == "" || "$2" == "" || "$3" == "" ]];
     then
         log_error "Scope ID, Registration ID, and the Symmetric Key are required"
-        return
+        exit $EXIT_CODES[2]
     fi
 
     if [ -x "$(command -v iotedge)" ];
     then
         log_error "Edge runtime is already available."
-        return
-    else
-        log_info "install_edge_runtime..."
+        exit $EXIT_CODES[9]
     fi
 
-    apt-get install aziot-edge -y
+    log_info "install_edge_runtime..."
+
+    apt-get install aziot-edge -y 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT &
+    long_running_command $!
     exit_code=$?
     if [[ $exit_code != 0 ]];
     then
-        log_info "'apt-get install aziot-edge' returned %d\n" $exit_code
-        return
+        log_info "'apt-get install aziot-edge' returned %d" $exit_code
+        exit $EXIT_CODES[10]
     fi
 
     # create .toml from template
     log_info "create .toml from template."
-    cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml
+    cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml &>/dev/null
     exit_code=$?
     if [[ $exit_code != 0 ]];
     then
-        log_info "'cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml' returned %d\n" $exit_code
-        return
+        log_info "'cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml' returned %d" $exit_code
+        exit $EXIT_CODES[11]
     fi
 
     local SCOPE_ID=$1
@@ -76,10 +77,15 @@ symmetric_key = { value = \"'$SYMMETRIC_KEY'\" }                                
 # symmetric_key = { uri = "pkcs11:slot-id=0;object=device%20id?pin-value=1234" }                                         # PKCS#11 URI\
 \
 ## DPS provisioning with X.509 certificate\
-    '  /etc/aziot/config.toml
+    '  /etc/aziot/config.toml &>/dev/null
+
+    exit_code=$?
+    if [[ $exit_code != 0 ]];
+    then
+        log_info "'sed ....'" $exit_code
+        exit $EXIT_CODES[12]
+    fi
 
     log_info "Apply settings - this will restart the edge"
     iotedge config apply
-
-    OK_TO_CONTINUE=true
 }

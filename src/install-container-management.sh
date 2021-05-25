@@ -22,12 +22,13 @@ install_container_management() {
     else
         log_info "Running install-container-management.sh"
 
-        apt-get install moby-engine -y
+        apt-get install moby-engine -y 2>$STDERR_REDIRECT 1>$STDOUT_REDIRECT &
+        long_running_command $!
         exit_code=$?
         if [[ $exit_code != 0 ]];
         then
-            OK_TO_CONTINUE=false
             log_info "'apt-get install moby-engine' returned %d\n" $exit_code
+            exit $EXIT_CODES[8]
         fi
     fi
 }
