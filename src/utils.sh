@@ -358,8 +358,8 @@ function long_running_command() {
                     break
                 fi
             done
-            echo -e "\b"
         done
+        echo -en "\b"
     fi
 }
 
