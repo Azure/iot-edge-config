@@ -420,9 +420,13 @@ function handle_ctrl_c() {
 
 function handle_exit() {
     local e_code=$?
-    log_info "Exit %d\n" $e_code
+    log_info "Exit %d" $e_code
 
-    send_appinsight_event_telemetry $e_code
+    local end=`date +%s`
+    runtime=$((end-start))
+    log_info "Runtime duration %d" $runtime
+
+    send_appinsight_event_telemetry $e_code $runtime
 
     # cleanup, always
     cd ..

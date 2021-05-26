@@ -3,6 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# Record start time, this value is used for calculating execution time
+start=`date +%s`
+
 if [[ $EUID -ne 0 ]];
 then
     echo "$(echo -en "\e[31m")ERROR: $(echo -en "\e[00m")$0 requires elevated privileges.. "
