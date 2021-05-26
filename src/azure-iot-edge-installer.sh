@@ -11,7 +11,7 @@ fi
 
 VERSION_TAG="v0.0.1"
 
-# where am i
+# where am I
 TOPDIR=$(dirname $0)
 
 ######################################
@@ -103,7 +103,7 @@ add_option_args "VERBOSE_LOGGING" -v --verbose
 add_option_args "SCOPE_ID" -s --scope-id
 add_option_args "REGISTRATION_ID" -r --registration-id
 add_option_args "SYMMETRIC_KEY" -k --symmetric-key
-add_option_args "SYMMETRIC_KEY" -cv --correlation-vector
+add_option_args "CORRELATION_VECTOR" -cv --correlation-vector
 
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
