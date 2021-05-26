@@ -479,7 +479,7 @@ function generate_uuid() {
 }
 
 # Constants
-InstrumentationKey="e83c2a5c-35d1-4a37-a5fe-b4f0f6e8e2a5"
+InstrumentationKey="d403f627-57b8-4fb0-8001-c51b7466682d"
 IngestionEndpoint="https://dc.services.visualstudio.com/v2/track"
 EventName="Azure-IoT-Edge-Installer-Summary"
 DeviceUniqueID="xinzedPC"
@@ -511,9 +511,9 @@ function send_appinsight_event_telemetry ()
     then
         log_info "Ready to send telemetry to AppInsights endpoint with wget"
         local CurrentTime=$(echo `date --utc '+%Y-%m-%dT%H:%M:%S.%N'`)
-        echo '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}'
 
         wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}' $IngestionEndpoint 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+        
         log_info "Finished sending telemetry to AppInsights endpoint with wget"
     fi
 }
