@@ -33,7 +33,7 @@ stages:
     
   - job: LinuxE2ETests
     pool:
-      vmImage: ubuntu-18.04
+      name: IoT-Devices-E2E
     steps: 
     - template: continuous-e2e.yml
     dependsOn: SetupScript
