@@ -454,28 +454,32 @@ function handlers_init() {
 
 export -f handlers_init
 
+######################################
+# generate_uuid
+#
+# ARGUMENTS:
+#    generate UUIDs
+#
+# OUTPUTS: UUID
+# RETURN:
+#
+######################################
+
+source /etc/os-release
 function generate_uuid() {
-    source /etc/os-release
     case $ID in
         ubuntu)
-            if [ "$VERSION_ID" == "18.04" ];
-            then
-                uuidgen
-            fi
+            uuidgen
             ;;
 
         raspbian)
-            if [ "$VERSION_CODENAME" == "stretch" ] || [ "$VERSION_ID" == "9" ];
-            then
-                uuid
-            fi
+            uuid
             ;;
 
         *)
             log_error "OS is not Tier 1"
             ;;
     esac
-
 }
 
 # Constants
@@ -513,7 +517,7 @@ function send_appinsight_event_telemetry ()
         local CurrentTime=$(echo `date --utc '+%Y-%m-%dT%H:%M:%S.%N'`)
 
         wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}' $IngestionEndpoint 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
-        
+
         log_info "Finished sending telemetry to AppInsights endpoint with wget"
     fi
 }
