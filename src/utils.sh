@@ -411,6 +411,10 @@ function handle_exit() {
     local e_code=$?
     log_info "Exit %d\n" $e_code
 
+    local end=`date +%s`
+    runtime=$((end-start))
+    log_info "Runtime duration %d\n" $runtime
+
     # cleanup, always
     cd ..
     if [ -d "iot-edge-installer" ]
