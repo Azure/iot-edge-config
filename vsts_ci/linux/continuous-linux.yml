@@ -1,14 +1,16 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 steps:
 - script: echo Hello Linux!
   displayName: 'Echo Hello Linux'
 
 - script: |
     cd tests/unit-tests
-    chmod +x ./*.sh
-    ./test-install-container-management.sh  
-    ./test-install-edge-runtime.sh  
+    chmod +x ./*.sh    
     ./test-validate-post-install.sh  
     ./test-validate-tier1-os.sh
     ./test-cmd-parser.sh
     ./test-logger.sh
+    ./test-telemetry-flag.sh
   displayName: 'Run All Linux Unit Tests'

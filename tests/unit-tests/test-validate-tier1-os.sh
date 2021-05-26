@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-source src/validate-tier1-os.sh
-source tests/test_utils.sh
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+source ../../src/utils.sh
+source ../../src/validate-tier1-os.sh
+source ../test_utils.sh
 
 test_ubuntu1804() {
     ID="ubuntu"
@@ -28,3 +32,5 @@ test_tier2() {
 test_ubuntu1804
 test_raspbian
 test_tier2
+
+show_test_totals

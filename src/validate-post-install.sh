@@ -15,7 +15,6 @@
 # RETURN:
 #    0 if service is running, 1 otherwise
 ######################################
-source utils.sh
 
 function is_service_running() {
     local service_name=${1,,}
@@ -30,8 +29,9 @@ function is_service_running() {
         log_error "sudo iotedge check"
         return 1
     fi
+
     log_info "'%s' is running." $service_name
-    return 0 
+    return 0
 }
 
 function validate_post_install() {
@@ -44,9 +44,9 @@ function validate_post_install() {
                                  "aziot-certd"
                                  "aziot-tpmd")
 
-    for i in "${iotedge_services[@]}"
+    for service_name in "${iotedge_services[@]}"
     do
-        is_service_running ${iotedge_services[$i]} "$status"
+        is_service_running $service_name "$status"
     done
 
     log_info "Post install validation completed."
