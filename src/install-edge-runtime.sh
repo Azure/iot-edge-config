@@ -48,7 +48,7 @@ function install_edge_runtime() {
     log_info "Installed edge runtime..."
 
     # create .toml from template
-    log_info "Create instanance configuration .toml from template."
+    log_info "Create instance configuration .toml from template."
     cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml &>/dev/null
     exit_code=$?
     if [[ $exit_code != 0 ]];

@@ -134,7 +134,7 @@ echo Run the Azure IoT Edge Installer
 #wget -O azure-iot-edge-installer.sh https://github.com/Azure/iot-edge-config/releases/latest/download/azure-iot-edge-installer.sh \
 cd ./../../src
 chmod +x azure-iot-edge-installer.sh
-sudo LOCAL_E2E=1 ./azure-iot-edge-installer.sh --scope-id "$scope_id" --registration-id "$device_id" --symmetric-key "$primary_key"
+sudo LOCAL_E2E=1 ./azure-iot-edge-installer.sh --telemetry-opt-out --scope-id "$scope_id" --registration-id "$device_id" --symmetric-key "$primary_key"
 rm -rf azure-iot-edge-installer.sh
 
 # give 2 mins for changes to propagate to central app
