@@ -35,6 +35,8 @@ declare -a EXIT_CODES=(0    # success
                        14   # ctrl-c or kill
                       )
 
+CORRELATION_VECTOR=""
+
 ######################################
 # set_opt_out_selection
 #
@@ -50,7 +52,7 @@ declare -a EXIT_CODES=(0    # success
 ######################################
 
 function set_opt_out_selection() {
-    if [[ $# == 1 && $1 == true ]];
+    if [ $1 == true ];
     then
         OPT_IN=false
         log_info "The user has opted out of sending usage telemetry."
@@ -58,6 +60,15 @@ function set_opt_out_selection() {
         OPT_IN=true
         log_info "The user has opted in for sending usage telemetry."
     fi
+
+    # handle correlation vector
+    if [ -z $2 ];
+    then
+        CORRELATION_VECTOR=$(generate_uuid)
+    else
+        CORRELATION_VECTOR=$2
+    fi
+
 }
 
 function get_opt_in_selection() {
@@ -411,6 +422,8 @@ function handle_exit() {
     local e_code=$?
     log_info "Exit %d\n" $e_code
 
+    send_appinsight_event_telemetry $e_code
+
     # cleanup, always
     cd ..
     if [ -d "iot-edge-installer" ]
@@ -440,3 +453,72 @@ function handlers_init() {
 }
 
 export -f handlers_init
+
+######################################
+# generate_uuid
+#
+# ARGUMENTS:
+#    generate UUIDs
+#
+# OUTPUTS: UUID
+# RETURN:
+#
+######################################
+
+source /etc/os-release
+function generate_uuid() {
+    case $ID in
+        ubuntu)
+            uuidgen
+            ;;
+
+        raspbian)
+            uuid
+            ;;
+
+        *)
+            log_error "OS is not Tier 1"
+            ;;
+    esac
+}
+
+# Constants
+InstrumentationKey="d403f627-57b8-4fb0-8001-c51b7466682d"
+IngestionEndpoint="https://dc.services.visualstudio.com/v2/track"
+EventName="Azure-IoT-Edge-Installer-Summary"
+DeviceUniqueID="xinzedPC"
+SchemaVersion="1.0"
+
+######################################
+# send_appinsight_event_telemetry
+#
+#    Send Application Insights event as a REST POST request with JSON body containing telemetry
+#
+# ARGUMENTS:
+#    CustomProperties: "status":[EXIT_CODE]
+#    CustomMeasurements: "duration":    
+#
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function send_appinsight_event_telemetry ()
+{
+    local customPropertiesObj='"status":'$1''
+    local customMeasurementsObj='"duration":'$2''
+
+    # validate that the user has opted in for telemetry collection
+    local optin=$(get_opt_in_selection)
+    if [[ $optin == true ]];
+    then
+        log_info "Ready to send telemetry to AppInsights endpoint with wget"
+        local CurrentTime=$(echo `date --utc '+%Y-%m-%dT%H:%M:%S.%N'`)
+
+        wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}' $IngestionEndpoint 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+
+        log_info "Finished sending telemetry to AppInsights endpoint with wget"
+    fi
+}
+
