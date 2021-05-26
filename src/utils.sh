@@ -64,7 +64,7 @@ function set_opt_out_selection() {
     # handle correlation vector
     if [ -z $2 ];
     then
-        CORRELATION_VECTOR=$(uuidgen)
+        CORRELATION_VECTOR=$(generate_uuid)
     else
         CORRELATION_VECTOR=$2
     fi
@@ -422,7 +422,7 @@ function handle_exit() {
     local e_code=$?
     log_info "Exit %d\n" $e_code
 
-    send_appinsight_telemetry e_code
+    send_appinsight_event_telemetry $e_code
 
     # cleanup, always
     cd ..
@@ -454,16 +454,39 @@ function handlers_init() {
 
 export -f handlers_init
 
+function generate_uuid() {
+    source /etc/os-release
+    case $ID in
+        ubuntu)
+            if [ "$VERSION_ID" == "18.04" ];
+            then
+                uuidgen
+            fi
+            ;;
+
+        raspbian)
+            if [ "$VERSION_CODENAME" == "stretch" ] || [ "$VERSION_ID" == "9" ];
+            then
+                uuid
+            fi
+            ;;
+
+        *)
+            log_error "OS is not Tier 1"
+            ;;
+    esac
+
+}
+
 # Constants
 InstrumentationKey="e83c2a5c-35d1-4a37-a5fe-b4f0f6e8e2a5"
 IngestionEndpoint="https://dc.services.visualstudio.com/v2/track"
 EventName="Azure-IoT-Edge-Installer-Summary"
 DeviceUniqueID="xinzedPC"
-CurrentTime=$(echo `date '+%Y-%m-%dT%H:%M:%S.%N'`)
 SchemaVersion="1.0"
 
 ######################################
-# send_appinsight_telemetry
+# send_appinsight_event_telemetry
 #
 #    Send Application Insights event as a REST POST request with JSON body containing telemetry
 #
@@ -477,17 +500,21 @@ SchemaVersion="1.0"
 #
 ######################################
 
-function send_appinsight_telemetry ()
+function send_appinsight_event_telemetry ()
 {
     local customPropertiesObj='"status":'$1''
+    local customMeasurementsObj='"duration":'$2''
 
     # validate that the user has opted in for telemetry collection
-    local optin=$(get_opt_in_selection )
+    local optin=$(get_opt_in_selection)
     if [[ $optin == true ]];
     then
-        wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{"duration":57}}}}' $IngestionEndpoint -O $tmp_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+        log_info "Ready to send telemetry to AppInsights endpoint with wget"
+        local CurrentTime=$(echo `date --utc '+%Y-%m-%dT%H:%M:%S.%N'`)
+        echo '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}'
+
+        wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}' $IngestionEndpoint 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+        log_info "Finished sending telemetry to AppInsights endpoint with wget"
     fi
 }
-
-export -f send_appinsight_telemetry
 

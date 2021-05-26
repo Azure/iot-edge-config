@@ -129,7 +129,6 @@ then
 fi
 
 # check if current OS is Tier 1
-source /etc/os-release
 source validate-tier1-os.sh
 is_os_tier1
 if [ "$?" != "0" ];
