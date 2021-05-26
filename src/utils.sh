@@ -273,15 +273,15 @@ function prepare_apt() {
             sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
 
             # sources list
-            log_info "Adding'%s' to repository lists." $sources
+            log_info "Adding'%s' to package sources lists." $sources
             wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             local exit_code=$?
             if [[ $exit_code != 0 ]];
             then
-                log_error "prepare_apt() step 1 failed with error: %d\n" exit_code
+                log_error "prepare_apt() step 1 failed with error: %d" exit_code
                 exit ${EXIT_CODES[4]}
             fi
-            log_info "Added'%s' to repository lists." $sources
+            log_info "Added'%s' to package sources lists." $sources
 
             log_info "Downloading key"
             local tmp_file=$(echo `mktemp -u`)
@@ -289,7 +289,7 @@ function prepare_apt() {
             exit_code=$?
             if [[ $exit_code != 0 ]];
             then
-                log_error "prepare_apt() step 2 failed with error %d\n" exit_code
+                log_error "prepare_apt() step 2 failed with error %d" exit_code
                 rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
                 exit ${EXIT_CODES[5]}
             fi
@@ -307,7 +307,7 @@ function prepare_apt() {
 
             if [[ $exit_code != 0 ]];
             then
-                log_error "prepare_apt() step 2 failed with error %d\n" $exit_code
+                log_error "prepare_apt() step 2 failed with error %d" $exit_code
                 rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
                 exit ${EXIT_CODES[6]}
             fi
@@ -318,7 +318,7 @@ function prepare_apt() {
             apt-get update 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
             long_running_command $!
             exit_code=$?
-            log_info "update step completed with exit code: %d\n" $exit_code
+            log_info "update step completed with exit code: %d" $exit_code
         fi
     fi
 }
@@ -349,7 +349,7 @@ function long_running_command() {
             for next_symbol in '-' '\\' '|' '/';
             do
                 echo -en "$next_symbol\b"
-                sleep 0.2
+                sleep 0.15
                 local MYPS=$(ps -a | awk '/'$BG_PROCESS_ID'/ {print $1}')
                 if [ "$MYPS" == "" ];
                 then
@@ -358,8 +358,8 @@ function long_running_command() {
                     break
                 fi
             done
-            echo -e "\b"
         done
+        echo -en " \b"
     fi
 }
 
