@@ -14,7 +14,7 @@ fi
 
 VERSION_TAG="v0.0.1"
 
-# where am i
+# where am I
 TOPDIR=$(dirname $0)
 
 ######################################
@@ -106,11 +106,12 @@ add_option_args "VERBOSE_LOGGING" -v --verbose
 add_option_args "SCOPE_ID" -s --scope-id
 add_option_args "REGISTRATION_ID" -r --registration-id
 add_option_args "SYMMETRIC_KEY" -k --symmetric-key
+add_option_args "CORRELATION_VECTOR" -cv --correlation-vector
 
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
 
-set_opt_out_selection ${parsed_cmds["TELEMETRY_OPT_OUT"]}
+set_opt_out_selection ${parsed_cmds["TELEMETRY_OPT_OUT"]} $parsed_cmds["CORRELATION_VECTOR"]
 
 # validate that all arguments are acceptable / known
 if [[ ${#@} > 0 && ${#parsed_cmds[*]} == 0 ]];
@@ -131,7 +132,6 @@ then
 fi
 
 # check if current OS is Tier 1
-source /etc/os-release
 source validate-tier1-os.sh
 is_os_tier1
 if [ "$?" != "0" ];
