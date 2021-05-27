@@ -18,7 +18,8 @@ stages:
     - script: |
         sudo apt update
         sudo apt install jq
-      displayName: 'Install jq'
+        sudo apt install tree -y
+      displayName: 'Install jq tree'
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
