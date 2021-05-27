@@ -37,8 +37,7 @@ function install_edge_runtime() {
 
     log_info "Installing edge runtime..."
 
-    apt-get install aziot-edge -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
-    long_running_command $!
+    apt-get install aziot-edge -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
     exit_code=$?
     if [[ $exit_code != 0 ]];
     then
