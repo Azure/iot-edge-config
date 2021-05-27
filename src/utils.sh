@@ -289,6 +289,7 @@ function prepare_apt() {
         else
             sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
 
+            cat /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             # sources list
             log_info "Adding '%s' to package sources lists." $sources
             wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
@@ -298,7 +299,7 @@ function prepare_apt() {
                 log_error "prepare_apt() step 1 failed with error: %d" exit_code
                 exit ${EXIT_CODES[4]}
             fi
-			cat /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+            cat /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             log_info "Added '%s' to package sources lists." $sources
 
             log_info "Downloading key"
