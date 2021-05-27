@@ -36,6 +36,7 @@ declare -a EXIT_CODES=(0    # success
                       )
 
 CORRELATION_VECTOR=""
+DeviceUniqueID=""
 
 ######################################
 # set_opt_out_selection
@@ -44,6 +45,9 @@ CORRELATION_VECTOR=""
 #
 # ARGUMENTS:
 #    does_the_user_NOT_consent_to_sending_telemetry
+#    correlation vector specific to the run
+#    scope id
+#    registration id
 #
 # OUTPUTS:
 #    Write output to stdout
@@ -52,23 +56,25 @@ CORRELATION_VECTOR=""
 ######################################
 
 function set_opt_out_selection() {
-    if [ $1 == true ];
+    if [[ "$LOCAL_E2E" == "1" || $1 == true ]];
     then
         OPT_IN=false
         log_info "The user has opted out of sending usage telemetry."
     else
         OPT_IN=true
         log_info "The user has opted in for sending usage telemetry."
-    fi
 
-    # handle correlation vector
-    if [ -z $2 ];
-    then
-        CORRELATION_VECTOR=$(generate_uuid)
-    else
-        CORRELATION_VECTOR=$2
-    fi
+        # handle correlation vector
+        if [ -z $2 ];
+        then
+            CORRELATION_VECTOR=$(generate_uuid)
+        else
+            CORRELATION_VECTOR=$2
+        fi
 
+        local ret_value=$(openssl dgst -hmac $3 <<< `echo $3$4`)
+        DeviceUniqueID=${ret_value##* }
+    fi
 }
 
 function get_opt_in_selection() {
@@ -490,7 +496,6 @@ function generate_uuid() {
 InstrumentationKey="d403f627-57b8-4fb0-8001-c51b7466682d"
 IngestionEndpoint="https://dc.services.visualstudio.com/v2/track"
 EventName="Azure-IoT-Edge-Installer-Summary"
-DeviceUniqueID="xinzedPC"
 SchemaVersion="1.0"
 
 ######################################
