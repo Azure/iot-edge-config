@@ -16,13 +16,9 @@ stages:
   - job: SetupScript
     steps:
     - script: |
-        sudo apt update
-        sudo apt install jq
-        sudo apt install tree -y
-        sudo apt upgrade -y
-        sudo echo -e "\ndeb [arch=amd64,arm64,armhf] https://packages.microsoft.com/ubuntu/18.04/multiarch/prod bionic main" > /etc/apt/sources.list.d/microsoft-prod.list
         sudo apt-get update
-        sudo apt-get install aziot-edge -y
+        sudo apt-get install jq
+        sudo apt-get install tree -y
       displayName: 'Install jq tree'
     - task: AzureCLI@2
       inputs:
@@ -35,7 +31,7 @@ stages:
           az --version
           az account set -s $(AzureSubscriptionId)
       displayName: 'Set Azure resources'
-    
+
   - job: LinuxE2ETests
     pool:
       vmImage: ubuntu-18.04
