@@ -307,7 +307,7 @@ function prepare_apt() {
             if [[ $exit_code != 0 ]];
             then
                 log_error "prepare_apt() step 2 failed with error %d" exit_code
-                rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
+                rm -f /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
                 exit ${EXIT_CODES[5]}
             fi
 
@@ -315,17 +315,17 @@ function prepare_apt() {
             local gpg_file=/etc/apt/trusted.gpg.d/microsoft.gpg
             if [[ -f $gpg_file ]];
             then
-                rm -f $gpg_file &> /dev/null
+                rm -f $gpg_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             fi
             gpg --dearmor --output $gpg_file $tmp_file
             exit_code=$?
 
-            rm -f $tmp_file &> /dev/null
+            rm -f $tmp_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
 
             if [[ $exit_code != 0 ]];
             then
                 log_error "prepare_apt() step 2 failed with error %d" $exit_code
-                rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
+                rm -f /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
                 exit ${EXIT_CODES[6]}
             fi
             log_info "Downloaded key"

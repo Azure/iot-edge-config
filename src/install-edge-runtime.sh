@@ -49,7 +49,7 @@ function install_edge_runtime() {
 
     # create .toml from template
     log_info "Create instance configuration .toml from template."
-    cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml &>/dev/null
+    cp /etc/aziot/config.toml.edge.template /etc/aziot/config.toml 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
     exit_code=$?
     if [[ $exit_code != 0 ]];
     then
