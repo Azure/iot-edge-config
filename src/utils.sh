@@ -443,6 +443,13 @@ function handle_exit() {
         log_info "Removed temporary directory files for iot-edge-installer."
     fi
 
+    if [[ "$LOCAL_E2E" == "1" && $e_code != 0 ]];
+    then
+        echo errors-file -----------------------------
+        cat $STDERR_REDIRECT
+        echo errors-file -----------------------------
+    fi
+
     announce_my_log_file "All logs were appended to" $OUTPUT_FILE
 }
 
