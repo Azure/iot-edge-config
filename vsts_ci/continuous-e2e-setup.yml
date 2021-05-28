@@ -1,0 +1,18 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+steps:
+- script: |
+    sudo apt update
+    sudo apt install jq
+  displayName: 'Install jq'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az upgrade
+      az extension add --name azure-iot
+      az --version
+      az account set -s $(AzureSubscriptionId)
+  displayName: 'Set Azure resources'

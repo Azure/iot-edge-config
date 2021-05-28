@@ -13,37 +13,21 @@ stages:
 - stage: E2ETest
   displayName: E2E Tests
   jobs:
-  - job: SetupScript
-    steps:
-    - script: |
-        sudo apt update
-        sudo apt install jq
-      displayName: 'Install jq'
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az upgrade
-          az extension add --name azure-iot
-          az --version
-          az account set -s $(AzureSubscriptionId)
-      displayName: 'Set Azure resources'
-    
   - job: LinuxE2ETests
     pool:
       name: IoT-Devices-E2E
     steps: 
+    - template: continuous-e2e-setup.yml
     - template: continuous-e2e.yml
-    dependsOn: SetupScript
+    dependsOn: []
     condition: succeeded()
 
   - job: RaspberryPiE2ETests
     pool:
       vmImage: ubuntu-18.04
     steps:
+    - template: continuous-e2e-setup.yml
     - template: continuous-e2e.yml
-    dependsOn: SetupScript
+    dependsOn: []
     condition: succeeded()
   
