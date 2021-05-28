@@ -292,14 +292,14 @@ function prepare_apt() {
             cat /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             # sources list
             log_info "Adding '%s' to package sources lists." $sources
-            wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
-            local exit_code=$?
-            if [[ $exit_code != 0 ]];
-            then
-                log_error "prepare_apt() step 1 failed with error: %d" exit_code
-                exit ${EXIT_CODES[4]}
-            fi
-            cat /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+            #wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+            #local exit_code=$?
+            #if [[ $exit_code != 0 ]];
+            #then
+            #    log_error "prepare_apt() step 1 failed with error: %d" exit_code
+            #    exit ${EXIT_CODES[4]}
+            #fi
+            #cat /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             log_info "Added '%s' to package sources lists." $sources
 
             log_info "Downloading key"
