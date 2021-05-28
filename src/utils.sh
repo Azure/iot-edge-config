@@ -36,6 +36,7 @@ declare -a EXIT_CODES=(0    # success
                       )
 
 CORRELATION_VECTOR=""
+DEVICE_UNIQUE_ID=""
 
 ######################################
 # set_opt_out_selection
@@ -44,6 +45,9 @@ CORRELATION_VECTOR=""
 #
 # ARGUMENTS:
 #    does_the_user_NOT_consent_to_sending_telemetry
+#    correlation vector specific to the run
+#    scope id
+#    registration id
 #
 # OUTPUTS:
 #    Write output to stdout
@@ -52,23 +56,25 @@ CORRELATION_VECTOR=""
 ######################################
 
 function set_opt_out_selection() {
-    if [ $1 == true ];
+    if [[ "$LOCAL_E2E" == "1" || $1 == true ]];
     then
         OPT_IN=false
         log_info "The user has opted out of sending usage telemetry."
     else
         OPT_IN=true
         log_info "The user has opted in for sending usage telemetry."
-    fi
 
-    # handle correlation vector
-    if [ -z $2 ];
-    then
-        CORRELATION_VECTOR=$(generate_uuid)
-    else
-        CORRELATION_VECTOR=$2
-    fi
+        # handle correlation vector
+        if [ -z $2 ];
+        then
+            CORRELATION_VECTOR=$(generate_uuid)
+        else
+            CORRELATION_VECTOR=$2
+        fi
 
+        local ret_value=$(openssl dgst -hmac $INSTRUMENTATION_KEY <<< `echo $3$4`)
+        DEVICE_UNIQUE_ID=${ret_value##* }
+    fi
 }
 
 function get_opt_in_selection() {
@@ -284,7 +290,7 @@ function prepare_apt() {
             sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
 
             # sources list
-            log_info "Adding'%s' to package sources lists." $sources
+            log_info "Adding '%s' to package sources lists." $sources
             wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             local exit_code=$?
             if [[ $exit_code != 0 ]];
@@ -292,7 +298,7 @@ function prepare_apt() {
                 log_error "prepare_apt() step 1 failed with error: %d" exit_code
                 exit ${EXIT_CODES[4]}
             fi
-            log_info "Added'%s' to package sources lists." $sources
+            log_info "Added '%s' to package sources lists." $sources
 
             log_info "Downloading key"
             local tmp_file=$(echo `mktemp -u`)
@@ -301,7 +307,7 @@ function prepare_apt() {
             if [[ $exit_code != 0 ]];
             then
                 log_error "prepare_apt() step 2 failed with error %d" exit_code
-                rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
+                rm -f /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
                 exit ${EXIT_CODES[5]}
             fi
 
@@ -309,17 +315,17 @@ function prepare_apt() {
             local gpg_file=/etc/apt/trusted.gpg.d/microsoft.gpg
             if [[ -f $gpg_file ]];
             then
-                rm -f $gpg_file &> /dev/null
+                rm -f $gpg_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             fi
             gpg --dearmor --output $gpg_file $tmp_file
             exit_code=$?
 
-            rm -f $tmp_file &> /dev/null
+            rm -f $tmp_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
 
             if [[ $exit_code != 0 ]];
             then
                 log_error "prepare_apt() step 2 failed with error %d" $exit_code
-                rm -f /etc/apt/sources.list.d/microsoft-prod.list &> /dev/null
+                rm -f /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
                 exit ${EXIT_CODES[6]}
             fi
             log_info "Downloaded key"
@@ -364,13 +370,14 @@ function long_running_command() {
                 local MYPS=$(ps -a | awk '/'$BG_PROCESS_ID'/ {print $1}')
                 if [ "$MYPS" == "" ];
                 then
-                    BG_PROCESS_ID=-1
                     BG_PROCESS_ACTIVE=false
                     break
                 fi
             done
         done
         echo -en " \b"
+        wait $BG_PROCESS_ID
+        BG_PROCESS_ID=-1
     fi
 }
 
@@ -437,6 +444,19 @@ function handle_exit() {
         log_info "Removed temporary directory files for iot-edge-installer."
     fi
 
+    if [[ "$LOCAL_E2E" == "1" ]];
+    then
+        if [[ $e_code != 0 ]];
+        then
+            echo errors-file -----------------------------
+            cat $STDERR_REDIRECT
+            echo errors-file -----------------------------
+        fi
+        echo stdout-file -----------------------------
+        cat $STDOUT_REDIRECT
+        echo stdout-file -----------------------------
+    fi
+
     announce_my_log_file "All logs were appended to" $OUTPUT_FILE
 }
 
@@ -487,11 +507,10 @@ function generate_uuid() {
 }
 
 # Constants
-InstrumentationKey="d403f627-57b8-4fb0-8001-c51b7466682d"
-IngestionEndpoint="https://dc.services.visualstudio.com/v2/track"
-EventName="Azure-IoT-Edge-Installer-Summary"
-DeviceUniqueID="xinzedPC"
-SchemaVersion="1.0"
+INSTRUMENTATION_KEY="d403f627-57b8-4fb0-8001-c51b7466682d"
+INGESTION_POINT="https://dc.services.visualstudio.com/v2/track"
+TELEMETRY_EVENT_NAME="Azure-IoT-Edge-Installer-Summary"
+TELEMETRY_SCHEMA_VERSION="1.0"
 
 ######################################
 # send_appinsight_event_telemetry
@@ -520,7 +539,7 @@ function send_appinsight_event_telemetry ()
         log_info "Ready to send telemetry to AppInsights endpoint with wget"
         local CurrentTime=$(echo `date --utc '+%Y-%m-%dT%H:%M:%S.%N'`)
 
-        wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}' $IngestionEndpoint 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+        wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$INSTRUMENTATION_KEY'.Event","time": "'$CurrentTime'","iKey": "'$INSTRUMENTATION_KEY'","tags":{"ai.cloud.roleInstance": "'$DEVICE_UNIQUE_ID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$TELEMETRY_SCHEMA_VERSION'","name": "'$TELEMETRY_EVENT_NAME'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}' $INGESTION_POINT 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
 
         log_info "Finished sending telemetry to AppInsights endpoint with wget"
     fi

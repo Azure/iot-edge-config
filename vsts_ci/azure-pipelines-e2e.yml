@@ -16,8 +16,8 @@ stages:
   - job: SetupScript
     steps:
     - script: |
-        sudo apt update
-        sudo apt install jq
+        sudo apt-get update
+        sudo apt-get install jq
       displayName: 'Install jq'
     - task: AzureCLI@2
       inputs:
@@ -30,7 +30,7 @@ stages:
           az --version
           az account set -s $(AzureSubscriptionId)
       displayName: 'Set Azure resources'
-    
+
   - job: LinuxE2ETests
     pool:
       vmImage: ubuntu-18.04

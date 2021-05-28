@@ -111,8 +111,6 @@ add_option_args "CORRELATION_VECTOR" -cv --correlation-vector
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
 
-set_opt_out_selection ${parsed_cmds["TELEMETRY_OPT_OUT"]} $parsed_cmds["CORRELATION_VECTOR"]
-
 # validate that all arguments are acceptable / known
 if [[ ${#@} > 0 && ${#parsed_cmds[*]} == 0 ]];
 then
@@ -131,6 +129,8 @@ then
     exit ${EXIT_CODES[2]}
 fi
 
+set_opt_out_selection ${parsed_cmds["TELEMETRY_OPT_OUT"]} ${parsed_cmds["CORRELATION_VECTOR"]} ${parsed_cmds["SCOPE_ID"]} ${parsed_cmds["REGISTRATION_ID"]}
+
 # check if current OS is Tier 1
 source validate-tier1-os.sh
 is_os_tier1
@@ -148,7 +148,7 @@ source install-container-management.sh
 install_container_management
 
 source install-edge-runtime.sh
-install_edge_runtime ${parsed_cmds["SCOPE_ID"]}  ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
+install_edge_runtime ${parsed_cmds["SCOPE_ID"]} ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
 
 source validate-post-install.sh
 validate_post_install
