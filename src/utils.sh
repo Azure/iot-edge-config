@@ -72,7 +72,7 @@ function set_opt_out_selection() {
             CORRELATION_VECTOR=$2
         fi
 
-        local ret_value=$(openssl dgst -hmac $3 <<< `echo $3$4`)
+        local ret_value=$(openssl dgst -hmac $InstrumentationKey <<< `echo $3$4`)
         DeviceUniqueID=${ret_value##* }
     fi
 }
@@ -289,22 +289,20 @@ function prepare_apt() {
         else
             sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
 
-            cat /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             # sources list
             log_info "Adding '%s' to package sources lists." $sources
-            #wget $sources -q -O /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
-            #local exit_code=$?
-            #if [[ $exit_code != 0 ]];
-            #then
-            #    log_error "prepare_apt() step 1 failed with error: %d" exit_code
-            #    exit ${EXIT_CODES[4]}
-            #fi
-            #cat /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+            wget $sources -O /etc/apt/sources.list.d/microsoft-prod.list 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+            local exit_code=$?
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "prepare_apt() step 1 failed with error: %d" exit_code
+                exit ${EXIT_CODES[4]}
+            fi
             log_info "Added '%s' to package sources lists." $sources
 
             log_info "Downloading key"
             local tmp_file=$(echo `mktemp -u`)
-            wget https://packages.microsoft.com/keys/microsoft.asc -q -O $tmp_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+            wget https://packages.microsoft.com/keys/microsoft.asc -O $tmp_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             exit_code=$?
             if [[ $exit_code != 0 ]];
             then
@@ -372,13 +370,14 @@ function long_running_command() {
                 local MYPS=$(ps -a | awk '/'$BG_PROCESS_ID'/ {print $1}')
                 if [ "$MYPS" == "" ];
                 then
-                    BG_PROCESS_ID=-1
                     BG_PROCESS_ACTIVE=false
                     break
                 fi
             done
         done
         echo -en " \b"
+        wait $BG_PROCESS_ID
+        BG_PROCESS_ID=-1
     fi
 }
 
