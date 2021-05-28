@@ -36,7 +36,7 @@ declare -a EXIT_CODES=(0    # success
                       )
 
 CORRELATION_VECTOR=""
-DeviceUniqueID=""
+DEVICE_UNIQUE_ID=""
 
 ######################################
 # set_opt_out_selection
@@ -72,8 +72,8 @@ function set_opt_out_selection() {
             CORRELATION_VECTOR=$2
         fi
 
-        local ret_value=$(openssl dgst -hmac $InstrumentationKey <<< `echo $3$4`)
-        DeviceUniqueID=${ret_value##* }
+        local ret_value=$(openssl dgst -hmac $INSTRUMENTATION_KEY <<< `echo $3$4`)
+        DEVICE_UNIQUE_ID=${ret_value##* }
     fi
 }
 
@@ -507,10 +507,10 @@ function generate_uuid() {
 }
 
 # Constants
-InstrumentationKey="d403f627-57b8-4fb0-8001-c51b7466682d"
-IngestionEndpoint="https://dc.services.visualstudio.com/v2/track"
-EventName="Azure-IoT-Edge-Installer-Summary"
-SchemaVersion="1.0"
+INSTRUMENTATION_KEY="d403f627-57b8-4fb0-8001-c51b7466682d"
+INGESTION_POINT="https://dc.services.visualstudio.com/v2/track"
+TELEMETRY_EVENT_NAME="Azure-IoT-Edge-Installer-Summary"
+TELEMETRY_SCHEMA_VERSION="1.0"
 
 ######################################
 # send_appinsight_event_telemetry
@@ -539,7 +539,7 @@ function send_appinsight_event_telemetry ()
         log_info "Ready to send telemetry to AppInsights endpoint with wget"
         local CurrentTime=$(echo `date --utc '+%Y-%m-%dT%H:%M:%S.%N'`)
 
-        wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$InstrumentationKey'.Event","time": "'$CurrentTime'","iKey": "'$InstrumentationKey'","tags":{"ai.cloud.roleInstance": "'$DeviceUniqueID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$SchemaVersion'","name": "'$EventName'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}' $IngestionEndpoint 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+        wget --header='Content-Type: application/json' --header='Accept-Charset: UTF-8' --post-data '{"name":"Microsoft.ApplicationInsights.'$INSTRUMENTATION_KEY'.Event","time": "'$CurrentTime'","iKey": "'$INSTRUMENTATION_KEY'","tags":{"ai.cloud.roleInstance": "'$DEVICE_UNIQUE_ID'"},"data":{"baseType": "EventData","baseData": {"ver": "'$TELEMETRY_SCHEMA_VERSION'","name": "'$TELEMETRY_EVENT_NAME'","cv": "'$CORRELATION_VECTOR'","properties":{'$customPropertiesObj'},"measurements":{'$customMeasurementsObj'}}}}' $INGESTION_POINT 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
 
         log_info "Finished sending telemetry to AppInsights endpoint with wget"
     fi
