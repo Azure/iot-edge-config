@@ -44,12 +44,12 @@ stages:
       inputs:
         gitHubConnection: 'github.com_cindydeng1998'
         tagPattern: '^v?[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$'
-        assets: 'dest/*.sh'
+        assets: 'dest/*'
         isDraft: true
     - task: GitHubRelease@1
       displayName: 'GitHub release (create)'
       inputs:
         gitHubConnection: 'github.com_cindydeng1998'
         tagPattern: '^v?[0-9]+\.[0-9]+\.[0-9]+$'
-        assets: 'dest/*.sh'
+        assets: 'dest/*'
         isDraft: true
