@@ -34,6 +34,10 @@ stages:
     - script: |  
         mkdir dest
         cp src/*.sh dest/
+        chmod +x tools/generate_sigs.sh
+        cd dest
+        ../tools/generate_sigs.sh
+        cd ..
       displayName: Create dest/ directory
     - task: GitHubRelease@1
       displayName: 'GitHub release (create) RC'
