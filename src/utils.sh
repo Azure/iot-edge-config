@@ -33,6 +33,7 @@ declare -a EXIT_CODES=(0    # success
                        12   # step 3 of installing edge-runtime failed
                        13   # step 4 of installing edge-runtime failed
                        14   # ctrl-c or kill
+                       15   # signature validation error
                       )
 
 CORRELATION_VECTOR=""
