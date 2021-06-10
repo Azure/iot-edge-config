@@ -17,7 +17,7 @@ stages:
     pool:
       name: IoT-Devices-E2E
     steps: 
-    - template: continuous-e2e-setup.yml
+    #- template: continuous-e2e-setup.yml
     - template: continuous-e2e.yml
     dependsOn: []
     condition: succeeded()
@@ -26,7 +26,7 @@ stages:
     pool:
       name: Raspberry-Pi
     steps:
-    - template: continuous-e2e-setup.yml
+    #- template: continuous-e2e-setup.yml
     - template: continuous-e2e.yml
     dependsOn: []
     condition: succeeded()
