@@ -3,7 +3,7 @@
 
 steps:
 - script: |
-    sudo apt-get update
+    apt-get update -y
     sudo apt-get install jq
   displayName: 'Install jq'
 - task: AzureCLI@2
