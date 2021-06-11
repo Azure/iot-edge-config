@@ -9,7 +9,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       sudo apt-get remove --purge aziot-edge aziot-identity-service -y
-      sudo docker rm -f 'sudo docker ps -a | awk '(NR>1) {​​ ​print $1 }​​​​​​​​​​''
-      sudo docker rmi -f 'sudo docker images -a | awk '(NR>1) {​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​ ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​print $3 }​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​''
+      sudo docker rm $(sudo docker ps -a -q) > /dev/null 2>&1
+      sudo docker rmi -f $(sudo docker images -aq) /dev/null 2>&1
       sudo apt-get remove --purge moby-cli moby-engine -y
   displayName: 'Uninstall iotedge package from previous run'
