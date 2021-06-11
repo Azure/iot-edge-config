@@ -31,8 +31,8 @@ function install_edge_runtime() {
 
     if [ -x "$(command -v iotedge)" ];
     then
-        log_info "Edge runtime is already available, removing it"
-        sudo apt purge aziot-edge  -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+        log_error "Edge runtime is already available."
+        exit ${EXIT_CODES[9]}
     fi
 
     log_info "Installing edge runtime..."
