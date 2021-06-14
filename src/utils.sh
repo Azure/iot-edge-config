@@ -328,7 +328,7 @@ function prepare_apt() {
             then
                 rm -f $gpg_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             fi
-            gpg --dearmor --output $gpg_file $tmp_file
+            gpg --dearmor --output $gpg_file $tmp_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
             exit_code=$?
 
             rm -f $tmp_file 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
