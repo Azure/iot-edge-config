@@ -254,12 +254,12 @@ log_init() {
 
 #
 log_error() {
-    log "${RED}ERR${DEFAULT}" "$@"
+    log "${BLACK_BG}${RED}ERR${DEFAULT}" "$@"
 }
 
 #
 log_info() {
-    log "${GREEN}INFO${DEFAULT}" "$@"
+    log "${BLACK_BG}${GREEN}INFO${DEFAULT}" "$@"
 }
 
 #
