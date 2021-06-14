@@ -7,12 +7,23 @@
 declare -A flag_to_variable_dict
 
 # output color indicators
+BLACK_BG=$(echo -en "\e[40m")
+RED_BG=$(echo -en "\e[41m")
+GREEN_BG=$(echo -en "\e[42m")
+MAGENTA_BG=$(echo -en "\e[45m")
+WHITE_BG=$(echo -en "\e[47m")
+
 RED=$(echo -en "\e[31m")
 GREEN=$(echo -en "\e[32m")
 MAGENTA=$(echo -en "\e[35m")
 DEFAULT=$(echo -en "\e[00m")
-BOLD=$(echo -en "\e[01m")
+BLACK=$(echo -en "\e[30m")
+
+BOLD=$(echo -en "\e[1m")
+ITALIC=$(echo -en "\e[3m")
+UNDERLINE=$(echo -en "\e[4m")
 BLINK=$(echo -en "\e[5m")
+REVERSE=$(echo -en "\e[7m")
 
 # OPT_IN - set to true if the user opts in for sending telemetry information to us.
 OPT_IN=false
@@ -217,7 +228,7 @@ log() {
 
 #
 function announce_my_log_file() {
-    printf '\n------\n%s%s%s%s%s\n------\n\n' "$GREEN" "$BOLD" "$BLINK" "$1 '$2'" "$DEFAULT"
+    printf '\n------\n%s%s%s%s%s\n------\n\n' "$BOLD" "$REVERSE" "$GREEN" "$1 '$2'" "$DEFAULT"
 }
 
 #
@@ -243,12 +254,12 @@ log_init() {
 
 #
 log_error() {
-    log "ERR" "$@"
+    log "${RED}ERR${DEFAULT}" "$@"
 }
 
 #
 log_info() {
-    log "INFO" "$@"
+    log "${GREEN}INFO${DEFAULT}" "$@"
 }
 
 #
@@ -427,7 +438,12 @@ function handle_ctrl_c() {
 
 function handle_exit() {
     local e_code=$?
-    log_info "Exit %d" $e_code
+    local tc=${GREEN}
+    if [[ $e_code != 0 ]];
+    then
+        tc=${RED}
+    fi
+    log_info "${REVERSE}${BOLD}${UNDERLINE}${tc}Exit %d$DEFAULT" $e_code
 
     local end=`date +%s`
     runtime=$((end-start))
