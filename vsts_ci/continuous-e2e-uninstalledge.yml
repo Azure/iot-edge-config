@@ -1,0 +1,15 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+steps:  
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      sudo apt-get remove --purge aziot-edge aziot-identity-service -y
+      sudo docker rm $(sudo docker ps -a -q) > /dev/null 2>&1
+      sudo docker rmi -f $(sudo docker images -aq) /dev/null 2>&1
+      sudo apt-get remove --purge moby-cli moby-engine -y
+  displayName: 'Uninstall iotedge package from previous run'
