@@ -13,37 +13,31 @@ stages:
 - stage: PERFTests
   displayName: Performance Tests
   jobs:
-  - job: SetupScript
-    steps:
-    - script: |
-        sudo apt update
-        sudo apt install jq
-      displayName: 'Install jq'
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az config set extension.use_dynamic_install=yes_without_prompt
-          az extension add --name azure-iot
-          az --version
-          az account set -s $(AzureSubscriptionId)
-      displayName: 'Set Azure resources'
-
-  - job: LinuxPerfTests
+  - job: LinuxE2ETests
     pool:
-      vmImage: ubuntu-18.04
+      name: IoT-Devices-E2E
     steps: 
+    - template: continuous-e2e-setup.yml
+    - template: continuous-e2e-uninstalledge.yml
     - template: continuous-perf.yml
-    dependsOn: SetupScript
+    dependsOn: []
     condition: succeeded()
 
   - job: RaspberryPiPerfTests
     pool:
-      vmImage: ubuntu-latest
+      name: Raspberry-Pi
     steps:
+    - template: continuous-e2e-setup.yml
+    - template: continuous-e2e-uninstalledge.yml
     - template: continuous-perf.yml
-    dependsOn: SetupScript
+    dependsOn: []
     condition: succeeded()
-  
+
+  - job: UbuntuPerfTests
+    pool:
+      vmImage: ubuntu-18.04
+    steps: 
+    - template: continuous-e2e-setup.yml
+    - template: continuous-perf.yml
+    dependsOn: []
+    condition: succeeded()
