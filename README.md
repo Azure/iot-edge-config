@@ -52,18 +52,18 @@ wget https://github.com/Azure/iot-edge-config/releases/latest/download/azure-iot
 Upon completion of the script, go to All devices view and Device status should be changed from registered to provisioned.
 
 ### Uninstalling IoT Edge runtime and Moby-Engine
-You can uninstall both IoT Edge runtime and Moby-Engine with following commands
+You can uninstall both IoT Edge runtime and Moby-Engine with following commands in the following sequences.
 
-- Uninstall Edge runtime
+1. Uninstall Edge runtime
     * sudo apt-get remove --purge aziot-edge aziot-identity-service -y
-- Enumerate and remove edge modules
+2. Enumerate and remove edge modules
     * sudo docker ps -a
     * sudo docker rm -f <container ID>
     * sudo docker images -a
     * sudo docker rmi -f <image ID>
-- Remove Moby
+3. Remove Moby
     * sudo apt-get remove --purge moby-cli moby-engine -y
-- Restart your device
+4. Restart your device
     * sudo reboot
   
 ### Supported script arguments
