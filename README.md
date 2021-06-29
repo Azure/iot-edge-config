@@ -1,11 +1,11 @@
 # Azure IoT Edge configuration tool [![Build Status](https://dev.azure.com/mseng/VSIoT/_apis/build/status/Azure%20IoT%20Edge/iotedgehubdev?branchName=master)](https://dev.azure.com/Azure-IoT-DDE-EdgeExperience/IoTEdgeConfig/_build?definitionId=28&branchName=main)
 
 ## Overview
-Azure IoT Edge configuration tool (the Tool) is a command-line tool that installs and configures Azure IoT Edge on a device. The tool greatly simplifies the configuration of IoT Edge by automating several steps into single command.
+Azure IoT Edge configuration tool (the Tool) is a command-line tool that installs IoT Edge runtime version 1.2 and configures Azure IoT Edge on a device. The tool greatly simplifies the configuration of IoT Edge by automating several steps into single command.
  
 The tool is useful to install and configure IoT Edge on any given device (physical or virtual) to get started with just one command. The tool is also useful by OT persona in production who are required to perform the task and can eliminate the skill gaps.
  
-The tool can also be integrated into the existing IT Automation tools like Ansible Towers, Puppet, Chef etc).
+The tool can also be integrated into the existing IT Automation tools like Ansible Towers, Puppet, Chef, etc.
 
 ## Getting started
 
