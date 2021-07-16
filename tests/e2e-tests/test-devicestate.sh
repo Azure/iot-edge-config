@@ -82,13 +82,13 @@ prefix=e2e
 token_id="${prefix}testtoken${num}"
 device_id="${prefix}testdevice${num}"
 device_displayName=$device_id
-device_template=dtmi:z3kvj66agb:gi4gydpmx 
+device_template=dtmi:vhas3cwx:gi4gydpmx
 test_result=1 # fail by default
 rg=PipelineResources-IoTEdgeConfig
 centralapp_name=${prefix}test-iotc-iiot-asset-app${num}
 
 # The Central app is stored in PipelineResources-IoTEdgeConfig resource group
-echo Get access token to subscription "Azure IoT DDE team subscription"
+echo Get access token to subscription "Connection to Pipeline resources for IoT Edge Config (Test sub)"
 out=$(az account get-access-token --resource https://apps.azureiotcentral.com -s ${subscription})
 echo $out
 armToken=$(jq -r '.accessToken' <<< "$out")

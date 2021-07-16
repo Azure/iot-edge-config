@@ -10,7 +10,7 @@ steps:
 - task: AzureCLI@2
   displayName: 'Run All Performance Tests'
   inputs:
-    azureSubscription: 'Connection to Pipeline resources for IoT Edge Config'
+    azureSubscription: 'Connection to Pipeline resources for IoT Edge Config (Test sub)'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
