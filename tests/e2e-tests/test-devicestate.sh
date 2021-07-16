@@ -88,7 +88,7 @@ rg=PipelineResources-IoTEdgeConfig
 centralapp_name=${prefix}test-iotc-iiot-asset-app${num}
 
 # The Central app is stored in PipelineResources-IoTEdgeConfig resource group
-echo Get access token to subscription "Azure IoT DDE team subscription"
+echo Get access token to subscription "Connection to Pipeline resources for IoT Edge Config (Test sub)"
 out=$(az account get-access-token --resource https://apps.azureiotcentral.com -s ${subscription})
 echo $out
 armToken=$(jq -r '.accessToken' <<< "$out")
