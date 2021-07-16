@@ -47,15 +47,18 @@ function install_edge_runtime() {
     fi
     log_info "Installed edge runtime..."
 
-    # create .toml from template
-    log_info "Create instance configuration .toml from template."
+    # create config.toml
+    log_info "Create instance configuration 'config.toml'."
 
     local SCOPE_ID=$1
     local REGISTRATION_ID=$2
     local SYMMETRIC_KEY=$3
 
     log_info "Set DPS provisioning parameters."
+
     local FILE_NAME="/etc/aziot/config.toml"
+
+    # create a config.toml - will replace existing
     echo 'hostname = "'`hostname`'"' > $FILE_NAME
     echo '' >> $FILE_NAME
     echo '## DPS provisioning with symmetric key' >> $FILE_NAME
