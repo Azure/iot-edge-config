@@ -56,11 +56,33 @@ function download_bash_script() {
                 rm $tmp_file
                 exit $exit_code
             else
-                printf "downloaded '%s'\n" $file_name
+                printf "file '%s' was successfully downloaded.\n" $file_name
 
                 mv -f $tmp_file $file_name
                 chmod +x $file_name
             fi
+        fi
+    fi
+}
+
+######################################
+# verify_sums
+# ARGUMENTS:
+# OUTPUTS:
+# RETURN:
+#    exits with code 15 on failure
+######################################
+
+function verify_sums() {
+    if [ "$LOCAL_E2E" != "1" ];
+    then
+        sha256sum --quiet -c COMP_SHASUMS &> /dev/null
+
+        exit_code=$?
+        if [[ $exit_code != 0 ]];
+        then
+            printf "integrity validation error.\n"
+            exit 15
         fi
     fi
 }
@@ -93,7 +115,10 @@ download_bash_script install-container-management.sh
 download_bash_script install-edge-runtime.sh
 download_bash_script validate-post-install.sh
 download_bash_script utils.sh
+download_bash_script COMP_SHASUMS
 printf "Downloaded helper files to temporary directory ./iot-edge-installer\n"
+
+verify_sums
 
 # import utils
 source utils.sh
