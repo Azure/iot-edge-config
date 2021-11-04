@@ -8,7 +8,7 @@ steps:
   displayName: 'Install jq'
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'Connection to Pipeline resources for IoT Edge Config (Test sub)'
+    azureSubscription: 'Azure IoT Edge Dev Tools - Test'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |

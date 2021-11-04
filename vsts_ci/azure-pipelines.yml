@@ -26,6 +26,8 @@ stages:
     - template: raspi/continuous-raspi.yml
 
   - job: GithubRelease
+    pool:
+      vmImage: ubuntu-18.04
     dependsOn:
       - LinuxUnitTests
       - RaspberryPiUnitTests
