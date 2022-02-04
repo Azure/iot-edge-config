@@ -523,7 +523,7 @@ function generate_uuid() {
 }
 
 # Constants
-INSTRUMENTATION_KEY="d403f627-57b8-4fb0-8001-c51b7466682d"
+INSTRUMENTATION_KEY="eafb256e-d2b3-4bf8-bd15-56c6d7053215"
 INGESTION_POINT="https://dc.services.visualstudio.com/v2/track"
 TELEMETRY_EVENT_NAME="Azure-IoT-Edge-Installer-Summary"
 TELEMETRY_SCHEMA_VERSION="1.0"
