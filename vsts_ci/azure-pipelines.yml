@@ -38,7 +38,7 @@ stages:
       - Linux1804UnitTests
       - Linux2004UnitTests
       - RaspberryPiUnitTests
-    condition: and(succeeded('LinuxUnitTests'), succeeded('RaspberryPiUnitTests')) 
+    condition: and(succeeded('Linux1804UnitTests'), succeeded('Linux2004UnitTests'), succeeded('RaspberryPiUnitTests')) 
     steps:
     - script: |  
         mkdir dest
