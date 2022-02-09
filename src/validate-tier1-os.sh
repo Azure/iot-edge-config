@@ -65,11 +65,16 @@ function get_platform() {
 
     case $ID in
         ubuntu)
-            os_platform="$ID/$VERSION_ID"
+            if [[ $VERSION_ID == "18.04" ]];
+            then
+                os_platform="$ID/$VERSION_ID/multiarch"
+            else
+                os_platform="$ID/$VERSION_ID"
+            fi
             ;;
 
         raspbian)
-            os_platform="$ID_LIKE/stretch"
+            os_platform="$ID_LIKE/stretch/multiarch"
             ;;
     esac
 
