@@ -12,7 +12,7 @@ then
     exit 1
 fi
 
-VERSION_TAG="v0.0.3"
+VERSION_TAG="v0.0.4-rc1"
 
 # where am I
 TOPDIR=$(dirname $0)

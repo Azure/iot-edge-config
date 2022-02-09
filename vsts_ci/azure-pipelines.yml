@@ -13,9 +13,15 @@ stages:
 - stage: UnitTest
   displayName: Unit Tests
   jobs:  
-  - job: LinuxUnitTests
+  - job: Linux1804UnitTests
     pool:
       vmImage: ubuntu-18.04
+    steps: 
+    - template: linux/continuous-linux.yml
+
+  - job: Linux2004UnitTests
+    pool:
+      vmImage: ubuntu-20.04
     steps: 
     - template: linux/continuous-linux.yml
 
@@ -29,7 +35,8 @@ stages:
     pool:
       vmImage: ubuntu-18.04
     dependsOn:
-      - LinuxUnitTests
+      - Linux1804UnitTests
+      - Linux2004UnitTests
       - RaspberryPiUnitTests
     condition: and(succeeded('LinuxUnitTests'), succeeded('RaspberryPiUnitTests')) 
     steps:
