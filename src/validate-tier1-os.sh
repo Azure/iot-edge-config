@@ -23,7 +23,7 @@ function is_os_tier1() {
 
     case $ID in
         ubuntu)
-            if [ "$VERSION_ID" == "18.04" ];
+            if [ "$VERSION_ID" == "18.04" ] || [ "$VERSION_ID" == "20.04" ];
             then
                 return 0
             fi
@@ -65,11 +65,16 @@ function get_platform() {
 
     case $ID in
         ubuntu)
-            os_platform="$ID/$VERSION_ID"
+            if [[ $VERSION_ID == "18.04" ]];
+            then
+                os_platform="$ID/$VERSION_ID/multiarch"
+            else
+                os_platform="$ID/$VERSION_ID"
+            fi
             ;;
 
         raspbian)
-            os_platform="$ID_LIKE/stretch"
+            os_platform="$ID_LIKE/stretch/multiarch"
             ;;
     esac
 

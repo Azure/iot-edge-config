@@ -298,7 +298,7 @@ function prepare_apt() {
             log_error "Unsupported platform."
             exit ${EXIT_CODES[3]}
         else
-            sources="https://packages.microsoft.com/config/"$platform"/multiarch/prod.list"
+            sources="https://packages.microsoft.com/config/"$platform"/prod.list"
 
             # sources list
             log_info "Adding '%s' to package sources lists." $sources
