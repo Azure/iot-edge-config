@@ -85,7 +85,7 @@ device_displayName=$device_id
 device_template=dtmi:p7xmntslpen:vzbw2mcng
 test_result=1 # fail by default
 rg=PipelineResources-IoTEdgeConfig
-centralapp_name=${prefix}test-iotc-iiot-asset-app${num}
+centralapp_name=${prefix}test-iotc-inventory-app${num}
 
 # The Central app is stored in PipelineResources-IoTEdgeConfig resource group
 echo Get access token to subscription "Azure IoT Edge Dev Tools - Test"
