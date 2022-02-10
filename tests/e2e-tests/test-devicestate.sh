@@ -82,7 +82,7 @@ prefix=e2e
 token_id="${prefix}testtoken${num}"
 device_id="${prefix}testdevice${num}"
 device_displayName=$device_id
-device_template=dtmi:lsnodrttd:gi4gydpmx
+device_template=dtmi:p7xmntslpen:vzbw2mcng
 test_result=1 # fail by default
 rg=PipelineResources-IoTEdgeConfig
 centralapp_name=${prefix}test-iotc-iiot-asset-app${num}
@@ -95,7 +95,7 @@ armToken=$(jq -r '.accessToken' <<< "$out")
 
 # Create a central app
 echo Create a central app
-az iot central app create -g ${rg} -n ${centralapp_name} -s ${centralapp_name} --template iotc-iiot-asset
+az iot central app create -g ${rg} -n ${centralapp_name} -s ${centralapp_name} --template iotc-inventory
 
 # Create API token
 echo Create API token to interact with Central app
