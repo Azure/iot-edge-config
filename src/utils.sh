@@ -502,6 +502,12 @@ function handle_exit() {
 #        echo stdout-file -----------------------------
 #        cat $STDOUT_REDIRECT
 #        echo stdout-file -----------------------------
+
+        echo -----------------------------
+        echo ''
+        cat /etc/aziot/config.toml
+        echo ''
+        echo -----------------------------
     fi
 
     announce_my_log_file "All logs were appended to" $OUTPUT_FILE

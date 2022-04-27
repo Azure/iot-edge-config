@@ -18,7 +18,7 @@
 
 function apply_config_changes() {
     log_info "Apply settings"
-    aziotctl  config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+    aziotctl config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
     exit_code=$?
     if [[ $exit_code == 0 ]];
     then
@@ -26,7 +26,7 @@ function apply_config_changes() {
     fi
 
     log_info "Restart Azure IoTEdge"
-    iotedge system restart 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+    aziotctl system restart 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
     exit_code=$?
     if [[ $exit_code == 0 ]];
     then
@@ -93,6 +93,7 @@ function install_edge_runtime_dps() {
     echo '## DPS provisioning with symmetric key' >> $FILE_NAME
     echo '[provisioning]' >> $FILE_NAME
     echo 'source = "dps"' >> $FILE_NAME
+    echo '' >> $FILE_NAME
     echo 'global_endpoint = "https://global.azure-devices-provisioning.net"' >> $FILE_NAME
     echo 'id_scope = "'$SCOPE_ID'"' >> $FILE_NAME
     echo '' >> $FILE_NAME
