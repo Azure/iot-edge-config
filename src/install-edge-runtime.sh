@@ -6,9 +6,9 @@
 #script to install edge runtime 1.2
 
 ######################################
-# install_edge_runtime
+# install_edge_runtime_dps
 #
-#    - installs Azure IoT Edge Runtime 1.2
+#    - installs Azure IoT Edge Runtime 1.2, DPS provisioning
 #    - generates the edge's configuration file from template and
 #      fills in the DPS provisioning section from provided parameters
 #
@@ -22,7 +22,7 @@
 #    updates the global variable OK_TO_CONTINUE in case of success to true.
 ######################################
 
-function install_edge_runtime() {
+function install_edge_runtime_dps() {
     if [[ $# != 3 || "$1" == "" || "$2" == "" || "$3" == "" ]];
     then
         log_error "Scope ID, Registration ID, and the Symmetric Key are required"
@@ -73,6 +73,64 @@ function install_edge_runtime() {
     echo 'registration_id = "'$REGISTRATION_ID'"' >> $FILE_NAME
     echo '' >> $FILE_NAME
     echo 'symmetric_key = { value = "'$SYMMETRIC_KEY'" }' >> $FILE_NAME
+    echo '' >> $FILE_NAME
+
+    log_info "Apply settings - this will restart the edge"
+    iotedge config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+    exit_code=$?
+    if [[ $exit_code == 0 ]];
+    then
+        log_info "IotEdge has been configured successfully"
+    fi
+}
+
+######################################
+# install_edge_runtime_cs
+#
+#    - installs Azure IoT Edge Runtime 1.2
+#    - generates the edge's configuration file from template and
+#      fills in the manual provisioning section from provided parameters
+#
+# ARGUMENTS:
+#    CONNECTION_STRING
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#    updates the global variable OK_TO_CONTINUE in case of success to true.
+######################################
+
+function install_edge_runtime_cs() {
+    if [[ $# != 1 || "$1" == "" ]];
+    then
+        log_error "IoTEdge Device Connection string is required"
+        exit ${EXIT_CODES[2]}
+    fi
+
+    if [ -x "$(command -v iotedge)" ];
+    then
+        log_error "Edge runtime is already available."
+        exit ${EXIT_CODES[9]}
+    fi
+
+    log_info "Installing edge runtime..."
+
+    # create config.toml
+    log_info "Create instance configuration 'config.toml'."
+
+    local CONNECTION_STRING=$1
+
+    log_info "Set manual provisioning parameters."
+
+    local FILE_NAME="/etc/aziot/config.toml"
+
+    # create a config.toml - will replace existing
+    echo 'hostname = "'`hostname`'"' > $FILE_NAME
+    echo '' >> $FILE_NAME
+    echo '## Manual provisioning configuration' >> $FILE_NAME
+    echo '[provisioning]' >> $FILE_NAME
+    echo 'source = "manual"' >> $FILE_NAME
+    echo '' >> $FILE_NAME
+    echo 'device_connection_string: = "'$CONNECTION_STRING'"' >> $FILE_NAME
     echo '' >> $FILE_NAME
 
     log_info "Apply settings - this will restart the edge"

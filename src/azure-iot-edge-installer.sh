@@ -100,6 +100,30 @@ source utils.sh
 log_init
 handlers_init
 
+function show_help() {
+    echo ""
+    echo "${BOLD}Usage: sudo ./azure-iot-edge-installer.sh [OPTION]...${DEFAULT}"
+    echo ""
+    echo "${BOLD}Basic:${DEFAULT}"
+    echo -e "\t-h, --help\t\t\t\t\tPrint this help"
+    echo ""
+    echo "${BOLD}Connection String Provisioning:${DEFAULT}"
+    echo -e "\t-c, --connection-string <CONNECTION_STRING>\tThe Azure IoT Edge Device Connection String"
+    echo -e "${MAGENTA}\tThe default provisioning method. For example,"
+    echo -e "\t$ sudo ./azure-iot-edge-installer.sh -c \"<Connection String>\""
+    echo -e "${DEFAULT}"
+    echo "${BOLD}DPS Provisioning:${DEFAULT}"
+    echo -e "\t-s, --scope-id <SCOPE_ID>\t\t\tThe Azure DPS ID Scope"
+    echo -e "\t-r, --registration-id <REGISTRATION_ID>\t\tThe Azure DPS enrollment Registration ID"
+    echo -e "\t-k, --symmetric-key <SYMMETRIC_KEY>\t\tThe Symmetric Key for the individual enrollment"
+    echo -e "${MAGENTA}\tThree arguments above are all neccessary for DPS provisioning. For example,"
+    echo -e "\t$ sudo ./azure-iot-edge-installer.sh -s <ID Scope> -r <Registration ID> -k <Symmetric Key>"
+    echo "${DEFAULT}"
+    echo "${BOLD}Telemetry:${DEFAULT}"
+    echo -e "\t-nt, --telemetry-opt-out\t\t\tDisable usage telemetry feature"
+    echo -e "\t-cv, --correlation-vector\t\t\tCorrelation vector specific to the run\n"
+}
+
 # add flag:variable_name dictionary entries
 add_option_args "TELEMETRY_OPT_OUT" -nt --telemetry-opt-out
 add_option_args "VERBOSE_LOGGING" -v --verbose
@@ -107,27 +131,51 @@ add_option_args "SCOPE_ID" -s --scope-id
 add_option_args "REGISTRATION_ID" -r --registration-id
 add_option_args "SYMMETRIC_KEY" -k --symmetric-key
 add_option_args "CORRELATION_VECTOR" -cv --correlation-vector
+add_option_args "SHOW_HELP" -h --help
+add_option_args "CONNECTION_STRING" -c --connection-string
 
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
+
+# show usage
+if [[ ${#@} == 0 || "${parsed_cmds["SHOW_HELP"]}" != "" ]];
+then
+    show_help
+    exit ${EXIT_CODES[1]}
+fi
 
 # validate that all arguments are acceptable / known
 if [[ ${#@} > 0 && ${#parsed_cmds[*]} == 0 ]];
 then
     array=("$*")
     echo Unknown argument "${array[*]}"
-    echo "Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>"
+    show_help
     exit ${EXIT_CODES[1]}
 fi
 
-if [[ "${parsed_cmds["SCOPE_ID"]}" == "" || "${parsed_cmds["REGISTRATION_ID"]}" == "" || "${parsed_cmds["SYMMETRIC_KEY"]}" == "" ]];
+# is a connection string given for provisioning?
+if [[ "${parsed_cmds["CONNECTION_STRING"]}" == "" ]];
 then
-    echo Missing argument
-    echo     defined: "'"${!parsed_cmds[@]}"'"
-    echo     given: "'"${parsed_cmds[@]}"'"
-    echo "Usage: sudo ./azure-iot-edge-installer.sh -s <IDScope> -r <RegistrationID> -k <Symmetric Key>"
-    exit ${EXIT_CODES[2]}
+    # validate that all DPS parameters have been provided
+    if [[ "${parsed_cmds["SCOPE_ID"]}" == "" || "${parsed_cmds["REGISTRATION_ID"]}" == "" || "${parsed_cmds["SYMMETRIC_KEY"]}" == "" ]];
+    then
+        echo Missing argument
+        echo     defined: "'"${!parsed_cmds[@]}"'"
+        echo     given: "'"${parsed_cmds[@]}"'"
+        show_help
+        exit ${EXIT_CODES[2]}
+    fi
+else
+    if [[ "${parsed_cmds["CONNECTION_STRING"]}" == "true" ]];
+    then
+        echo Missing argument
+        echo     The IoTEdge device connection string must be provided with the '-c / --connection-string' option
+        show_help
+        exit ${EXIT_CODES[2]}
+    fi
 fi
+
+exit 0
 
 set_opt_out_selection ${parsed_cmds["TELEMETRY_OPT_OUT"]} ${parsed_cmds["CORRELATION_VECTOR"]} ${parsed_cmds["SCOPE_ID"]} ${parsed_cmds["REGISTRATION_ID"]}
 
@@ -148,7 +196,12 @@ source install-container-management.sh
 install_container_management
 
 source install-edge-runtime.sh
-install_edge_runtime ${parsed_cmds["SCOPE_ID"]} ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
+if [[ "${parsed_cmds["CONNECTION_STRING"]}" == "" ]];
+then
+    install_edge_runtime_dps ${parsed_cmds["SCOPE_ID"]} ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
+else
+    install_edge_runtime_cs ${parsed_cmds["CONNECTION_STRING"]}
+fi
 
 source validate-post-install.sh
 validate_post_install

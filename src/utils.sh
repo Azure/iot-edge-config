@@ -15,6 +15,7 @@ WHITE_BG=$(echo -en "\e[47m")
 
 RED=$(echo -en "\e[31m")
 GREEN=$(echo -en "\e[32m")
+YELLOW=$(echo -en "\e[33m")
 MAGENTA=$(echo -en "\e[35m")
 DEFAULT=$(echo -en "\e[00m")
 BLACK=$(echo -en "\e[30m")
@@ -264,7 +265,7 @@ log_info() {
 
 #
 log_warn() {
-    log "WARN" "$@"
+    log "${BLACK_BG}${YELLOW}WARN${DEFAULT}" "$@"
 }
 
 #
@@ -346,7 +347,36 @@ function prepare_apt() {
             apt-get update 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
             long_running_command $!
             exit_code=$?
-            log_info "update step completed with exit code: %d" $exit_code
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "apt-get update failed!" $exit_code
+            fi
+
+            # install apt-utils to check if apt is locked
+            log_info "dpkg-query for apt-utils"
+            dpkg-query -s apt-utils 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+            if [[ $? == 0 ]];
+            then
+                log_info "apt function testing ... remove apt-utils"
+                apt remove apt-utils -y 1>>$STDOUT_REDIRECT
+                exit_code=$?
+                if [[ $exit_code != 0 ]];
+                then
+                    log_error "apt remove apt-utils failed!" $exit_code
+                    exit ${EXIT_CODES[6]}
+                fi
+            fi
+
+            log_info "apt function testing ... install apt-utils"
+            apt-get install apt-utils -y 1>>$STDOUT_REDIRECT
+            exit_code=$?
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "apt-get install apt-utils failed!" $exit_code
+                exit ${EXIT_CODES[6]}
+            fi
+
+            log_info "prepare_apt() completed with exit code: %d" $exit_code
         fi
     fi
 }
