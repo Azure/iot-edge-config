@@ -21,7 +21,7 @@ function is_service_running() {
     local iotedge_status=${2,,}
 
     service_status=$(awk '/'$service_name'/ {print $2}' <<< $iotedge_status)
-    if [ "$service_status" != "running" ] && [ "$service_status" != "ready" ];
+    if [ "$service_status" != "Running" ] && [ "$service_status" != "Ready" ];
     then
         log_error "'%s' is not running." $service_name
         log_error "Run these commands to gather additional logs:"
