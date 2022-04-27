@@ -175,8 +175,6 @@ else
     fi
 fi
 
-exit 0
-
 set_opt_out_selection ${parsed_cmds["TELEMETRY_OPT_OUT"]} ${parsed_cmds["CORRELATION_VECTOR"]} ${parsed_cmds["SCOPE_ID"]} ${parsed_cmds["REGISTRATION_ID"]}
 
 # check if current OS is Tier 1

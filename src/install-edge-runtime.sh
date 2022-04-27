@@ -64,7 +64,6 @@ function install_edge_runtime_dps() {
     echo '## DPS provisioning with symmetric key' >> $FILE_NAME
     echo '[provisioning]' >> $FILE_NAME
     echo 'source = "dps"' >> $FILE_NAME
-    echo '' >> $FILE_NAME
     echo 'global_endpoint = "https://global.azure-devices-provisioning.net"' >> $FILE_NAME
     echo 'id_scope = "'$SCOPE_ID'"' >> $FILE_NAME
     echo '' >> $FILE_NAME
@@ -114,6 +113,16 @@ function install_edge_runtime_cs() {
 
     log_info "Installing edge runtime..."
 
+    apt-get install aziot-edge -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+    long_running_command $!
+    exit_code=$?
+    if [[ $exit_code != 0 ]];
+    then
+        log_info "aziot-edged installation failed with exit code: %d" $exit_code
+        exit ${EXIT_CODES[10]}
+    fi
+    log_info "Installed edge runtime..."
+
     # create config.toml
     log_info "Create instance configuration 'config.toml'."
 
@@ -129,8 +138,7 @@ function install_edge_runtime_cs() {
     echo '## Manual provisioning configuration' >> $FILE_NAME
     echo '[provisioning]' >> $FILE_NAME
     echo 'source = "manual"' >> $FILE_NAME
-    echo '' >> $FILE_NAME
-    echo 'device_connection_string: = "'$CONNECTION_STRING'"' >> $FILE_NAME
+    echo 'connection_string = "'$CONNECTION_STRING'"' >> $FILE_NAME
     echo '' >> $FILE_NAME
 
     log_info "Apply settings - this will restart the edge"
