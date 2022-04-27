@@ -22,7 +22,7 @@ function apply_config_changes() {
     exit_code=$?
     if [[ $exit_code == 0 ]];
     then
-        log_info "IotEdge has been configured successfully"
+        log_info "IoTEdge has been configured successfully"
     fi
 
     log_info "Restart Azure IoTEdge"
@@ -30,7 +30,7 @@ function apply_config_changes() {
     exit_code=$?
     if [[ $exit_code == 0 ]];
     then
-        log_info "IotEdge has been restarted successfully"
+        log_info "IoTEdge has been restarted successfully"
     fi
 
     for next_symbol in '-' '\\' '|' '/';
@@ -39,6 +39,8 @@ function apply_config_changes() {
         sleep 0.35
     done
     echo -en " \b"
+
+    iotedge check
 }
 
 ######################################

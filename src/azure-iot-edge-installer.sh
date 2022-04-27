@@ -114,7 +114,7 @@ function show_help() {
     echo -e "${DEFAULT}"
     echo "${BOLD}DPS Provisioning:${DEFAULT}"
     echo -e "\t-s, --scope-id <SCOPE_ID>\t\t\tThe Azure DPS ID Scope"
-    echo -e "\t-r, --registration-id <REGISTRATION_ID>\t\tThe Azure DPS enrollment Registration ID"
+    echo -e "\t-r, --registration-id <REGISTRATION_ID>\t\tThe Azure IoT DPS enrollment Registration ID"
     echo -e "\t-k, --symmetric-key <SYMMETRIC_KEY>\t\tThe Symmetric Key for the individual enrollment"
     echo -e "${MAGENTA}\tThree arguments above are all neccessary for DPS provisioning. For example,"
     echo -e "\t$ sudo ./azure-iot-edge-installer.sh -s <ID Scope> -r <Registration ID> -k <Symmetric Key>"
