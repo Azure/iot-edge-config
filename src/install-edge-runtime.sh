@@ -6,6 +6,35 @@
 #script to install edge runtime 1.2
 
 ######################################
+# apply_config_changes
+#
+#    - apply changes and restart
+#
+# ARGUMENTS:
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+######################################
+
+function apply_config_changes() {
+    log_info "Apply settings"
+    iotedge config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+    exit_code=$?
+    if [[ $exit_code == 0 ]];
+    then
+        log_info "IotEdge has been configured successfully"
+    fi
+
+    log_info "Restart Azure IoTEdge"
+    iotedge system restart 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+    exit_code=$?
+    if [[ $exit_code == 0 ]];
+    then
+        log_info "IotEdge has been restarted successfully"
+    fi
+}
+
+######################################
 # install_edge_runtime_dps
 #
 #    - installs Azure IoT Edge Runtime 1.2, DPS provisioning
@@ -74,13 +103,7 @@ function install_edge_runtime_dps() {
     echo 'symmetric_key = { value = "'$SYMMETRIC_KEY'" }' >> $FILE_NAME
     echo '' >> $FILE_NAME
 
-    log_info "Apply settings - this will restart the edge"
-    iotedge config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
-    exit_code=$?
-    if [[ $exit_code == 0 ]];
-    then
-        log_info "IotEdge has been configured successfully"
-    fi
+    apply_config_changes
 }
 
 ######################################
@@ -141,11 +164,5 @@ function install_edge_runtime_cs() {
     echo 'connection_string = "'$CONNECTION_STRING'"' >> $FILE_NAME
     echo '' >> $FILE_NAME
 
-    log_info "Apply settings - this will restart the edge"
-    iotedge config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
-    exit_code=$?
-    if [[ $exit_code == 0 ]];
-    then
-        log_info "IotEdge has been configured successfully"
-    fi
+    apply_config_changes
 }
