@@ -490,8 +490,9 @@ function handle_exit() {
         log_info "Removed temporary directory files for iot-edge-installer."
     fi
 
-#    if [[ "$LOCAL_E2E" == "1" ]];
-#    then
+    if [[ "$LOCAL_E2E" == "1" ]];
+    then
+        iotedge check
 #        if [[ $e_code != 0 ]];
 #        then
 #            echo errors-file -----------------------------
@@ -501,7 +502,7 @@ function handle_exit() {
 #        echo stdout-file -----------------------------
 #        cat $STDOUT_REDIRECT
 #        echo stdout-file -----------------------------
-#    fi
+    fi
 
     announce_my_log_file "All logs were appended to" $OUTPUT_FILE
 }

@@ -32,9 +32,6 @@ function apply_config_changes() {
     then
         log_info "IoTEdge has been restarted successfully"
     fi
-
-    iotedge check
-    iotedge system status
 }
 
 ######################################
