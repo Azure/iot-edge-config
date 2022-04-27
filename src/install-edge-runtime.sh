@@ -17,21 +17,38 @@
 ######################################
 
 function apply_config_changes() {
-    log_info "Apply settings"
+    log_info "Apply settings - this will restart Azure IoTEdge"
     aziotctl config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
     exit_code=$?
     if [[ $exit_code == 0 ]];
     then
         log_info "IoTEdge has been configured successfully"
     fi
+}
 
-    log_info "Restart Azure IoTEdge"
-    aziotctl system restart 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+######################################
+# install_common
+#
+#    - install the runtime
+#
+# ARGUMENTS:
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+######################################
+
+function install_common() {
+    log_info "Installing edge runtime..."
+
+    apt-get install aziot-edge -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+    long_running_command $!
     exit_code=$?
-    if [[ $exit_code == 0 ]];
+    if [[ $exit_code != 0 ]];
     then
-        log_info "IoTEdge has been restarted successfully"
+        log_info "aziot-edged installation failed with exit code: %d" $exit_code
+        exit ${EXIT_CODES[10]}
     fi
+    log_info "Installed edge runtime..."
 }
 
 ######################################
@@ -64,17 +81,7 @@ function install_edge_runtime_dps() {
         exit ${EXIT_CODES[9]}
     fi
 
-    log_info "Installing edge runtime..."
-
-    apt-get install aziot-edge -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
-    long_running_command $!
-    exit_code=$?
-    if [[ $exit_code != 0 ]];
-    then
-        log_info "aziot-edged installation failed with exit code: %d" $exit_code
-        exit ${EXIT_CODES[10]}
-    fi
-    log_info "Installed edge runtime..."
+    install_common
 
     # create config.toml
     log_info "Create instance configuration 'config.toml'."
@@ -135,17 +142,7 @@ function install_edge_runtime_cs() {
         exit ${EXIT_CODES[9]}
     fi
 
-    log_info "Installing edge runtime..."
-
-    apt-get install aziot-edge -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
-    long_running_command $!
-    exit_code=$?
-    if [[ $exit_code != 0 ]];
-    then
-        log_info "aziot-edged installation failed with exit code: %d" $exit_code
-        exit ${EXIT_CODES[10]}
-    fi
-    log_info "Installed edge runtime..."
+    install_common
 
     # create config.toml
     log_info "Create instance configuration 'config.toml'."

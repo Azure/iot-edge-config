@@ -160,6 +160,7 @@ function cmd_parser() {
         parsed_cmd[${flag_to_variable_dict[$key]}]=""
     done
 
+    local arg_pos = 0
     while [ $# -ne 0 ];
     do
         if [[ $1 == -* ]];
@@ -175,7 +176,8 @@ function cmd_parser() {
                     then
                         parsed_cmd[${flag_to_variable_dict[$key]}]=true
                     else
-                        parsed_cmd[${flag_to_variable_dict[$key]}]=\$2
+                        arg_pos = $(($arg_pos + 2))
+                        parsed_cmd[${flag_to_variable_dict[$key]}]=\${$arg_pos}
                         shift
                     fi
                     break
@@ -358,7 +360,8 @@ function prepare_apt() {
             if [[ $? == 0 ]];
             then
                 log_info "apt function testing ... remove apt-utils"
-                apt-get remove apt-utils -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+                apt-get remove apt-utils -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+                long_running_command $!
                 exit_code=$?
                 if [[ $exit_code != 0 ]];
                 then
@@ -368,7 +371,8 @@ function prepare_apt() {
             fi
 
             log_info "apt function testing ... install apt-utils"
-            apt-get install apt-utils -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+            apt-get install apt-utils -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+            long_running_command $!
             exit_code=$?
             if [[ $exit_code != 0 ]];
             then
