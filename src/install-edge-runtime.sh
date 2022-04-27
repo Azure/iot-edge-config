@@ -18,7 +18,7 @@
 
 function apply_config_changes() {
     log_info "Apply settings"
-    iotedge config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+    aziotctl  config apply 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
     exit_code=$?
     if [[ $exit_code == 0 ]];
     then
