@@ -38,8 +38,6 @@ function validate_post_install() {
     log_info "Post install validation starting."
     local status=$(iotedge system status)
 
-    iotedge system status
-
     declare -a iotedge_services=("aziot-edged"
                                  "aziot-identityd"
                                  "aziot-keyd"
