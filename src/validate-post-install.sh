@@ -27,6 +27,7 @@ function is_service_running() {
         log_error "Run these commands to gather additional logs:"
         log_error "sudo iotedge system logs"
         log_error "sudo iotedge check"
+        iotedge check
         return 1
     fi
 
