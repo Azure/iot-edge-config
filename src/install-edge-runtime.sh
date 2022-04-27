@@ -32,6 +32,13 @@ function apply_config_changes() {
     then
         log_info "IotEdge has been restarted successfully"
     fi
+
+    for next_symbol in '-' '\\' '|' '/';
+    do
+        echo -en "$next_symbol\b"
+        sleep 0.35
+    done
+    echo -en " \b"
 }
 
 ######################################
