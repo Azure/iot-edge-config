@@ -136,7 +136,6 @@ add_option_args "CONNECTION_STRING" -c --connection-string
 
 # parse command line inputs and fetch output from parser
 declare -A parsed_cmds="$(cmd_parser $@)"
-echo $@
 
 # show usage
 if [[ ${#@} == 0 || "${parsed_cmds["SHOW_HELP"]}" != "" ]];
@@ -197,7 +196,6 @@ install_container_management
 source install-edge-runtime.sh
 if [[ "${parsed_cmds["CONNECTION_STRING"]}" == "" ]];
 then
-    echo install_edge_runtime_dps ${parsed_cmds["SCOPE_ID"]} ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
     install_edge_runtime_dps ${parsed_cmds["SCOPE_ID"]} ${parsed_cmds["REGISTRATION_ID"]} ${parsed_cmds["SYMMETRIC_KEY"]}
 else
     install_edge_runtime_cs ${parsed_cmds["CONNECTION_STRING"]}
