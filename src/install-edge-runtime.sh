@@ -100,7 +100,6 @@ function install_edge_runtime_dps() {
     echo '## DPS provisioning with symmetric key' >> $FILE_NAME
     echo '[provisioning]' >> $FILE_NAME
     echo 'source = "dps"' >> $FILE_NAME
-    echo '' >> $FILE_NAME
     echo 'global_endpoint = "https://global.azure-devices-provisioning.net"' >> $FILE_NAME
     echo 'id_scope = "'$SCOPE_ID'"' >> $FILE_NAME
     echo '' >> $FILE_NAME
