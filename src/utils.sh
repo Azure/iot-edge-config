@@ -160,7 +160,7 @@ function cmd_parser() {
         parsed_cmd[${flag_to_variable_dict[$key]}]=""
     done
 
-    local arg_pos = 0
+    local arg_pos=0
     while [ $# -ne 0 ];
     do
         if [[ $1 == -* ]];
@@ -176,7 +176,7 @@ function cmd_parser() {
                     then
                         parsed_cmd[${flag_to_variable_dict[$key]}]=true
                     else
-                        arg_pos = $(($arg_pos + 2))
+                        arg_pos=$(($arg_pos + 2))
                         parsed_cmd[${flag_to_variable_dict[$key]}]=\${$arg_pos}
                         shift
                     fi
