@@ -411,7 +411,7 @@ function long_running_command() {
         do
             for next_symbol in '-' '\\' '|' '/';
             do
-                echo -en "$next_symbol\b"
+                echo -en "$next_symbol ${GREEN}Running ${DEFAULT}...\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
                 sleep 0.15
                 local MYPS=$(ps -a | awk '/'$BG_PROCESS_ID'/ {print $1}')
                 if [ "$MYPS" == "" ];
@@ -421,7 +421,7 @@ function long_running_command() {
                 fi
             done
         done
-        echo -en " \b"
+        echo -en " \b\b\b\b\b\b\b\b\b\b\b\b\b\b"
         wait $BG_PROCESS_ID
         BG_PROCESS_ID=-1
     fi
