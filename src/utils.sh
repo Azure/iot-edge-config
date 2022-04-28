@@ -174,6 +174,7 @@ function cmd_parser() {
                     valid_argument=true
                     if [[ $# == 1 || $2 == -* ]];
                     then
+                        arg_pos=$(($arg_pos+1))
                         parsed_cmd[${flag_to_variable_dict[$key]}]=true
                     else
                         arg_pos=$(($arg_pos+2))
@@ -497,21 +498,25 @@ function handle_exit() {
     if [[ "$LOCAL_E2E" == "1" ]];
     then
         iotedge check
-#        if [[ $e_code != 0 ]];
-#        then
-#            echo errors-file -----------------------------
-#            cat $STDERR_REDIRECT
-#            echo errors-file -----------------------------
-#        fi
-#        echo stdout-file -----------------------------
-#        cat $STDOUT_REDIRECT
-#        echo stdout-file -----------------------------
+        if [[ $e_code != 0 ]];
+        then
+            echo errors-file -----------------------------
+            echo ''
+            cat $STDERR_REDIRECT
+        echo ''
+            echo errors-file -----------------------------
+        fi
+        echo stdout-file -----------------------------
+        echo ''
+        cat $STDOUT_REDIRECT
+        echo ''
+        echo stdout-file -----------------------------
 
-        echo -----------------------------
+        echo config-file -----------------------------
         echo ''
         cat /etc/aziot/config.toml
         echo ''
-        echo -----------------------------
+        echo config-file -----------------------------
     fi
 
     announce_my_log_file "All logs were appended to" $OUTPUT_FILE
