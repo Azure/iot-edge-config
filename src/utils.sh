@@ -15,6 +15,7 @@ WHITE_BG=$(echo -en "\e[47m")
 
 RED=$(echo -en "\e[31m")
 GREEN=$(echo -en "\e[32m")
+YELLOW=$(echo -en "\e[33m")
 MAGENTA=$(echo -en "\e[35m")
 DEFAULT=$(echo -en "\e[00m")
 BLACK=$(echo -en "\e[30m")
@@ -159,6 +160,7 @@ function cmd_parser() {
         parsed_cmd[${flag_to_variable_dict[$key]}]=""
     done
 
+    local arg_pos=0
     while [ $# -ne 0 ];
     do
         if [[ $1 == -* ]];
@@ -172,9 +174,11 @@ function cmd_parser() {
                     valid_argument=true
                     if [[ $# == 1 || $2 == -* ]];
                     then
+                        arg_pos=$(($arg_pos+1))
                         parsed_cmd[${flag_to_variable_dict[$key]}]=true
                     else
-                        parsed_cmd[${flag_to_variable_dict[$key]}]=$2
+                        arg_pos=$(($arg_pos+2))
+                        parsed_cmd[${flag_to_variable_dict[$key]}]=\${$arg_pos}
                         shift
                     fi
                     break
@@ -264,7 +268,7 @@ log_info() {
 
 #
 log_warn() {
-    log "WARN" "$@"
+    log "${BLACK_BG}${YELLOW}WARN${DEFAULT}" "$@"
 }
 
 #
@@ -346,7 +350,38 @@ function prepare_apt() {
             apt-get update 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
             long_running_command $!
             exit_code=$?
-            log_info "update step completed with exit code: %d" $exit_code
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "apt-get update failed!" $exit_code
+            fi
+
+            # install apt-utils to check if apt is locked
+            log_info "dpkg-query for apt-utils"
+            dpkg-query -s apt-utils 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT
+            if [[ $? == 0 ]];
+            then
+                log_info "apt function testing ... remove apt-utils"
+                apt-get remove apt-utils -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+                long_running_command $!
+                exit_code=$?
+                if [[ $exit_code != 0 ]];
+                then
+                    log_error "apt remove apt-utils failed!" $exit_code
+                    exit ${EXIT_CODES[6]}
+                fi
+            fi
+
+            log_info "apt function testing ... install apt-utils"
+            apt-get install apt-utils -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+            long_running_command $!
+            exit_code=$?
+            if [[ $exit_code != 0 ]];
+            then
+                log_error "apt-get install apt-utils failed!" $exit_code
+                exit ${EXIT_CODES[6]}
+            fi
+
+            log_info "prepare_apt() completed with exit code: %d" $exit_code
         fi
     fi
 }
@@ -376,7 +411,7 @@ function long_running_command() {
         do
             for next_symbol in '-' '\\' '|' '/';
             do
-                echo -en "$next_symbol\b"
+                echo -en "$next_symbol ${GREEN}Running ${DEFAULT}...\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
                 sleep 0.15
                 local MYPS=$(ps -a | awk '/'$BG_PROCESS_ID'/ {print $1}')
                 if [ "$MYPS" == "" ];
@@ -386,7 +421,7 @@ function long_running_command() {
                 fi
             done
         done
-        echo -en " \b"
+        echo -en " \b\b\b\b\b\b\b\b\b\b\b\b\b\b"
         wait $BG_PROCESS_ID
         BG_PROCESS_ID=-1
     fi
@@ -462,15 +497,26 @@ function handle_exit() {
 
     if [[ "$LOCAL_E2E" == "1" ]];
     then
+        iotedge check
         if [[ $e_code != 0 ]];
         then
             echo errors-file -----------------------------
+            echo ''
             cat $STDERR_REDIRECT
+        echo ''
             echo errors-file -----------------------------
         fi
         echo stdout-file -----------------------------
+        echo ''
         cat $STDOUT_REDIRECT
+        echo ''
         echo stdout-file -----------------------------
+
+        echo config-file -----------------------------
+        echo ''
+        cat /etc/aziot/config.toml
+        echo ''
+        echo config-file -----------------------------
     fi
 
     announce_my_log_file "All logs were appended to" $OUTPUT_FILE

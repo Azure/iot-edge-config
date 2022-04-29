@@ -36,8 +36,8 @@ function is_service_running() {
 
 function validate_post_install() {
     log_info "Post install validation starting."
-    local status=$(sudo iotedge system status)
-    
+    local status=$(iotedge system status)
+
     declare -a iotedge_services=("aziot-edged"
                                  "aziot-identityd"
                                  "aziot-keyd"
