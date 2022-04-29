@@ -22,17 +22,17 @@ subscription=$1
 # Create a random number to make sure create new resources per each run
 let num=$RANDOM*$RANDOM
 prefix=e2e
-iothub_id="${prefix}_ih_${num}"
-edge_device_id="${prefix}_testdevice_${num}"
+iothub_id="${prefix}-ih-${num}"
+edge_device_id="${prefix}-testdevice-${num}"
 device_displayName=$edge_device_id
 rg_name=PipelineResources-IoTEdgeConfig
 
 az account set -s ${subscription}
 
-echo Create the test IoT Hub for the run
+echo Create the test IoT Hub '${iothub_id}' for the run
 az iot hub create --resource-group ${rg_name} --location westus2 --name ${iothub_id} --sku S2
 
-echo Create the edge device for the run, edge enabled
+echo Create the edge device '${edge_device_id}' for the run, edge enabled
 az iot hub device-identity create -n ${iothub_id} -d ${edge_device_id} --ee
 
 echo Retrieve the connection string
@@ -46,7 +46,7 @@ echo Run the Azure IoT Edge Installer
 #wget -O azure-iot-edge-installer.sh https://github.com/Azure/iot-edge-config/releases/latest/download/azure-iot-edge-installer.sh \
 cd ./../../src
 chmod u+x azure-iot-edge-installer.sh
-sudo LOCAL_E2E=1 ./azure-iot-edge-installer.sh --telemetry-opt-out --connection-string "$device_connection_string"
+sudo LOCAL_E2E=1 ./azure-iot-edge-installer.sh --telemetry-opt-out --connection-string "${device_connection_string}"
 chmod u-x azure-iot-edge-installer.sh
 
 # Give 2 mins for changes to propagate to central app
