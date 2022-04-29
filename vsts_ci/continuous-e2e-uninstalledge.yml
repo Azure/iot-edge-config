@@ -10,7 +10,7 @@ steps:
     inlineScript: |
       sudo apt-get remove --purge --auto-remove aziot-edge -y
       sudo docker rm $(sudo docker ps -a -q) > /dev/null 2>&1
-      sudo docker rmi -f $(sudo docker images -aq) /dev/null 2>&1
+      sudo docker rmi -f $(sudo docker images -aq) > /dev/null 2>&1
       sudo apt-get remove --purge --auto-remove moby-engine -y
       sudo rm -f /tmp/azure-iot-edge-installer*.* > /dev/null 2>&1
   displayName: 'Uninstall iotedge package from previous run'

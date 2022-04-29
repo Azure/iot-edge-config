@@ -40,7 +40,7 @@ out=$(az iot hub device-identity connection-string show  -n ${iothub_id} -d ${ed
 device_connection_string=$(jq -r '.connectionString' <<< "$out")
 
 echo Configure the edge device with a test deployment manifest
-az iot edge set-modules --hub-name ${iothub_id} --device-id ${edge_device_id} --content ./test-edge-deployment
+az iot edge set-modules --hub-name ${iothub_id} --device-id ${edge_device_id} --content ./test-edge-deployment.json
 
 echo Run the Azure IoT Edge Installer
 #wget -O azure-iot-edge-installer.sh https://github.com/Azure/iot-edge-config/releases/latest/download/azure-iot-edge-installer.sh \

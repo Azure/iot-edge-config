@@ -23,7 +23,7 @@ echo Remove any dangling docker containers
 sudo docker rm $(sudo docker ps -a -q) > /dev/null 2>&1
 
 echo Remove all docker images
-sudo docker rmi -f $(sudo docker images -aq) /dev/null 2>&1
+sudo docker rmi -f $(sudo docker images -aq) > /dev/null 2>&1
 
 echo Remove moby-engine and its subs
 sudo apt-get remove --purge --auto-remove moby-engine -y
