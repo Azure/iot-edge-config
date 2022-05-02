@@ -57,7 +57,13 @@ sleep 120
 out=$(az iot hub device-identity show -d ${edge_device_id} -n ${iothub_id})
 status=$(jq -r '.connectionState' <<< "$out")
 
-echo $status
+test_result=1 # assume the worst
+if [ "$status" == "Connected" ];
+then
+    test_result=0 # success
+fi
 
 # Clean up
 az iot hub delete --resource-group ${rg_name} --name ${iothub_id}
+
+exit $test_result
