@@ -52,5 +52,17 @@ chmod u-x azure-iot-edge-installer.sh
 # Give 2 mins for changes to propagate to central app
 sleep 120
 
+# check edge status
+out=$(az iot hub device-identity show -d ${edge_device_id} -n ${iothub_id})
+status=$(jq -r '.connectionState' <<< "$out")
+
+test_result=1 # assume the worst
+if [ "$status" == "Connected" ];
+then
+    test_result=0 # success
+fi
+
 # Clean up
- az iot hub delete --resource-group ${rg_name} --name ${iothub_id}
+az iot hub delete --resource-group ${rg_name} --name ${iothub_id}
+
+exit $test_result
