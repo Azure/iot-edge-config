@@ -30,7 +30,8 @@ stages:
     - template: continuous-e2e-setup.yml
     - template: continuous-e2e-uninstalledge.yml
     - template: continuous-e2e.yml
-    dependsOn: []
+    dependsOn:
+    - LinuxE2ETests
     condition: succeeded()
 
   - job: Ubuntu1804E2ETests
@@ -40,7 +41,8 @@ stages:
     - template: continuous-e2e-setup.yml
     - template: continuous-e2e-uninstalledge.yml
     - template: continuous-e2e.yml
-    dependsOn: []
+    dependsOn:
+    - Ubuntu1804E2ETests
     condition: succeeded()
 
   - job: Ubuntu2004E2ETests
@@ -50,6 +52,7 @@ stages:
     - template: continuous-e2e-setup.yml
     - template: continuous-e2e-uninstalledge.yml
     - template: continuous-e2e.yml
-    dependsOn: []
+    dependsOn:
+    - Ubuntu2004E2ETests
     condition: succeeded()
   
