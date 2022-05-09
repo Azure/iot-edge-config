@@ -9,10 +9,9 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       cd tests/e2e-tests
-      chmod u+x test-uninstall.sh
-      ./test-uninstall.sh
       chmod u+x test-devicestate.sh
       ./test-devicestate.sh $(AzureSubscriptionId)
+      chmod u+x test-uninstall.sh
       ./test-uninstall.sh
       chmod u+x test-ihedgecs.sh
       ./test-ihedgecs.sh $(AzureSubscriptionId)
