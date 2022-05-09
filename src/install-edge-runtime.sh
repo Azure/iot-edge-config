@@ -135,7 +135,7 @@ function install_edge_runtime_cs() {
         exit ${EXIT_CODES[2]}
     fi
 
-    if [ -x "$(command -v iotedge)" ];
+    if [ "x$(command -v iotedge)" != "x" ];
     then
         log_error "Edge runtime is already available."
         exit ${EXIT_CODES[9]}

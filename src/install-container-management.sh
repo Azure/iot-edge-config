@@ -16,7 +16,7 @@
 ######################################
 
 install_container_management() {
-    if [ -x "$(command -v docker)" ];
+    if [ "x$(command -v docker)" != "x" ];
     then
         log_info "docker command is already available."
     else
