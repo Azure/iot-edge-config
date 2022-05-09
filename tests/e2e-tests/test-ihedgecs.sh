@@ -29,10 +29,10 @@ rg_name=PipelineResources-IoTEdgeConfig
 
 az account set -s ${subscription}
 
-echo Create the test IoT Hub '${iothub_id}' for the run
+echo Create the test IoT Hub ${iothub_id} for the run
 az iot hub create --resource-group ${rg_name} --location westus2 --name ${iothub_id} --sku S2
 
-echo Create the edge device '${edge_device_id}' for the run, edge enabled
+echo Create the edge device ${edge_device_id} for the run, edge enabled
 az iot hub device-identity create -n ${iothub_id} -d ${edge_device_id} --ee
 
 echo Retrieve the connection string
