@@ -56,7 +56,8 @@ sleep 120
 #az iot hub module-twin show --device-id ${edge_device_id} --module-id '$edgeAgent' --hub-name ${iothub_id}
 out=$(az iot hub device-identity show -d ${edge_device_id} -n ${iothub_id})
 status=$(jq -r '.connectionState' <<< "$out")
-
+echo "out: $out"
+echo "Status: $status"
 test_result=1 # assume the worst
 if [ "$status" == "Connected" ];
 then
