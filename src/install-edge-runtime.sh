@@ -77,7 +77,7 @@ function install_edge_runtime_dps() {
 
     if [ -x "$(command -v iotedge)" ];
     then
-		out=$(which docker)
+        out=$(which docker)
         log_error "Edge runtime is already available at %s." $out
         exit ${EXIT_CODES[9]}
     fi
@@ -138,7 +138,7 @@ function install_edge_runtime_cs() {
 
     if [ "x$(command -v iotedge)" != "x" ];
     then
-		log_error "Edge runtime is already available at '%s'." $(which iotedge)
+        log_error "Edge runtime is already available at ${BOLD}'%s'${DEFAULT}." $(which iotedge)
         exit ${EXIT_CODES[9]}
     fi
 

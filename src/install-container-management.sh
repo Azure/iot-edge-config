@@ -18,7 +18,7 @@
 install_container_management() {
     if [ "x$(command -v docker)" != "x" ];
     then
-        log_info "docker command is already available at '%s'." $(which docker)
+        log_info "docker command is already available at ${BOLD}'%s'${DEFAULT}." $(which docker)
     else
         log_info "Installing moby-engine container management"
 
