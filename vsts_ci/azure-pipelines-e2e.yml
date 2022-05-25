@@ -40,6 +40,7 @@ stages:
     - template: continuous-e2e-setup.yml
     - template: continuous-e2e.yml
     dependsOn: []
+    
     condition: succeeded()
 
   - job: Ubuntu2004E2ETests
