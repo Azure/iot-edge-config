@@ -74,7 +74,7 @@ function get_platform() {
             ;;
 
         raspbian)
-            os_platform="$ID_LIKE/bullseye/multiarch"
+            os_platform="$ID_LIKE/11"
             ;;
     esac
 
