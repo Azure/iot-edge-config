@@ -29,7 +29,7 @@ stages:
     steps:
     - template: continuous-e2e-setup.yml
     - template: continuous-e2e-uninstalledge.yml
-    - template: continuous-perf-raspi.yml
+    - template: continuous-perf.yml
     dependsOn: []
     condition: succeeded()
 
