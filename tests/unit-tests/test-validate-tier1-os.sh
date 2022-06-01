@@ -28,9 +28,22 @@ test_raspbian() {
     assert_eq 0 $?
 }
 
+test_raspbian11() {
+    ID="raspbian"
+    VERSION_ID="11"
+    is_os_tier1 "$ID" "$VERSION_ID"
+    assert_eq 0 $?
+}
+
 test_tier2() {
     ID="debian"
     VERSION_ID="9"
+    is_os_tier1 "$ID" "$VERSION_ID"
+    assert_eq 1 $?
+}
+test_tier2_11() {
+    ID="debian"
+    VERSION_ID="11"
     is_os_tier1 "$ID" "$VERSION_ID"
     assert_eq 1 $?
 }
@@ -39,6 +52,8 @@ test_tier2() {
 test_ubuntu1804
 test_ubuntu2004
 test_raspbian
+test_raspbian11
 test_tier2
+test_tier2_11
 
 show_test_totals

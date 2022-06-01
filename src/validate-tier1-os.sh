@@ -30,7 +30,7 @@ function is_os_tier1() {
             ;;
 
         raspbian)
-            if [ "$VERSION_CODENAME" == "stretch" ] || [ "$VERSION_ID" == "9" ];
+            if [ "$VERSION_CODENAME" == "bullseye" ] || [ "$VERSION_CODENAME" == "stretch" ] || [ "$VERSION_ID" == "9" ] || [ "$VERSION_ID" == "11" ];
             then
                 return 0
             fi
@@ -74,7 +74,12 @@ function get_platform() {
             ;;
 
         raspbian)
-            os_platform="$ID_LIKE/stretch/multiarch"
+            if [ "$VERSION_CODENAME" == "bullseye" ] || [ "$VERSION_ID" == "11" ];
+            then
+                os_platform="$ID_LIKE/11"               
+            else
+                os_platform="$ID_LIKE/stretch/multiarch"
+            fi
             ;;
     esac
 
