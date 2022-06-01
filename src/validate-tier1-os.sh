@@ -30,7 +30,7 @@ function is_os_tier1() {
             ;;
 
         raspbian)
-            if [ "$VERSION_CODENAME" == "bullseye" ] || [ "$VERSION_ID" == "11" ];
+            if [ "$VERSION_CODENAME" == "bullseye" ] || [ "$VERSION_CODENAME" == "stretch" ] || [ "$VERSION_ID" == "9" ] || [ "$VERSION_ID" == "11" ];
             then
                 return 0
             fi
