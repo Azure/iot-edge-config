@@ -74,7 +74,12 @@ function get_platform() {
             ;;
 
         raspbian)
-            os_platform="$ID_LIKE/11"
+            if [ "$VERSION_CODENAME" == "bullseye" ] || [ "$VERSION_ID" == "11" ];
+            then
+                os_platform="$ID_LIKE/11"               
+            else
+                os_platform="$ID_LIKE/stretch/multiarch"
+            fi
             ;;
     esac
 
