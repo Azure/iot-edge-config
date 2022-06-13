@@ -29,10 +29,10 @@ rg_name=PipelineResources-IoTEdgeConfig
 
 az account set -s ${subscription}
 
-echo Create the test IoT Hub '${iothub_id}' for the run
+echo Create the test IoT Hub ${iothub_id} for the run
 az iot hub create --resource-group ${rg_name} --location westus2 --name ${iothub_id} --sku S2
 
-echo Create the edge device '${edge_device_id}' for the run, edge enabled
+echo Create the edge device ${edge_device_id} for the run, edge enabled
 az iot hub device-identity create -n ${iothub_id} -d ${edge_device_id} --ee
 
 echo Retrieve the connection string
@@ -52,5 +52,17 @@ chmod u-x azure-iot-edge-installer.sh
 # Give 2 mins for changes to propagate to central app
 sleep 120
 
+# check edge status
+out=$(az iot hub device-identity show -d ${edge_device_id} -n ${iothub_id})
+status=$(jq -r '.connectionState' <<< "$out")
+
+test_result=1 # assume the worst
+if [ "$status" == "Connected" ];
+then
+    test_result=0 # success
+fi
+
 # Clean up
- az iot hub delete --resource-group ${rg_name} --name ${iothub_id}
+az iot hub delete --resource-group ${rg_name} --name ${iothub_id}
+
+exit $test_result

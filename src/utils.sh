@@ -478,7 +478,7 @@ function handle_exit() {
     then
         tc=${RED}
     fi
-    log_info "${REVERSE}${BOLD}${UNDERLINE}${tc}Exit %d$DEFAULT" $e_code
+    log_info "${REVERSE}${BOLD}${UNDERLINE}${tc}Exit %d${DEFAULT}" $e_code
 
     local end=`date +%s`
     runtime=$((end-start))
@@ -497,7 +497,7 @@ function handle_exit() {
 
     if [[ "$LOCAL_E2E" == "1" ]];
     then
-        iotedge check
+        iotedge check --verbose
         if [[ $e_code != 0 ]];
         then
             echo errors-file -----------------------------
