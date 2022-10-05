@@ -84,11 +84,11 @@ sudo ./azure-iot-edge-installer.sh -h
 ## Post-Installer Experience
 ### Using the Services in the Fundamentals Package
 - Defender for IoT
-  1.	To configure the Defender for IoT agent-based solution, please follow [“Configure data collection” section and the “Log Analytics creation”](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/how-to-configure-agent-based-solution).
-  2.	Navigate to IoT Hub > Your hub > Defender for IoT > Overview and review the information. Refer to the following guidance for detail.
-    - [Investigate security recommendations](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/tutorial-investigate-security-recommendations)
-    - [Investigate security alerts](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/tutorial-investigate-security-alerts)
-  3.	Refer to [Micro agent event collection (Preview)](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/concept-event-aggregation) for more applications with the Defender for IoT.
+    1.	To configure the Defender for IoT agent-based solution, please follow [“Configure data collection” section and the “Log Analytics creation”](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/how-to-configure-agent-based-solution).
+    2.	Navigate to IoT Hub > Your hub > Defender for IoT > Overview and review the information. Refer to the following guidance for detail.
+        - [Investigate security recommendations](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/tutorial-investigate-security-recommendations)
+        - [Investigate security alerts](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/tutorial-investigate-security-alerts)
+    3.	Refer to [Micro agent event collection (Preview)](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/concept-event-aggregation) for more applications with the Defender for IoT.
 - OSConfig
 Refer to the following guidance to try the OSconfig features. (More scenarios are available under the same category: “What can I provision and manage”.)
   - [Working with host names using Azure IoT and OSConfig](https://docs.microsoft.com/en-us/azure/osconfig/howto-hostname?tabs=portal)
@@ -144,14 +144,63 @@ $ sudo systemd-resolve --status
 ```
 $ sudo vi /etc/docker/daemon.json
 ```
-3.	Find the following line and move the cursor to the `#ffffff`highlighted location`#ffffff`. Then press “i” to enter insert mode.
-“dns”: [“1.1.1.1”, “8.8.8.8”],
+3.	Find the following line and move the cursor to the `highlighted location`. Then press “i” to enter insert mode.
+> “dns”: [`“`1.1.1.1”, “8.8.8.8”],
 4.	Insert the characters so the line is modified as below. (Your DNS server IP needs to be the fist element in the array.)
-“dns”: [“<DNS server IP>”, “1.1.1.1”, “8.8.8.8”],
+> “dns”: [`“<DNS server IP>”`, “1.1.1.1”, “8.8.8.8”],
 5.	Press Esc key to exit the insert mode.
-6.	Type “:wq” to save and exit.
+6.	Type **“:wq”** to save and exit.
 7.	Restart Docker service after the configuration is updated.
+```
 $ sudo systemctl restart docker
+```
+
+### Further IoT Edge diagnostic
+For information about each of the diagnostic checks this tool runs, including what to do if you get an error or warning, see [IoT Edge troubleshoot checks](https://github.com/Azure/iotedge/blob/main/doc/troubleshoot-checks.md). The Edge Installer performs the installation and default setup process. However, there are other factors that impact the behavior of IoT Edge runtime/service (such as network configuration, firewall…). Therefore, please do check the following IoT Edge troubleshooting guidance if you encounter IoT Edge issues:
+- [Common errors – Azure IoT Edge | Microsoft Docs](https://docs.microsoft.com/en-us/azure/iot-edge/troubleshoot-common-errors?view=iotedge-2020-11)
+- [Troubleshoot – Azure IoT Edge | Microsoft Docs](https://docs.microsoft.com/en-us/azure/iot-edge/troubleshoot?view=iotedge-2020-11)
+- [Troubleshoot from the Azure portal – Azure IoT Edge | Microsoft Docs](https://docs.microsoft.com/en-us/azure/iot-edge/troubleshoot-in-portal?view=iotedge-2020-11)
+
+[Note] DPS provisioning does not contain IoTHub’s hostname, so users need to add additional parameter for iotedge check command. Refer to the following links for troubleshooting:
+- [iotedge check with DPS & x.509 configuration returns “cannot resolve IoT Hub hostname” Errors · Issue #2033 · Azure/iotedge (github.com)](https://github.com/Azure/iotedge/issues/2033) 
+- [iotedge check incorrectly shows an error when using DPS · Issue #2313 · Azure/iotedge (github.com)](https://github.com/Azure/iotedge/issues/2313)
+
+## Appendix
+### Provision with connecting string
+1.	**Register your device**
+In your IoT hub in the Azure portal, IoT Edge devices are created and managed separately from IoT devices that are not edge enabled.
+    1. Sign in to the Azure portal and navigate to your IoT hub.
+    2. In the left pane, select **IoT Edge** from the menu, then select **Add an IoT Edge device**.
+    3. On the Create a device page, provide the following information:
+        1. Create a descriptive device ID. Make a note of this device ID, as you'll use it later.
+        2. Select **Symmetric key** as the authentication type.
+        3. Use the default settings to auto-generate authentication keys and connect the new device to your hub.
+    4. Select **Save**.
+Now that you have a device registered in IoT Hub, retrieve the information that you use to complete installation and provisioning of the IoT Edge runtime.
+
+2.	**View registered devices and retrieve provisioning information**
+Devices that use symmetric key authentication need their connection strings to complete installation and provisioning of the IoT Edge runtime.
+All the edge-enabled devices that connect to your IoT hub are listed on the IoT Edge page.
+ 
+When you're ready to set up your device, you need the connection string that links your physical device with its identity in the IoT hub.
+Devices that authenticate with symmetric keys have their connection strings available to copy in the portal.
+      1.	From the **IoT Edge** page in the portal, click on the device ID from the list of IoT Edge devices.
+      2.	Copy the value of either **Primary Connection String** or **Secondary Connection String**.
+Refer to [Create and provision an IoT Edge device on Linux using symmetric keys - Azure IoT Edge | Microsoft Docs](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-provision-single-device-linux-symmetric?view=iotedge-2020-11&tabs=azure-portal%2Cubuntu) for more details.
+
+### How to setup IoT Hub with DPS
+1.	Set-Up Azure Basics – If you do not have an IoT Hub (and DPS linked to your IoT Hub), follow these [instructions](https://word-edit.officeapps.live.com/we/Quickstart - Set up IoT Hub Device Provisioning Service in the Microsoft Azure portal %7C Microsoft Docs) to create an IoT Hub, create a DPS instance, and link the IoT Hub to your DPS instance
+2.	Create an individual enrollment within the DPS resource
+    1.	Specify the Mechanism to be **Symmetric Key**, and set **IoT Edge Device = TRUE**. Refer to the image below for filling in remaining fields.
+    2.	Copy the following for later use.
+        1. the **Registration_ID**,
+        2. **Symmetric Primary Key**,
+        3. the **IoT Hub host name** that’s been assigned.
+        4. **DPS Scope ID** (found in DPS overview page)
+ 
+    3.	[Note] If the dropdown menu from the final field in the image above does not include an IoT Hub, still proceed to the next page – where the option will likely update.
+    4.	[Note] The Installer does not support the following characters for DeviceID: `=, %, !, $`
+    5.	[Note] If you would like to utilize the hostname option (**-hn** or **--hostname**) to assign hostname as DeviceId, please also notice the following special characters do not comply with RFC 1035 for hostname naming: `+ _ # * ? ( ) , : @ '`
 
 
 
