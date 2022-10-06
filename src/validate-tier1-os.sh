@@ -30,7 +30,7 @@ function is_os_tier1() {
             ;;
 
         raspbian)
-            if [ "$VERSION_CODENAME" == "bullseye" ] || [ "$VERSION_CODENAME" == "stretch" ] || [ "$VERSION_ID" == "9" ] || [ "$VERSION_ID" == "11" ];
+            if [ "$VERSION_CODENAME" == "stretch" ] || [ "$VERSION_ID" == "9" ];
             then
                 return 0
             fi
@@ -74,12 +74,7 @@ function get_platform() {
             ;;
 
         raspbian)
-            if [ "$VERSION_CODENAME" == "bullseye" ] || [ "$VERSION_ID" == "11" ];
-            then
-                os_platform="$ID_LIKE/11"               
-            else
-                os_platform="$ID_LIKE/stretch/multiarch"
-            fi
+            os_platform="$ID_LIKE/stretch/multiarch"
             ;;
     esac
 
@@ -88,3 +83,28 @@ function get_platform() {
 
 export -f is_os_tier1 get_platform
 
+######################################
+# is_aarch64
+#
+#    - Check if the platform architecture is aarch64
+#
+# ARGUMENTS:
+#
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#    0 if the architecture is aarch64, 1 otherwise (x86_64)
+######################################
+
+function is_aarch64() {
+    local os_arch=$(uname -p)
+
+    if [[ $os_arch == "aarch64" ]];
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
+export -f is_aarch64

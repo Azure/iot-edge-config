@@ -1,0 +1,7 @@
+{
+   "action" : {
+      "do_install" : true,
+      "do_hotfix" : true,
+      "do_provisioning" : true
+   }
+}

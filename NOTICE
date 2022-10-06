@@ -1,0 +1,62 @@
+NOTICES AND INFORMATION
+Do Not Translate or Localize
+
+Edge AI Installer
+Copyright 2022 Microsoft
+
+This software incorporates material from
+Azure IoT Edge configuration tool (https://github.com/Azure/iot-edge-config)
+
+The Initial Developer of the 20.04/dmidecode_3.3-4.debian.tar.xz
+is Ubuntu Core Developers (ubuntu-devel-discuss@lists.ubuntu.com)
+Copyright: 2003-2007 Petter Reinholdtsen <pere@debian.org>
+           2011-2012 Daniel Baumann <daniel.baumann@progress-technologies.net>
+           2014-2019 JÃ¶rg Frings-FÃ¼rst <debian@jff.email>
+
+---------------------------------------------------------
+
+Binary: 20.04/dmidecode_3.3-4_arm64.deb
+Source: 20.04/dmidecode_3.3-4.debian.tar.xz
+The remainder of source can be downloaded from
+Ubuntu Package server (https://packages.ubuntu.com/impish/dmidecode)
+
+License: GPL-2+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+ .
+ The complete text of the GNU General Public License
+ can be found in /usr/share/common-licenses/GPL-2 file.
+
+---------------------------------------------------------
+
+MIT License
+
+    Copyright (c) Microsoft Corporation.
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE

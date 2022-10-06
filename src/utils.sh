@@ -160,7 +160,7 @@ function cmd_parser() {
         parsed_cmd[${flag_to_variable_dict[$key]}]=""
     done
 
-    local arg_pos=0
+    local count=1
     while [ $# -ne 0 ];
     do
         if [[ $1 == -* ]];
@@ -174,12 +174,17 @@ function cmd_parser() {
                     valid_argument=true
                     if [[ $# == 1 || $2 == -* ]];
                     then
-                        arg_pos=$(($arg_pos+1))
                         parsed_cmd[${flag_to_variable_dict[$key]}]=true
                     else
-                        arg_pos=$(($arg_pos+2))
-                        parsed_cmd[${flag_to_variable_dict[$key]}]=\${$arg_pos}
+                        if [[ "$1" == "-c" || "$1" == "--connection-string" ]];
+                        then
+                            count=$(($count+1))
+                            parsed_cmd[${flag_to_variable_dict[$key]}]=\${$count}
+                        else
+                            parsed_cmd[${flag_to_variable_dict[$key]}]=$2
+                        fi
                         shift
+                        count=$(($count+1))
                     fi
                     break
                 fi
@@ -197,6 +202,7 @@ function cmd_parser() {
         fi
 
         shift
+        count=$(($count+1))
     done
 
     # view content of entire dictionary
@@ -361,8 +367,8 @@ function prepare_apt() {
             if [[ $? == 0 ]];
             then
                 log_info "apt function testing ... remove apt-utils"
-                apt-get remove apt-utils -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
-                long_running_command $!
+                echo "If no response for a while, press CTRL + C to exit and run '${YELLOW}sudo apt remove apt-utils${DEFAULT}' for details."
+                apt remove apt-utils -y 1>>$STDOUT_REDIRECT
                 exit_code=$?
                 if [[ $exit_code != 0 ]];
                 then
@@ -372,8 +378,8 @@ function prepare_apt() {
             fi
 
             log_info "apt function testing ... install apt-utils"
-            apt-get install apt-utils -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
-            long_running_command $!
+            echo "If no response for a while, press CTRL + C to exit and run '${YELLOW}sudo apt-get install apt-utils${DEFAULT}' for details."
+            apt-get install apt-utils -y 1>>$STDOUT_REDIRECT
             exit_code=$?
             if [[ $exit_code != 0 ]];
             then
@@ -383,6 +389,78 @@ function prepare_apt() {
 
             log_info "prepare_apt() completed with exit code: %d" $exit_code
         fi
+    fi
+}
+
+######################################
+# get_manufacturer
+#
+#    - Retrieved the Manufacturer info from SMBIOS
+#
+# ARGUMENTS:
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function get_manufacturer() {
+    local manufacturer=""
+    manufacturer="$(sudo dmidecode -t system | grep Manufacturer | cut -d ':' -f 2)"
+    echo ${manufacturer:1}
+}
+
+######################################
+# get_product_name
+#
+#    - Retrieved the Product Name info from SMBIOS
+#
+# ARGUMENTS:
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function get_product_name() {
+    local product_name=""
+    product_name="$(sudo dmidecode -t system | grep "Product Name" | cut -d ':' -f 2)"
+    echo ${product_name:1}
+}
+
+export -f get_manufacturer get_product_name
+
+######################################
+# only_upgrade
+#
+#    - Install upgrades for the installed packages only and skip installing new packages
+#
+# ARGUMENTS:
+# OUTPUTS:
+#    Write output to stdout
+# RETURN:
+#
+######################################
+
+function only_upgrade() {
+    # update list
+    log_info "apt-get update ..."
+    apt-get update 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+    long_running_command $!
+    exit_code=$?
+    if [[ $exit_code != 0 ]];
+    then
+        log_error "apt-get update failed!" $exit_code
+    fi
+
+    # only upgrade
+    log_info "apt-get --only-upgrade install for percept specific packages ..."
+    apt-get --only-upgrade install -y ${percept_packages[@]}
+    exit_code=$?
+    if [[ $exit_code != 0 ]];
+    then
+        log_error "apt-get --only-upgrade install failed!" $exit_code
+        exit ${EXIT_CODES[6]}
     fi
 }
 
@@ -411,7 +489,7 @@ function long_running_command() {
         do
             for next_symbol in '-' '\\' '|' '/';
             do
-                echo -en "$next_symbol ${GREEN}Running ${DEFAULT}...\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+                echo -en "$next_symbol\b"
                 sleep 0.15
                 local MYPS=$(ps -a | awk '/'$BG_PROCESS_ID'/ {print $1}')
                 if [ "$MYPS" == "" ];
@@ -421,7 +499,7 @@ function long_running_command() {
                 fi
             done
         done
-        echo -en " \b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+        echo -en " \b"
         wait $BG_PROCESS_ID
         BG_PROCESS_ID=-1
     fi
@@ -497,26 +575,15 @@ function handle_exit() {
 
     if [[ "$LOCAL_E2E" == "1" ]];
     then
-        iotedge check
         if [[ $e_code != 0 ]];
         then
             echo errors-file -----------------------------
-            echo ''
             cat $STDERR_REDIRECT
-        echo ''
             echo errors-file -----------------------------
         fi
         echo stdout-file -----------------------------
-        echo ''
         cat $STDOUT_REDIRECT
-        echo ''
         echo stdout-file -----------------------------
-
-        echo config-file -----------------------------
-        echo ''
-        cat /etc/aziot/config.toml
-        echo ''
-        echo config-file -----------------------------
     fi
 
     announce_my_log_file "All logs were appended to" $OUTPUT_FILE

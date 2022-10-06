@@ -16,13 +16,13 @@
 ######################################
 
 install_container_management() {
-    if [ -x "$(command -v docker)" ];
+    if [ "x$(command -v docker)" != "x" ];
     then
         log_info "docker command is already available."
     else
         log_info "Installing moby-engine container management"
 
-        apt-get install moby-engine -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
+        apt-get install -o Dpkg::Options::="--force-confdef" moby-engine=20.10.17+azure-ubuntu20.04u3 -y 2>>$STDERR_REDIRECT 1>>$STDOUT_REDIRECT &
         long_running_command $!
         exit_code=$?
         if [[ $exit_code != 0 ]];
