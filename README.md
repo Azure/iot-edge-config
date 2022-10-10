@@ -1,24 +1,26 @@
-# Azure IoT Edge configuration tool V2
-The configuration tool V2 is currently at **beta stage**. It is only applicable to the **NVIDIA Jetson device (Xavier/Orin)** as described in the following sections.
+
+# Azure IoT Edge Configuration Tool V2
+Note: The config tool v2 is currently at **beta stage** and is compatible with **Ubuntu 20.04 devices**. For devices outside of the current scope, feel free to try v2 or use the original [IoT Edge config tool](https://github.com/Azure/iot-edge-config).
 
 ## Overview
-The Azure IoT Edge configuration tool V2 is an onboarding tool that streamlines the provisioning process for edge devices. Developers can use the configuration tool V2 to register their device to Azure IoT Hub and install core components for securing and managing intelligent edge devices. 
-The configuration tool V2 offers the following benefits:
-1.	Accelerates device onboarding to Azure
-2.	Installs base components for manageability and security
-3.	Establishes a device setup that can be scaled to production scenarios
-4.	Configures devices to begin Edge AI development
+The Azure IoT Edge Configuration Tool v2 (previously called the Azure Edge "Installer") is an onboarding tool that simplifies the edge device setup process by bringing the installation of several services into a command-line operation. Developers can use the tool to register their device to Azure IoT Hub and install core components for securing and managing intelligent edge devices.
+
+The config tool installs device-side agents for:
+1. IoT Edge - Microsoft service for remotely and securely deploying and managing cloud-native workloads on IoT devices
+2. Defender for IoT ***(v2 only)*** - Microsoft security offering that offers network detection and response that can be rapidly deployed and works with diverse IoT, OT, and industrial control system devices
+3. OSConfig ***(v2 only)*** - Microsoft agent that brings configuration management capabilities into Azure IoT twin-based workflows
 
 
-## Hardware Options
-The configuration tool V2 officially supports the following devices:
+## Device Setup
+### Compatible Hardware 
+The configuration tool V2 supports Ubuntu 20.04 devices and has been officially validated for the following devices:
 - NVIDIA AGX Orin/Orin NX
 - NVIDIA AGX Xavier/Xavier NX (only on Jetpack 5.0)
 
-However, the configuration tool V2 should work on other ARM64 devices with Ubuntu 20.0.4. If your device meets these requirements, feel free to try the configuration tool V2 and report any feedback to our team.
+If you run into any problems with hardware compatibility, please feel free to open an issue on GitHub.
 
-## Device Setup (for NVIDIA Xavier/Orin Devices)
-For NVIDIA Jetson devices, you will need the following equipment:
+### NVIDIA Xavier/Orin Guidance
+For NVIDIA Jetson devices, you will need the following equipment for setup via GUI:
 - External monitor + USB keyboard/mouse
 - **[Orin Only]** DP-to-DP cable and monitor with display port (DP-to-HDMI cable will not work)
 - **[JP4.x OS/FW Only]** Additional physical host machine with Ubuntu OS (This is only required if your developer kit currently boots with JP4.x OS/FW(Ubuntu 18.04))
@@ -32,20 +34,18 @@ For NVIDIA Jetson devices, you will need the following equipment:
 
 **If your DK is already setup but not registered to Azure**, refer to this guidance:
 1.	Check the OS of your device by running command **“lsb_release -a”**. Orin devices will likely be Ubuntu 20.0.4, which is sufficient for the configuration tool V2. Xavier devices will likely be Ubuntu 18.0.4, which needs to be upgraded to use the configuration tool V2.
-2.	For devices on ubuntu 18.04: You will need to flash Jetpack 5.0 or later for your device to be compatible with configuration tool V2. Navigate to NVIDIA’s guidance for flashing your specific device.
-3.	For devices on ubuntu 20.04: You can proceed to run the configuration tool V2. But it is recommended to install the latest version of Jetpack 5.0 by following Step 2 of [Getting Started with Jetson Orin guide](https://developer.nvidia.com/embedded/learn/get-started-jetson-agx-orin-devkit).
+2.	For devices on Ubuntu 18.04: You will need to flash Jetpack 5.0 or later for your device to be compatible with configuration tool V2. Navigate to NVIDIA’s guidance for flashing your specific device.
+3.	For devices on Ubuntu 20.04: You can proceed to run the configuration tool V2. But it is recommended to install the latest version of Jetpack 5.0 by following Step 2 of [Getting Started with Jetson Orin guide](https://developer.nvidia.com/embedded/learn/get-started-jetson-agx-orin-devkit).
 
 **If your DK is already registered to an IoT Hub/Edge account**, you can still follow the guidance of using connection string to run the configuration tool V2 and connect to the same IoTHub. The configuration tool V2 should effectively install Defender for IoT and OSConfig.
 
 ## How to Install
-1.	**Make sure the developer kit is connected to the internet before executing the configuration tool V2!**
+1.	Make sure the developer kit is connected to the internet before executing the configuration tool V2!
 2.	Set up Azure Basics
     - If you do not have an IoT Hub, follow “Create an IoT Hub” in [Use the Azure portal to create an IoT Hub | Microsoft Docs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal). You can skip this step if you already have an IoT Hub.
     - Once you have an IoT Hub, choose one of these two options:
-      - **[Option I] Provision with connecting string**
-        If you are not familiar with the process of getting the IoT Hub connection string. Refer to the steps in appendix: Provision with connecting string.
-      - **[Option II] Provision with DPS**
-        Refer to the steps in appendix: How to setup IoT Hub with DPS.
+      	- **[Option I] Provision with connection string**: If you are not familiar with the process of getting the IoT Hub connection string, refer to the steps in [Appendix: Provision with connection string](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-connecting-string)
+      	- **[Option II] Provision with DPS**: If you are not familiar with this process, refer to the steps in [Appendix: Provision with DPS](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-connecting-string)
 3.	Save the **connection string** to a .txt file (or if using DPS provisioning, save Registration_ID, Symmetric Primary Key, the IoT Hub host name, DPS Scope ID to a .txt file).
 4.	Download the configuration tool V2 .run file (ex: **eai-installer_1.2.2_arm64.run**)
 5.	Copy the **configuration tool V2 file** and the **txt file that contains provision info** to your NV developer kit by USB drive
@@ -84,14 +84,13 @@ sudo ./azure-iot-edge-installer.sh -h
 
 ## Post-Install Experience
 ### Using the Services in the Fundamentals Package
-- Defender for IoT
+- **Defender for IoT**
     1.	To configure the Defender for IoT agent-based solution, please follow [“Configure data collection” section and the “Log Analytics creation”](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/how-to-configure-agent-based-solution).
     2.	Navigate to IoT Hub > Your hub > Defender for IoT > Overview and review the information. Refer to the following guidance for detail.
         - [Investigate security recommendations](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/tutorial-investigate-security-recommendations)
         - [Investigate security alerts](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/tutorial-investigate-security-alerts)
     3.	Refer to [Micro agent event collection (Preview)](https://docs.microsoft.com/en-us/azure/defender-for-iot/device-builders/concept-event-aggregation) for more applications with the Defender for IoT.
-- OSConfig
-Refer to the following guidance to try the OSconfig features. (More scenarios are available under the same category: “What can I provision and manage”.)
+- **OSConfig**: Refer to the following guidance to try the OSconfig features. (More scenarios are available under the same category: “What can I provision and manage”.)
   - [Working with host names using Azure IoT and OSConfig](https://docs.microsoft.com/en-us/azure/osconfig/howto-hostname?tabs=portal)
   - [Reboot or shut down devices with Azure IoT and OSConfig](https://docs.microsoft.com/en-us/azure/osconfig/howto-rebootshutdown?tabs=portal%2Csingle)
 
@@ -113,7 +112,7 @@ $ sudo docker rm -f <container id>
 $ sudo docker images
 $ sudo docker rmi -f <image id>
 ```
-4.	Restart your device
+3.	Restart your device
 ```
 $ sudo reboot
 ```
@@ -167,7 +166,7 @@ For information about each of the diagnostic checks this tool runs, including wh
 - [iotedge check incorrectly shows an error when using DPS · Issue #2313 · Azure/iotedge (github.com)](https://github.com/Azure/iotedge/issues/2313)
 
 ## Appendix
-### Provision with connecting string
+### Provision with connection string
 1.	**Register your device**
 In your IoT hub in the Azure portal, IoT Edge devices are created and managed separately from IoT devices that are not edge enabled.
     1. Sign in to the Azure portal and navigate to your IoT hub.
@@ -189,7 +188,7 @@ Devices that authenticate with symmetric keys have their connection strings avai
       2.	Copy the value of either **Primary Connection String** or **Secondary Connection String**.
 Refer to [Create and provision an IoT Edge device on Linux using symmetric keys - Azure IoT Edge | Microsoft Docs](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-provision-single-device-linux-symmetric?view=iotedge-2020-11&tabs=azure-portal%2Cubuntu) for more details.
 
-### How to setup IoT Hub with DPS
+### Provision with DPS
 1.	Set-Up Azure Basics – If you do not have an IoT Hub (and DPS linked to your IoT Hub), follow these [instructions](https://word-edit.officeapps.live.com/we/Quickstart - Set up IoT Hub Device Provisioning Service in the Microsoft Azure portal %7C Microsoft Docs) to create an IoT Hub, create a DPS instance, and link the IoT Hub to your DPS instance
 2.	Create an individual enrollment within the DPS resource
     1.	Specify the Mechanism to be **Symmetric Key**, and set **IoT Edge Device = TRUE**. Refer to the image below for filling in remaining fields.
@@ -202,20 +201,3 @@ Refer to [Create and provision an IoT Edge device on Linux using symmetric keys 
     3.	[Note] If the dropdown menu from the final field in the image above does not include an IoT Hub, still proceed to the next page – where the option will likely update.
     4.	[Note] The configuration tool V2 does not support the following characters for DeviceID: `=, %, !, $`
     5.	[Note] If you would like to utilize the hostname option (**-hn** or **--hostname**) to assign hostname as DeviceId, please also notice the following special characters do not comply with RFC 1035 for hostname naming: `+ _ # * ? ( ) , : @ '`
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
