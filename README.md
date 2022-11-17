@@ -47,25 +47,25 @@ For NVIDIA Jetson devices, you will need the following equipment for setup via G
       	- **[Option I] Provision with connection string**: If you are not familiar with the process of getting the IoT Hub connection string, refer to the steps in [Appendix: Provision with connection string](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-connecting-string)
       	- **[Option II] Provision with DPS**: If you are not familiar with this process, refer to the steps in [Appendix: Provision with DPS](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-connecting-string)
 3.	Save the **connection string** to a .txt file (or if using DPS provisioning, save Registration_ID, Symmetric Primary Key, the IoT Hub host name, DPS Scope ID to a .txt file).
-4.	Download the configuration tool V2 .run file (ex: **eai-installer_1.2.2_arm64.run**)
+4.	Download the configuration tool V2 .run file (ex: **edge-config-tool_2.0.0_arm64.deb**)
 5.	Copy the **configuration tool V2 file** and the **txt file that contains provision info** to your NV developer kit by USB drive
     - **[Alternate Method]** If you do not have a USB drive but the DK and PC are connected to the same network, there is a work around. Navigate to the PC command line, enter the directory where the configuration tool V2 is located, and run the following command to securely copy the configuration tool V2 to your DK. 
 
 ```
-scp ~/Downloads/eai-installer_[VERSION]_arm64.run [DK desktop address]:~/[target directory]./e
+scp ~/Downloads/edge-config-tool_[VERSION]_arm64.deb [DK desktop address]:~/[target directory]./e
 ```
 
 6.	Before running the configuration tool V2, execute the following commands in the **command line of your DK**.
 From the directory of the configuration tool V2 .run file, execute the following command:
 ```
-sudo chmod +x eai-installer_1.2.2_arm64.run; sudo ./eai-installer_1.2.2_arm64.run; cd /usr/local/microsoft/eai-installer
+sudo chmod +x edge-config-tool_2.0.0_arm64.deb; sudo dpkg -i edge-config-tool_2.0.0_arm64.deb; cd /usr/local/microsoft/edge-config-tool
 ```
-  **[Note]** 1.2.2 is the current configuration tool V2 version, if you are using other versions, please modify the command accordingly.
+  **[Note]** 2.0.0 is the current configuration tool V2 version, if you are using other versions, please modify the command accordingly.
   [Optional] Use the following command if you want to verify the configuration tool V2 is correctly setup.
 ```
-dpkg-query -s eai-installer
+dpkg-query -s edge-config-tool
 ```
-7.	To execute the configuration tool V2 and set the developer kit Azure ready, you can choose one of the provisioning mechanisms below when executing the configuration tool V2. Make sure you are under the directory of “/usr/local/microsoft/eai-installer” when executing the following command.
+7.	To execute the configuration tool V2 and set the developer kit Azure ready, you can choose one of the provisioning mechanisms below when executing the configuration tool V2. Make sure you are under the directory of “/usr/local/microsoft/edge-config-tool” when executing the following command.
 
 **[Connection String]**
 ```
@@ -103,7 +103,7 @@ sudo ./azure-iot-edge-installer.sh -u
 ### Uninstallation
 1.	Uninstall Edge runtime & Percept packages
 ```
-$ sudo apt-get remove --purge aziot-edge aziot-identity-service osconfig eai-installer -y
+$ sudo apt-get remove --purge aziot-edge aziot-identity-service osconfig edge-config-tool -y
 ```
 2.	Enumerate and remove edge modules
 ```

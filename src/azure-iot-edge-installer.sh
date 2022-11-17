@@ -12,7 +12,7 @@ then
     exit 1
 fi
 
-VERSION_TAG="v$(apt-cache policy eai-installer | grep Installed | cut -d ' ' -f 4)"
+VERSION_TAG="v$(apt-cache policy edge-config-tool | grep Installed | cut -d ' ' -f 4)"
 if [[ $VERSION_TAG == "v" ]];
 then
     VERSION_TAG="unknown"
