@@ -1,6 +1,6 @@
-Package: eai-installer
-Version: 1.2.3
+Package: edge-config-tool
+Version: 2.0.0
 Architecture: arm64
 Maintainer: Azure Percept <azurepercept@microsoft.com>
-Description: Microsoft Edge AI Installer
+Description: Microsoft Azure IoT Edge Configuration Tool
  A set of Linux shell scripts to install Percept related Debian packages and also provision user configurations to make the device available to connect with Azure Percept resources.
