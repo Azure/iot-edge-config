@@ -40,6 +40,7 @@ For NVIDIA Jetson devices, you will need the following equipment for setup via G
 **If your DK is already registered to an IoT Hub/Edge account**, you can still follow the guidance of using connection string to run the configuration tool V2 and connect to the same IoTHub. The configuration tool V2 should effectively install Defender for IoT and OSConfig.
 
 ## How to Install
+**Prerequisite**
 1.	Make sure the developer kit is connected to the internet before executing the configuration tool V2!
 2.	Set up Azure Basics
     - If you do not have an IoT Hub, follow “Create an IoT Hub” in [Use the Azure portal to create an IoT Hub | Microsoft Docs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal). You can skip this step if you already have an IoT Hub.
@@ -47,40 +48,47 @@ For NVIDIA Jetson devices, you will need the following equipment for setup via G
       	- **[Option I] Provision with connection string**: If you are not familiar with the process of getting the IoT Hub connection string, refer to the steps in [Appendix: Provision with connection string](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-connecting-string)
       	- **[Option II] Provision with DPS**: If you are not familiar with this process, refer to the steps in [Appendix: Provision with DPS](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-connecting-string)
 3.	Save the **connection string** to a .txt file (or if using DPS provisioning, save Registration_ID, Symmetric Primary Key, the IoT Hub host name, DPS Scope ID to a .txt file).
-4.	Download the configuration tool V2 .run file (ex: **edge-config-tool_2.0.0_arm64.deb**)
-5.	Copy the **configuration tool V2 file** and the **txt file that contains provision info** to your NV developer kit by USB drive
-    - **[Alternate Method]** If you do not have a USB drive but the DK and PC are connected to the same network, there is a work around. Navigate to the PC command line, enter the directory where the configuration tool V2 is located, and run the following command to securely copy the configuration tool V2 to your DK. 
 
-```
-scp ~/Downloads/edge-config-tool_[VERSION]_arm64.deb [DK desktop address]:~/[target directory]./e
-```
+**Install the Edge Configuration Tool V2 online (Recommended Option)**
 
-6.	Before running the configuration tool V2, execute the following commands in the **command line of your DK**.
-From the directory of the configuration tool V2 .run file, execute the following command:
-```
-sudo chmod +x edge-config-tool_2.0.0_arm64.deb; sudo dpkg -i edge-config-tool_2.0.0_arm64.deb; cd /usr/local/microsoft/edge-config-tool
-```
-  **[Note]** 2.0.0 is the current configuration tool V2 version, if you are using other versions, please modify the command accordingly.
-  [Optional] Use the following command if you want to verify the configuration tool V2 is correctly setup.
-```
-dpkg-query -s edge-config-tool
-```
-7.	To execute the configuration tool V2 and set the developer kit Azure ready, you can choose one of the provisioning mechanisms below when executing the configuration tool V2. Make sure you are under the directory of “/usr/local/microsoft/edge-config-tool” when executing the following command.
+This is the recommended method for installing the latest config tool. 
+1. Config Linux Software Repository for Microsoft Products
+    ```
+    curl -sSL https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft-prod.list; curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+    ```
+2. Install the Edge Configuration Tool V2 with apt-get
+    ```
+    sudo apt-get update; sudo apt list edge-config-tool; sudo apt-get install edge-config-tool; cd /usr/local/microsoft/edge-config-tool
+    ```
 
-**[Connection String]**
-```
-sudo ./azure-iot-edge-installer.sh -c  “<Azure IoT Edge Device Connection String>”
-```
-**[DPS]**
-```
-sudo ./azure-iot-edge-installer.sh -s <ID Scope> -r <Registration ID> -k <Symmetric Key>
-```
+**Install the Edge Configuration Tool V2 with offline package (Alternative Option)**
 
-**[Note]** To disable the telemetry sending to Microsoft, add the parameter **-nt** or **–telemetry-opt-out** when executing the shell script.
-8.	Refer to the help menu for more options:
-```
-sudo ./azure-iot-edge-installer.sh -h
-```
+This is an alternative method for installing the config tool. If you have already completed the previous step (apt-get installation), you can skip to the next section to connect your device to Azure.
+1.	Download the config tool V2 .deb file (ex: **edge-config-tool_2.0.0_arm64.deb**)
+2.	Copy the **config tool V2 file** and the **txt file that contains provision info** to your NV developer kit by USB drive
+3.	Install the Edge Config Tool V2 with following commands from the directory of the .deb file.
+    ```
+    sudo chmod +x edge-config-tool_2.0.0_arm64.deb; sudo dpkg -i edge-config-tool_2.0.0_arm64.deb; cd /usr/local/microsoft/edge-config-tool
+    ```
+    **[Note]** 2.0.0 is the current configuration tool V2 version, if you are using other versions, please modify the command accordingly.
+
+**Execute the configuration tool V2 and connect to Azure**
+1. To execute the configuration tool V2 and set the developer kit Azure ready, you can choose one of the provisioning mechanisms below when executing the configuration tool V2. Make sure you are under the directory of “/usr/local/microsoft/edge-config-tool” when executing the following command.
+
+    **[Connection String]**
+    ```
+    sudo ./azure-iot-edge-installer.sh -c  “<Azure IoT Edge Device Connection String>”
+    ```
+    **[DPS]**
+    ```
+    sudo ./azure-iot-edge-installer.sh -s <ID Scope> -r <Registration ID> -k <Symmetric Key>
+    ```
+
+    **[Note]** To disable the telemetry sending to Microsoft, add the parameter **-nt** or **–telemetry-opt-out** when executing the shell script.
+2.	Refer to the help menu for more options:
+    ```
+    sudo ./azure-iot-edge-installer.sh -h
+    ```
 
 ## Post-Install Experience
 ### Using the Services in the Fundamentals Package
@@ -101,7 +109,7 @@ sudo ./azure-iot-edge-installer.sh -u
 ```
 
 ### Uninstallation
-1.	Uninstall Edge runtime & Percept packages
+1.	Uninstall Edge runtime & Azure device-side agents
 ```
 $ sudo apt-get remove --purge aziot-edge aziot-identity-service osconfig edge-config-tool -y
 ```
@@ -124,6 +132,10 @@ The expected status of IoT Edge runtime response is **“NA”** or **“417 –
 For **DefenderMicroAgent** and **OSConfig module**, it is expected to see the states show **“NA”**. As long as you get the following INFO notification from the configuration tool V2 output, you are good to go.
 
 ### Configuration Check
+Use the following command if you want to verify the configuration tool V2 is correctly setup.
+```
+dpkg-query -s edge-config-tool
+```
 The IoT Edge Check is a useful tool for checking the status of edge agent and edge hub. Before you proceed to the check process, please double confirm if system time has been synchronized after network configured.
 ```
 Sudo timedatectl status
