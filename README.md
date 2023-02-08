@@ -45,8 +45,8 @@ For NVIDIA Jetson devices, you will need the following equipment for setup via G
 2.	Set up Azure Basics
     - If you do not have an IoT Hub, follow “Create an IoT Hub” in [Use the Azure portal to create an IoT Hub | Microsoft Docs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal). You can skip this step if you already have an IoT Hub.
     - Once you have an IoT Hub, choose one of these two options:
-      	- **[Option I] Provision with connection string**: If you are not familiar with the process of getting the IoT Hub connection string, refer to the steps in [Appendix: Provision with connection string](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-connecting-string)
-      	- **[Option II] Provision with DPS**: If you are not familiar with this process, refer to the steps in [Appendix: Provision with DPS](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-connecting-string)
+      	- **[Option I] Provision with connection string**: If you are not familiar with the process of getting the IoT Hub connection string, refer to the steps in [Appendix: Provision with connection string](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-connection-string)
+      	- **[Option II] Provision with DPS**: If you are not familiar with this process, refer to the steps in [Appendix: Provision with DPS](https://github.com/Azure/iot-edge-config/tree/config_tool_v2#provision-with-dps)
 3.	Save the **connection string** to a .txt file (or if using DPS provisioning, save Registration_ID, Symmetric Primary Key, the IoT Hub host name, DPS Scope ID to a .txt file).
 
 **Install the Edge Configuration Tool V2 online (Recommended Option)**
@@ -196,12 +196,13 @@ All the edge-enabled devices that connect to your IoT hub are listed on the IoT 
  
 When you're ready to set up your device, you need the connection string that links your physical device with its identity in the IoT hub.
 Devices that authenticate with symmetric keys have their connection strings available to copy in the portal.
-      1.	From the **IoT Edge** page in the portal, click on the device ID from the list of IoT Edge devices.
-      2.	Copy the value of either **Primary Connection String** or **Secondary Connection String**.
+1. From the **IoT Edge** page in the portal, click on the device ID from the list of IoT Edge devices.
+2. Copy the value of either **Primary Connection String** or **Secondary Connection String**.
+
 Refer to [Create and provision an IoT Edge device on Linux using symmetric keys - Azure IoT Edge | Microsoft Docs](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-provision-single-device-linux-symmetric?view=iotedge-2020-11&tabs=azure-portal%2Cubuntu) for more details.
 
 ### Provision with DPS
-1.	Set-Up Azure Basics – If you do not have an IoT Hub (and DPS linked to your IoT Hub), follow these [instructions](https://word-edit.officeapps.live.com/we/Quickstart - Set up IoT Hub Device Provisioning Service in the Microsoft Azure portal %7C Microsoft Docs) to create an IoT Hub, create a DPS instance, and link the IoT Hub to your DPS instance
+1.	Set-Up Azure Basics – If you do not have an IoT Hub (and DPS linked to your IoT Hub), follow these [instructions](https://learn.microsoft.com/en-us/azure/iot-dps/quick-setup-auto-provision) to create an IoT Hub, create a DPS instance, and link the IoT Hub to your DPS instance
 2.	Create an individual enrollment within the DPS resource
     1.	Specify the Mechanism to be **Symmetric Key**, and set **IoT Edge Device = TRUE**. Refer to the image below for filling in remaining fields.
     2.	Copy the following for later use.
