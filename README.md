@@ -2,14 +2,33 @@
 # Azure IoT Edge Configuration Tool V2
 Note: The config tool v2 is currently at **beta stage** and is compatible with **Ubuntu 20.04 devices**. For devices outside of the current scope, feel free to try v2 or use the original [IoT Edge config tool](https://github.com/Azure/iot-edge-config).
 
-## Overview
-The Azure IoT Edge Configuration Tool v2 (previously called the Azure Edge "Installer") is an onboarding tool that simplifies the edge device setup process by bringing the installation of several services into a command-line operation. Developers can use the tool to register their device to Azure IoT Hub and install core components for securing and managing intelligent edge devices.
+## What is the Edge Config Tool?
 
-The config tool installs device-side agents for:
-1. IoT Edge - Microsoft service for remotely and securely deploying and managing cloud-native workloads on IoT devices
-2. Defender for IoT ***(v2 only)*** - Microsoft security offering that offers network detection and response that can be rapidly deployed and works with diverse IoT, OT, and industrial control system devices
-3. OSConfig ***(v2 only)*** - Microsoft agent that brings configuration management capabilities into Azure IoT twin-based workflows
+The Edge Config Tool enables you to securely connect, deploy, and manage your Edge devices to and leverage the power of Azure. It makes it easy for device builders and systems/solution integrators/builders to use Azure to manage and secure their light edge devices. For more information, see https://aka.ms/LinuxEdgeIoTSuite.  
 
+### What’s in the Edge Config Tool? 
+
+The Edge Config Tool includes 3 key Azure services. Taken together, these services enable you to focus on creating differentiated value for your business (e.g., through AI/ML and data-driven insights instead of focusing on managing infrastructure). The 3 services are IoT Edge, Defender for IoT and OSConfig: 
+
+1. **IoT Edge** – Azure IoT Edge is Microsoft's tool for remotely and securely deploying and managing cloud-native workloads—such as AI, Azure services, or your own business logic—to run directly on your IoT devices. IoT Edge can be used to optimize cloud spend and enable your devices to react faster to local changes and operate reliably even in extended offline periods. By using IoT Edge, you can:   
+    - Deploy Azure IoT Edge on premises to break up data silos and consolidate operational data at scale in the Azure Cloud.   
+    - Remotely and securely deploy and manage cloud-native workloads—such as AI, Azure services, or your own business logic—to run directly on your IoT devices.   
+    - Optimize cloud spend and enable your devices to react faster to local changes and operate reliably even in extended offline periods.   
+
+2. **Defender for IoT** - Defender for IoT provides a comprehensive set of security features and capabilities that can be integrated into their products during the development process. This helps to secure devices from the ground up and reduces the risk of vulnerabilities and attacks. The solution can be customized to meet the specific security needs of different IoT devices and can be integrated with the device builder's existing development tools and processes. With Defender for IoT, one can: 
+    - Comply with industry regulations and standards: Defender for IoT helps device builders to comply with relevant security regulations and standards, such as the NIST Cybersecurity Framework, by providing a comprehensive set of security controls. 
+    - Proactively monitor the security posture of an IoT device: Defender for IoT provides security posture recommendations based on the CIS benchmark, along with device-specific recommendations. With the micro-agent, users can also get visibility into operating system security, including OS configuration, firewall settings, and permissions. 
+    - Secure your products against cyber threats: The solution provides real-time monitoring and protection (EDR - Endpoint Detection and Response) against malware, hacking, unauthorized access, and other security threats, helping to ensure the security of IoT devices throughout their lifecycle. 
+    - Ensure interoperability with Microsoft SIEM/SOAR and XDR to stop attacks with automated, cross-domain security and built-in AI.  
+
+    In summary, Defender for IoT provides device builders with a comprehensive set of security features and capabilities that help to secure IoT devices from the ground up and reduce the risk of vulnerabilities and attacks. It enables device builders to deliver secure, compliant, and trustworthy IoT products to their customers. 
+
+3. **OSConfig** - OSConfig for IoT is a compact (< 5MB) agent which brings configuration management capabilities into your Azure IoT twin-based workflows. To deploy devices at scale and to keep devices healthy and productive, solution operators need configuration management. Key examples include network settings, hostnames, time zones, security benchmarks, firewall rules, SSH users, and so on.  
+By using Azure IoT with OSConfig for configuration management, you can:   
+
+    - Reduce the number of device images you need to maintain (thanks to dynamic configuration at deploy time).  
+    - Reduce the frequency of full image updates (thanks to targeted reconfiguration at deploy time or any time).  
+    - Eliminate all the baggage of heavy weight server management tools from your IoT/Edge solution (thanks to very small agent) 
 
 ## Device Setup
 ### Compatible Hardware 
@@ -18,26 +37,6 @@ The configuration tool V2 supports Ubuntu 20.04 devices and has been officially 
 - NVIDIA AGX Xavier/Xavier NX (only on Jetpack 5.0)
 
 If you run into any problems with hardware compatibility, please feel free to open an issue on GitHub.
-
-### NVIDIA Xavier/Orin Guidance
-For NVIDIA Jetson devices, you will need the following equipment for setup via GUI:
-- External monitor + USB keyboard/mouse
-- **[Orin Only]** DP-to-DP cable and monitor with display port (DP-to-HDMI cable will not work)
-- **[JP4.x OS/FW Only]** Additional physical host machine with Ubuntu OS (This is only required if your developer kit currently boots with JP4.x OS/FW(Ubuntu 18.04))
-  - Please see Device Setup for more information
-  
-**If you are setting up your device for the first time,** refer to this guidance:
-- **Orin**: See [Getting Started with Jetson Orin guide](https://developer.nvidia.com/embedded/learn/get-started-jetson-agx-orin-devkit).
-- **Xavier**: See [Getting Started With Jetson Xavier NX guide](https://developer.nvidia.com/embedded/learn/get-started-jetson-xavier-nx-devkit). Note that you will need to flash Jetpack 5.0 or later for your device to be compatible with configuration tool V2.
-
-**[Important]** When going through the Jetson device setup, make sure you include not only the Jetson Linux BSP but also the JetPack SDK if you plan to deploy DeepStream workloads to the device.
-
-**If your DK is already setup but not registered to Azure**, refer to this guidance:
-1.	Check the OS of your device by running command **“lsb_release -a”**. Orin devices will likely be Ubuntu 20.0.4, which is sufficient for the configuration tool V2. Xavier devices will likely be Ubuntu 18.0.4, which needs to be upgraded to use the configuration tool V2.
-2.	For devices on Ubuntu 18.04: You will need to flash Jetpack 5.0 or later for your device to be compatible with configuration tool V2. Navigate to NVIDIA’s guidance for flashing your specific device.
-3.	For devices on Ubuntu 20.04: You can proceed to run the configuration tool V2. But it is recommended to install the latest version of Jetpack 5.0 by following Step 2 of [Getting Started with Jetson Orin guide](https://developer.nvidia.com/embedded/learn/get-started-jetson-agx-orin-devkit).
-
-**If your DK is already registered to an IoT Hub/Edge account**, you can still follow the guidance of using connection string to run the configuration tool V2 and connect to the same IoTHub. The configuration tool V2 should effectively install Defender for IoT and OSConfig.
 
 ## How to Install
 **Prerequisite**
@@ -214,3 +213,23 @@ Refer to [Create and provision an IoT Edge device on Linux using symmetric keys 
     3.	[Note] If the dropdown menu from the final field in the image above does not include an IoT Hub, still proceed to the next page – where the option will likely update.
     4.	[Note] The configuration tool V2 does not support the following characters for DeviceID: `=, %, !, $`
     5.	[Note] If you would like to utilize the hostname option (**-hn** or **--hostname**) to assign hostname as DeviceId, please also notice the following special characters do not comply with RFC 1035 for hostname naming: `+ _ # * ? ( ) , : @ '`
+
+### NVIDIA Xavier/Orin Guidance
+For NVIDIA Jetson devices, you will need the following equipment for setup via GUI:
+- External monitor + USB keyboard/mouse
+- **[Orin Only]** DP-to-DP cable and monitor with display port (DP-to-HDMI cable will not work)
+- **[JP4.x OS/FW Only]** Additional physical host machine with Ubuntu OS (This is only required if your developer kit currently boots with JP4.x OS/FW(Ubuntu 18.04))
+  - Please see Device Setup for more information
+  
+**If you are setting up your device for the first time,** refer to this guidance:
+- **Orin**: See [Getting Started with Jetson Orin guide](https://developer.nvidia.com/embedded/learn/get-started-jetson-agx-orin-devkit).
+- **Xavier**: See [Getting Started With Jetson Xavier NX guide](https://developer.nvidia.com/embedded/learn/get-started-jetson-xavier-nx-devkit). Note that you will need to flash Jetpack 5.0 or later for your device to be compatible with configuration tool V2.
+
+**[Important]** When going through the Jetson device setup, make sure you include not only the Jetson Linux BSP but also the JetPack SDK if you plan to deploy DeepStream workloads to the device.
+
+**If your DK is already setup but not registered to Azure**, refer to this guidance:
+1.	Check the OS of your device by running command **“lsb_release -a”**. Orin devices will likely be Ubuntu 20.0.4, which is sufficient for the configuration tool V2. Xavier devices will likely be Ubuntu 18.0.4, which needs to be upgraded to use the configuration tool V2.
+2.	For devices on Ubuntu 18.04: You will need to flash Jetpack 5.0 or later for your device to be compatible with configuration tool V2. Navigate to NVIDIA’s guidance for flashing your specific device.
+3.	For devices on Ubuntu 20.04: You can proceed to run the configuration tool V2. But it is recommended to install the latest version of Jetpack 5.0 by following Step 2 of [Getting Started with Jetson Orin guide](https://developer.nvidia.com/embedded/learn/get-started-jetson-agx-orin-devkit).
+
+**If your DK is already registered to an IoT Hub/Edge account**, you can still follow the guidance of using connection string to run the configuration tool V2 and connect to the same IoTHub. The configuration tool V2 should effectively install Defender for IoT and OSConfig.
