@@ -23,7 +23,7 @@ function is_os_tier1() {
 
     case $ID in
         ubuntu)
-            if [ "$VERSION_ID" == "18.04" ] || [ "$VERSION_ID" == "20.04" ];
+            if [ "$VERSION_ID" == "18.04" ] || [ "$VERSION_ID" == "20.04" ] || [ "$VERSION_ID" == "22.04" ];
             then
                 return 0
             fi

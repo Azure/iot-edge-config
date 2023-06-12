@@ -32,7 +32,7 @@ function download_bash_script() {
     if [[ $# == 1 ]];
     then
         local file_name=$1
-        local url_text=https://github.com/Azure/iot-edge-config/releases/download/${VERSION_TAG}/$file_name
+        local url_text=https://github.com/Inimco/iot-edge-config/releases/download/${VERSION_TAG}/$file_name
         local tmp_file=$(echo `mktemp -u`)
 
         printf "attempting to download '%s'.\n" $file_name
